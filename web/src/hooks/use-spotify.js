@@ -7,10 +7,23 @@ export function useSpotify() {
     requestAuth();
   }, []);
 
-  return {};
-}
+  const search = async query => {
+    const url = "https://api.spotify.com/v1/search";
 
-async function search
+    try {
+      const response = await fetch(`${url}?query=${query}&type=artist,track`, {
+        headers: {
+          Authorization: `Bearer ${getSpotifyAccessToken()}`,
+        },
+      });
+      return await response.json();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return { search };
+}
 
 async function requestAuth() {
   const url = `http://localhost:4000/spotify`;
@@ -28,5 +41,9 @@ function storeSpotifyAccessToken(token) {
 }
 
 function getSpotifyAccessToken() {
-  return localStorage.getItem(storageKey);
+  try {
+    return localStorage.getItem(storageKey);
+  } catch (err) {
+    console.log(err);
+  }
 }

@@ -4,10 +4,10 @@ import "./App.css";
 import { useSpotify } from "./hooks/use-spotify";
 
 function App() {
-  const { requestAuth } = useSpotify();
+  const { search } = useSpotify();
   React.useEffect(() => {
-    requestAuth();
-  });
+    search("john mayer");
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
