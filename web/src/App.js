@@ -1,18 +1,17 @@
 import React from "react";
 import "./App.css";
-import { useSpotify } from "./hooks/use-spotify";
+import { Routes, Route } from "react-router-dom";
+import Landing from "./Containers/Landing";
+import Login from "./Containers/Login";
+import Host from "./Containers/Host";
 
 function App() {
-  const { search } = useSpotify();
-  React.useEffect(() => {
-    search("john mayer");
-  }, []);
-
-  const login = () => {};
   return (
-    <div className="App">
-      <a href="http://localhost:4000/login">login</a>
-    </div>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="login" element={<Login />} />
+      <Route path="host" element={<Host />} />
+    </Routes>
   );
 }
 
