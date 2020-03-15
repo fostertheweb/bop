@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState } from "react";
 import useSpotify from "../hooks/useSpotify";
 
 export default function({ dispatch }) {
@@ -12,7 +12,7 @@ export default function({ dispatch }) {
     setResults(tracks);
   };
 
-  const addToQueue = item => dispatch({ type: "addToQueue", item: item.name });
+  const addToQueue = item => dispatch({ type: "addToQueue", item });
 
   return (
     <div>
@@ -23,7 +23,7 @@ export default function({ dispatch }) {
       />
       <div>
         {results?.items?.map(item => (
-          <button onClick={() => addToQueue(item)}>
+          <button onClick={() => addToQueue(item)} key={item.id}>
             {item.name} by {item.artists.map(artist => artist.name).join(", ")}
           </button>
         ))}
