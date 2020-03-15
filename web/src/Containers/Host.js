@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation } from "react-router-dom";
-import { parse as parseQueryString, stringify as stringifyQueryString } from "query-string";
+import { stringify as stringifyQueryString } from "query-string";
 
 const TYPES = {
   Computer: "💻",
@@ -10,25 +9,24 @@ const TYPES = {
 };
 
 const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
-const context_uri = { context_uri: "spotify:track:2aJDlirz6v2a4HREki98cP" };
 
 export default function() {
-  const location = useLocation();
-  const { access_token, refresh_token, error } = parseQueryString(location.search);
+  const { access_token, refresh_token, error } = JSON.parse(
+    localStorage.getItem("bop:spotify:access"),
+  );
 
   const [devices, setDevices] = useState(null);
   const [accessToken, setAccessToken] = useState(access_token);
 
   const refresh = useCallback(async () => {
-    const response = await fetch(
-      "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
-      {
-        method: "GET",
-      },
-    );
-
-    const { access_token } = await response.json();
-    setAccessToken(access_token);
+    // const response = await fetch(
+    //   "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
+    //   {
+    //     method: "GET",
+    //   },
+    // );
+    // const { access_token } = await response.json();
+    // setAccessToken(access_token);
   }, [refresh_token]);
 
   useEffect(() => {
@@ -40,6 +38,7 @@ export default function() {
         },
       });
       const { error, devices } = await response.json();
+
       if (error) {
         refresh();
       } else {
