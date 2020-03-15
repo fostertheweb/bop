@@ -1,52 +1,55 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { stringify as stringifyQueryString } from "query-string";
-
-const TYPES = {
-  Computer: "💻",
-  TV: "📺",
-  Smartphone: "📱",
-  Unknown: "🔊",
-};
+import Device from "../Components/Device";
+import useAccessStorage from "../hooks/useAccessStorage";
 
 const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
 
 export default function() {
-  const { access_token, refresh_token, error } = JSON.parse(
-    localStorage.getItem("bop:spotify:access"),
-  );
+  const { getAccessKeys, updateAccessToken } = useAccessStorage();
+  const { access_token, refresh_token, error } = JSON.parse(getAccessKeys());
 
   const [devices, setDevices] = useState(null);
-  const [accessToken, setAccessToken] = useState(access_token);
+  const [loading, setLoading] = useState(false);
+  const [getDevicesError, setGetDevicesError] = useState(null);
 
   const refresh = useCallback(async () => {
-    // const response = await fetch(
-    //   "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
-    //   {
-    //     method: "GET",
-    //   },
-    // );
-    // const { access_token } = await response.json();
-    // setAccessToken(access_token);
-  }, [refresh_token]);
+    const response = await fetch(
+      "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
+      {
+        method: "GET",
+      },
+    );
+    const { access_token } = await response.json();
+    updateAccessToken(access_token);
+  }, [refresh_token, updateAccessToken]);
 
   useEffect(() => {
     async function getDevices() {
+      setLoading(true);
       const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${access_token}`,
         },
       });
-      const { error, devices } = await response.json();
+      const { devices, error } = await response.json();
 
       if (error) {
-        refresh();
-      } else {
-        setDevices(devices);
+        setGetDevicesError(error);
       }
+
+      setLoading(false);
+      setDevices(devices);
     }
     getDevices();
-  }, [accessToken, refresh]);
+  }, [access_token]);
+
+  useEffect(() => {
+    if (getDevicesError) {
+      refresh();
+    }
+  }, [getDevicesError, refresh]);
 
   const playJam = async device_id => {
     console.log(device_id);
@@ -55,7 +58,7 @@ export default function() {
       {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${access_token}`,
         },
         body: JSON.stringify({ uris: tracks }),
       },
@@ -66,14 +69,14 @@ export default function() {
   if (error) {
     return <div>there was an error</div>;
   }
+  if (loading) {
+    return <div>Loading</div>;
+  }
   return (
     <div>
       {devices ? (
         devices.map(device => (
-          <div key={device.id}>
-            {device.name} | {TYPES[device.type]} | {device.isActive ? "Active" : "Nope"}
-            <button onClick={() => playJam(device.id)}>Play a jam</button>
-          </div>
+          <Device {...device} onClick={playJam} access_token={access_token} key={device.id} />
         ))
       ) : (
         <div> no devices found</div>

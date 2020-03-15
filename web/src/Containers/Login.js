@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parse } from "query-string";
+import useAccessStorage from "../hooks/useAccessStorage";
 
 export default function() {
   const location = useLocation();
   const navigate = useNavigate();
   const query = parse(location.search);
+
+  const { setAccessKeys } = useAccessStorage();
 
   useEffect(() => {
     async function getSpotifyCredentials() {
@@ -18,10 +21,8 @@ export default function() {
           },
         });
         const { access_token, refresh_token } = await response.json();
-        localStorage.setItem(
-          "bop:spotify:access",
-          JSON.stringify({ code: query.code, access_token, refresh_token }),
-        );
+        setAccessKeys({ code: query.code, access_token, refresh_token });
+
         navigate("/host");
       } catch (err) {
         console.error(err);
@@ -33,7 +34,7 @@ export default function() {
       getSpotifyCredentials();
     }
     // eslint-ignore-next-line
-  }, [query, navigate]);
+  }, [query, navigate, setAccessKeys]);
 
   return (
     <div className="App">
