@@ -1,9 +1,21 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useReducer } from "react";
 import { stringify as stringifyQueryString } from "query-string";
 import Device from "../Components/Device";
 import useAccessStorage from "../hooks/useAccessStorage";
+import Search from "../Components/Search";
+import Queue from "../Components/Queue";
+import { QueueContext } from "../context/QueueContext";
 
 const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
+
+function queueReducer(state, { type, item }) {
+  switch (type) {
+    case "addToQueue":
+      return [...state, item];
+    default:
+      throw new Error();
+  }
+}
 
 export default function() {
   const { getAccessKeys, updateAccessToken } = useAccessStorage();
@@ -12,6 +24,7 @@ export default function() {
   const [devices, setDevices] = useState(null);
   const [loading, setLoading] = useState(false);
   const [getDevicesError, setGetDevicesError] = useState(null);
+  const [queue, dispatch] = useReducer(queueReducer, []);
 
   const refresh = useCallback(async () => {
     const response = await fetch(
@@ -74,13 +87,17 @@ export default function() {
   }
   return (
     <div>
-      {devices ? (
-        devices.map(device => (
-          <Device {...device} onClick={playJam} access_token={access_token} key={device.id} />
-        ))
-      ) : (
-        <div> no devices found</div>
-      )}
+      <QueueContext.Provider value={queue}>
+        <Search dispatch={dispatch} />
+        {devices ? (
+          devices.map(device => (
+            <Device {...device} onClick={playJam} access_token={access_token} key={device.id} />
+          ))
+        ) : (
+          <div> no devices found</div>
+        )}
+        <Queue />
+      </QueueContext.Provider>
     </div>
   );
 }

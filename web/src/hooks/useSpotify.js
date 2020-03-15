@@ -1,28 +1,34 @@
 import { useEffect } from "react";
+import debounce from "lodash/debounce";
 
 const storageKey = "bop:spotify";
 
-export function useSpotify() {
+export default function() {
   useEffect(() => {
     requestAuth();
   }, []);
 
   const search = async query => {
     const url = "https://api.spotify.com/v1/search";
-
-    try {
-      const response = await fetch(`${url}?query=${query}&type=artist,track`, {
-        headers: {
-          Authorization: `Bearer ${getSpotifyAccessToken()}`,
-        },
-      });
-      return await response.json();
-    } catch (err) {
-      console.error(err);
+    if (query) {
+      try {
+        const response = await fetch(`${url}?query=${query}&type=track&market=US`, {
+          headers: {
+            Authorization: `Bearer ${getSpotifyAccessToken()}`,
+          },
+        });
+        return await response.json();
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      return {};
     }
   };
 
-  return { search };
+  const searchSpotify = debounce(search, 250, { leading: true });
+
+  return { searchSpotify };
 }
 
 async function requestAuth() {

@@ -1,4 +1,33 @@
-import React from "react";
+import React, { useState, useReducer } from "react";
 import useSpotify from "../hooks/useSpotify";
 
-export default function() {}
+export default function({ dispatch }) {
+  const { searchSpotify } = useSpotify();
+
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async query => {
+    const { tracks } = await searchSpotify(query);
+    setResults(tracks);
+  };
+
+  const addToQueue = item => dispatch({ type: "addToQueue", item: item.name });
+
+  return (
+    <div>
+      <input
+        id="search"
+        placeholder="Search by track or artist"
+        onChange={({ target }) => handleSearch(target.value)}
+      />
+      <div>
+        {results?.items?.map(item => (
+          <button onClick={() => addToQueue(item)}>
+            {item.name} by {item.artists.map(artist => artist.name).join(", ")}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
