@@ -1,29 +1,17 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { useSpotify } from "./hooks/use-spotify";
+import { Routes, Route } from "react-router-dom";
+import Landing from "./Containers/Landing";
+import Login from "./Containers/Login";
+import Host from "./Containers/Host";
 
 function App() {
-  const { search } = useSpotify();
-  React.useEffect(() => {
-    search("john mayer");
-  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="login" element={<Login />} />
+      <Route path="host" element={<Host />} />
+    </Routes>
   );
 }
 
