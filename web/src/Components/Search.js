@@ -12,7 +12,7 @@ export default function({ dispatch }) {
     setResults(tracks);
   };
 
-  const addToQueue = item => dispatch({ type: "addToQueue", item });
+  const addToQueue = payload => dispatch({ type: "addToQueue", payload });
 
   return (
     <div>

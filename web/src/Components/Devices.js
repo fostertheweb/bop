@@ -49,7 +49,7 @@ export default function({ access_token, refreshAccessToken }) {
   }
   return (
     <div>
-      {devices ? (
+      {devices && devices.length ? (
         devices.map(device => (
           <Device {...device} onClick={playJam} access_token={access_token} key={device.id} />
         ))

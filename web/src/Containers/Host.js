@@ -7,10 +7,12 @@ import Queue from "../Components/Queue";
 import { QueueContext } from "../context/QueueContext";
 import Devices from "../Components/Devices";
 
-function queueReducer(state, { type, item }) {
+function queueReducer(state, { type, payload }) {
   switch (type) {
     case "addToQueue":
-      return [...state, item];
+      return [...state, payload];
+    case "removeFromQueue":
+      return [...payload];
     default:
       throw new Error();
   }
@@ -54,7 +56,7 @@ export default function() {
       <QueueContext.Provider value={queue}>
         <Search dispatch={dispatch} />
         <Devices refreshAccessToken={refreshAccessToken} access_token={accessToken} />
-        <Queue />
+        <Queue dispatch={dispatch} />
       </QueueContext.Provider>
     </div>
   );

@@ -1,8 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { QueueContext } from "../context/QueueContext";
 
-export default function() {
+export default function({ dispatch }) {
   const queue = useContext(QueueContext);
+
+  useEffect(() => {
+    console.log(queue);
+  }, [queue]);
 
   return (
     <ol>
@@ -11,7 +15,6 @@ export default function() {
           {item.name} by {item.artists.map(artist => artist.name).join(", ")}
         </li>
       ))}
-      {/* {queue[0] && JSON.stringify(Object.keys(queue[0]))} */}
     </ol>
   );
 }
