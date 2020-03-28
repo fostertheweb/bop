@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useReducer } from "react";
 import { stringify as stringifyQueryString } from "query-string";
-import Device from "../Components/Device";
 import useAccessStorage from "../hooks/useAccessStorage";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
@@ -21,13 +20,9 @@ function queueReducer(state, { type, payload }) {
 export default function() {
   const { getAccessKeys, updateAccessToken } = useAccessStorage();
   const { access_token, refresh_token, error } = JSON.parse(getAccessKeys());
-
   const [accessToken, setAccessToken] = useState(access_token);
-
   const [queue, dispatch] = useReducer(queueReducer, []);
-
   const refreshAccessToken = useCallback(async () => {
-    console.log("beginning refresh");
     const response = await fetch(
       "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
       {
