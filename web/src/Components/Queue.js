@@ -1,5 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { QueueContext } from "../context/QueueContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faListMusic } from "@fortawesome/pro-light-svg-icons";
 
 export default function({ dispatch }) {
   const queue = useContext(QueueContext);
@@ -9,8 +11,11 @@ export default function({ dispatch }) {
   }, [queue]);
 
   return (
-    <div className="border-l border-gray-300 pl-4 h-full">
-      <h1 className="text-lg text-gray-600 tracking-wide py-2">Play Queue</h1>
+    <div className="">
+      <h1 className="flex items-center text-lg text-gray-600 tracking-wide py-2 sticky top-0 bg-white">
+        <FontAwesomeIcon icon={faListMusic} size="lg" className="fill-current" />
+        <span className="ml-4">Play Queue</span>
+      </h1>
       <div className="">
         {queue?.map(item => (
           <div

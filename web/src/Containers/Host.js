@@ -4,7 +4,9 @@ import useAccessStorage from "../hooks/useAccessStorage";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
 import { QueueContext } from "../context/QueueContext";
+import Player from "./Player";
 import Devices from "../Components/Devices";
+import { DeviceContext } from "../context/DeviceContext";
 
 function queueReducer(state, { type, payload }) {
   switch (type) {
@@ -22,6 +24,7 @@ export default function() {
   const { access_token, refresh_token, error } = JSON.parse(getAccessKeys());
   const [accessToken, setAccessToken] = useState(access_token);
   const [queue, dispatch] = useReducer(queueReducer, []);
+  const [deviceId, setDeviceId] = useState("");
   const refreshAccessToken = useCallback(async () => {
     const response = await fetch(
       "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
@@ -49,18 +52,28 @@ export default function() {
   return (
     <>
       <QueueContext.Provider value={queue}>
-        <div className="flex">
-          <div className="p-4 bg-gray-800 h-screen flex flex-col justify-between text-white">
-            <Devices refreshAccessToken={refreshAccessToken} access_token={accessToken} />
-            <div className="">Spotify Username</div>
+        <DeviceContext.Provider value={deviceId}>
+          <div className="flex">
+            <div className="flex-grow">
+              <div className="flex items-start">
+                <div className="p-4 w-1/2">
+                  <Queue dispatch={dispatch} />
+                </div>
+                <div className="p-4 w-1/2">
+                  <Search dispatch={dispatch} />
+                </div>
+              </div>
+            </div>
+            <div className="fixed bottom-0 left-0 flex items-center justify-between w-full p-4 bg-gray-200 border-t border-purple-300 shadow-inner">
+              <Player />
+              <Devices
+                refreshAccessToken={refreshAccessToken}
+                access_token={accessToken}
+                onDeviceChange={setDeviceId}
+              />
+            </div>
           </div>
-          <div className="pl-4 py-4 w-2/5">
-            <Search dispatch={dispatch} />
-          </div>
-          <div className="p-4 w-2/5">
-            <Queue dispatch={dispatch} />
-          </div>
-        </div>
+        </DeviceContext.Provider>
       </QueueContext.Provider>
     </>
   );

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { stringify as stringifyQueryString } from "query-string";
 
-const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
-
-export default function({ access_token, refreshAccessToken }) {
+export default function({ access_token, refreshAccessToken, onDeviceChange }) {
   const [devices, setDevices] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -28,28 +25,13 @@ export default function({ access_token, refreshAccessToken }) {
     getDevices();
   }, [access_token, refreshAccessToken]);
 
-  const playJam = async device_id => {
-    console.log(device_id);
-    const addedToQueue = await fetch(
-      "https://api.spotify.com/v1/me/player/play?" + stringifyQueryString({ device_id }),
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-        body: JSON.stringify({ uris: tracks }),
-      },
-    );
-    console.log(addedToQueue);
-  };
-
   if (loading) {
     return <div>Loading</div>;
   }
   return (
     <div className="">
       {devices && devices.length ? (
-        <DeviceSelector options={devices} />
+        <DeviceSelector options={devices} onChange={onDeviceChange} />
       ) : (
         <div className="text-gray-700 bg-gray-400 p-4 rounded">No devices found.</div>
       )}
@@ -66,7 +48,9 @@ const TYPES = {
 
 function DeviceSelector(props) {
   return (
-    <select className="appearance-none bg-gray-800 border-2 border-gray-700 px-4 py-2 rounded text-white focus:outline-none focus:shadow-outline">
+    <select
+      onChange={e => props.onChange(e.target.value)}
+      className="appearance-none bg-transparent border-2 border-gray-400 px-4 py-2 rounded text-gray-600 focus:outline-none focus:shadow-outline">
       {props.options.map(device => (
         <option value={device.id} className="px-4 py-2">
           {(TYPES[device.type] || TYPES.Unknown) + " " + device.name}
