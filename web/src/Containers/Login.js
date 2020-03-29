@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parse } from "query-string";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import useAccessStorage from "../hooks/useAccessStorage";
 
 export default function() {
@@ -41,7 +43,8 @@ export default function() {
       <a
         href="http://localhost:4000/login"
         className="px-6 py-4 rounded-full bg-green-500 text-white leading hover:bg-green-600">
-        Log in with Spotify
+        <FontAwesomeIcon icon={faSpotify} size="lg" />
+        <span className="ml-2">Log in with Spotify</span>
       </a>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useContext } from "react";
 import { stringify as stringifyQueryString } from "query-string";
 import useAccessStorage from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faStepBackward, faStepForward } from "@fortawesome/pro-solid-svg-icons";
+import { faPlay, faStepBackward, faStepForward } from "@fortawesome/pro-duotone-svg-icons";
 import { DeviceContext } from "../context/DeviceContext";
 
 export default function() {
@@ -30,11 +30,11 @@ export default function() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <button className="text-gray-500">
-          <FontAwesomeIcon icon={faStepBackward} size="lg" />
+        <button className="text-gray-500 hover:text-gray-400">
+          <FontAwesomeIcon icon={faStepBackward} size="2x" />
         </button>
-        <button className="text-gray-600 px-4 hover:text-gray-500" onClick={playJam}>
-          <FontAwesomeIcon icon={faPlay} size="2x" />
+        <button className="text-indigo-600 px-4 hover:text-indigo-500" onClick={playJam}>
+          <FontAwesomeIcon icon={faPlay} size="3x" />
         </button>
         {/* Current Song
         <div className="p-2">
@@ -49,8 +49,8 @@ export default function() {
           </div>
         </div> */}
         {/* Next Song */}
-        <button className="text-gray-500">
-          <FontAwesomeIcon icon={faStepForward} size="lg" />
+        <button className="text-gray-500 hover:text-gray-400">
+          <FontAwesomeIcon icon={faStepForward} size="2x" />
         </button>
       </div>
     </div>

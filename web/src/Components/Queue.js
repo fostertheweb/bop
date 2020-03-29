@@ -12,9 +12,9 @@ export default function({ dispatch }) {
 
   return (
     <div className="">
-      <h1 className="flex items-center text-lg text-gray-600 tracking-wide py-2 sticky top-0 bg-white">
+      <h1 className="flex items-center text-lg text-gray-600 tracking-wide sticky top-0 p-4 bg-white">
         <FontAwesomeIcon icon={faListMusic} size="lg" className="fill-current" />
-        <span className="ml-4">Play Queue</span>
+        <span className="ml-4 py-2">Play Queue</span>
       </h1>
       <div className="">
         {queue?.map(item => (

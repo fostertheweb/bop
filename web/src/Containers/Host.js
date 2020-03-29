@@ -56,15 +56,15 @@ export default function() {
           <div className="flex">
             <div className="flex-grow">
               <div className="flex items-start">
-                <div className="p-4 w-1/2">
+                <div className="w-1/2 border-r border-gray-300 h-screen overflow-y-scroll">
                   <Queue dispatch={dispatch} />
                 </div>
-                <div className="p-4 w-1/2">
+                <div className="w-1/2 h-screen overflow-y-scroll">
                   <Search dispatch={dispatch} />
                 </div>
               </div>
             </div>
-            <div className="fixed bottom-0 left-0 flex items-center justify-between w-full p-4 bg-gray-200 border-t border-purple-300 shadow-inner">
+            <div className="fixed bottom-0 left-0 flex items-center justify-between w-full p-4 bg-gray-200 border-t border-indigo-300 shadow-inner">
               <Player />
               <Devices
                 refreshAccessToken={refreshAccessToken}

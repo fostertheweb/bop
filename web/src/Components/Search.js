@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import useSpotify from "../hooks/useSpotify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 export default function({ dispatch }) {
   const { searchSpotify } = useSpotify();
@@ -15,13 +17,16 @@ export default function({ dispatch }) {
   const addToQueue = payload => dispatch({ type: "addToQueue", payload });
 
   return (
-    <div>
-      <input
-        className="border-2 border-gray-200 text-base rounded px-4 py-2 focus:outline-none focus:shadow-outline w-full text-gray-700"
-        id="search"
-        placeholder="Search by track or artist"
-        onChange={({ target }) => handleSearch(target.value)}
-      />
+    <div className="">
+      <div className="p-4 bg-white sticky top-0 flex items-center">
+        <FontAwesomeIcon icon={faSpotify} size="lg" className="text-gray-500 fill-current" />
+        <input
+          className="border-2 border-gray-200 text-base rounded ml-2 px-4 py-2 focus:outline-none focus:shadow-outline w-full text-gray-700"
+          id="search"
+          placeholder="Search by track or artist"
+          onChange={({ target }) => handleSearch(target.value)}
+        />
+      </div>
       <div>
         {results?.items?.map(item => (
           <button
