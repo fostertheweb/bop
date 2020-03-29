@@ -47,12 +47,21 @@ export default function() {
   }
 
   return (
-    <div>
+    <>
       <QueueContext.Provider value={queue}>
-        <Search dispatch={dispatch} />
-        <Devices refreshAccessToken={refreshAccessToken} access_token={accessToken} />
-        <Queue dispatch={dispatch} />
+        <div className="flex">
+          <div className="p-4 bg-gray-800 h-screen flex flex-col justify-between text-white">
+            <Devices refreshAccessToken={refreshAccessToken} access_token={accessToken} />
+            <div className="">Spotify Username</div>
+          </div>
+          <div className="pl-4 py-4 w-2/5">
+            <Search dispatch={dispatch} />
+          </div>
+          <div className="p-4 w-2/5">
+            <Queue dispatch={dispatch} />
+          </div>
+        </div>
       </QueueContext.Provider>
-    </div>
+    </>
   );
 }

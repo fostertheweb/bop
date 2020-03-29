@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { stringify as stringifyQueryString } from "query-string";
-import Device from "./Device";
 
 const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
 
@@ -48,14 +47,31 @@ export default function({ access_token, refreshAccessToken }) {
     return <div>Loading</div>;
   }
   return (
-    <div>
+    <div className="">
       {devices && devices.length ? (
-        devices.map(device => (
-          <Device {...device} onClick={playJam} access_token={access_token} key={device.id} />
-        ))
+        <DeviceSelector options={devices} />
       ) : (
-        <div> no devices found</div>
+        <div className="text-gray-700 bg-gray-400 p-4 rounded">No devices found.</div>
       )}
     </div>
+  );
+}
+
+const TYPES = {
+  Computer: "💻",
+  TV: "📺",
+  Smartphone: "📱",
+  Unknown: "🔊",
+};
+
+function DeviceSelector(props) {
+  return (
+    <select className="appearance-none bg-gray-800 border-2 border-gray-700 px-4 py-2 rounded text-white focus:outline-none focus:shadow-outline">
+      {props.options.map(device => (
+        <option value={device.id} className="px-4 py-2">
+          {(TYPES[device.type] || TYPES.Unknown) + " " + device.name}
+        </option>
+      ))}
+    </select>
   );
 }
