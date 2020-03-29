@@ -9,7 +9,7 @@ export default function() {
   const device_id = useContext(DeviceContext);
   const { getAccessKeys, updateAccessToken } = useAccessStorage();
   const { access_token, error } = JSON.parse(getAccessKeys());
-  const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
+  const tracks = ["spotify:track:3ZO6UxR61HavlXuyohc14T", "spotify:track:1r1oITz34K73OEbz1ogvxk"];
   const playJam = async () => {
     const addedToQueue = await fetch(
       "https://api.spotify.com/v1/me/player/play?" + stringifyQueryString({ device_id }),

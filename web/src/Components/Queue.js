@@ -3,12 +3,18 @@ import { QueueContext } from "../context/QueueContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-light-svg-icons";
 
-export default function({ dispatch }) {
+export default function({ dispatch, playlist }) {
   const queue = useContext(QueueContext);
 
   useEffect(() => {
-    console.log(queue);
-  }, [queue]);
+    const { id } = playlist;
+
+    const addToPlaylist = async () => {
+      const response = await fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+        method: "POST",
+      });
+    };
+  }, [queue, playlist]);
 
   return (
     <div className="">
