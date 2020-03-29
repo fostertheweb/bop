@@ -37,8 +37,12 @@ export default function() {
   }, [query, navigate, setAccessKeys]);
 
   return (
-    <div className="App">
-      <a href="http://localhost:4000/login">Log in with Spotify</a>
+    <div className="flex flex-col justify-center h-screen w-full items-center">
+      <a
+        href="http://localhost:4000/login"
+        className="px-6 py-4 rounded-full bg-green-500 text-white leading hover:bg-green-600">
+        Log in with Spotify
+      </a>
     </div>
   );
 }
