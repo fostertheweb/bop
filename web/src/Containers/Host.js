@@ -7,7 +7,6 @@ import { QueueContext } from "../context/QueueContext";
 import Player from "./Player";
 import Devices from "../Components/Devices";
 import { DeviceContext } from "../context/DeviceContext";
-import { createPlaylist } from "../hooks/useSpotify";
 
 function queueReducer(state, { type, payload }) {
   switch (type) {
@@ -27,7 +26,6 @@ export default function() {
   const [queue, dispatch] = useReducer(queueReducer, []);
   const [deviceId, setDeviceId] = useState("");
   const [user, setUser] = useState({});
-  const [playlist, setPlaylist] = useState({});
   const refreshAccessToken = useCallback(async () => {
     const response = await fetch(
       "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
@@ -72,7 +70,7 @@ export default function() {
             <div className="flex-grow">
               <div className="flex items-start">
                 <div className="w-1/2 border-r border-gray-300 h-screen overflow-y-scroll">
-                  <Queue dispatch={dispatch} playlist={playlist} />
+                  <Queue dispatch={dispatch} />
                 </div>
                 <div className="w-1/2 h-screen overflow-y-scroll">
                   <Search dispatch={dispatch} />

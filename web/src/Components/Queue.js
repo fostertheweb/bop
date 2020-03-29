@@ -2,19 +2,23 @@ import React, { useContext, useEffect } from "react";
 import { QueueContext } from "../context/QueueContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-light-svg-icons";
+import useAccessStorage from "../hooks/useAccessStorage";
 
-export default function({ dispatch, playlist }) {
+export default function({ dispatch }) {
   const queue = useContext(QueueContext);
+  const { getAccessKeys } = useAccessStorage();
+  const { access_token } = JSON.parse(getAccessKeys());
 
   useEffect(() => {
-    const { id } = playlist;
+    const trackToQueue = queue.slice(-1)[0]?.uri;
 
-    const addToPlaylist = async () => {
-      const response = await fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+    if (trackToQueue) {
+      fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${access_token}` },
       });
-    };
-  }, [queue, playlist]);
+    }
+  }, [queue, access_token]);
 
   return (
     <div className="">

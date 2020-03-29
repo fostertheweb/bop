@@ -10,7 +10,6 @@ export default function({ dispatch }) {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async query => {
-    console.log(query);
     const { tracks } = await searchSpotify(query);
     setResults(tracks);
   };
