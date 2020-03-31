@@ -7,7 +7,6 @@ import { QueueContext } from "../context/QueueContext";
 import Player from "./Player";
 import Devices from "../Components/Devices";
 import { DeviceContext } from "../context/DeviceContext";
-import { PlayerProvider } from "../hooks/useSpotifyPlayer";
 
 function queueReducer(state, { type, payload }) {
   switch (type) {
@@ -65,32 +64,30 @@ export default function() {
 
   return (
     <>
-      <PlayerProvider>
-        <QueueContext.Provider value={queue}>
-          <DeviceContext.Provider value={deviceId}>
-            <div className="flex">
-              <div className="flex-grow">
-                <div className="flex items-start">
-                  <div className="w-1/2 border-r border-gray-300 h-screen overflow-y-scroll">
-                    <Queue dispatch={dispatch} />
-                  </div>
-                  <div className="w-1/2 h-screen overflow-y-scroll">
-                    <Search dispatch={dispatch} />
-                  </div>
+      <QueueContext.Provider value={queue}>
+        <DeviceContext.Provider value={deviceId}>
+          <div className="flex">
+            <div className="flex-grow">
+              <div className="flex items-start">
+                <div className="w-1/2 border-r border-gray-300 h-screen overflow-y-scroll">
+                  <Queue dispatch={dispatch} />
+                </div>
+                <div className="w-1/2 h-screen overflow-y-scroll">
+                  <Search dispatch={dispatch} />
                 </div>
               </div>
-              <div className="fixed bottom-0 left-0 flex items-center justify-between w-full p-4 bg-gray-200 border-t border-indigo-300 shadow-inner">
-                <Player />
-                <Devices
-                  refreshAccessToken={refreshAccessToken}
-                  access_token={accessToken}
-                  onDeviceChange={setDeviceId}
-                />
-              </div>
             </div>
-          </DeviceContext.Provider>
-        </QueueContext.Provider>
-      </PlayerProvider>
+            <div className="fixed bottom-0 left-0 flex items-center justify-between w-full p-4 bg-gray-200 border-t border-indigo-300 shadow-inner">
+              <Player />
+              <Devices
+                refreshAccessToken={refreshAccessToken}
+                access_token={accessToken}
+                onDeviceChange={setDeviceId}
+              />
+            </div>
+          </div>
+        </DeviceContext.Provider>
+      </QueueContext.Provider>
     </>
   );
 }

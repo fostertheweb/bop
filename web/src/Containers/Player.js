@@ -4,6 +4,7 @@ import useAccessStorage from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faStepBackward, faStepForward } from "@fortawesome/pro-duotone-svg-icons";
 import { DeviceContext } from "../context/DeviceContext";
+import { useSpotifyWebPlayback } from "../hooks/useSpotifyWebPlayback";
 
 export default function() {
   const device_id = useContext(DeviceContext);
@@ -34,6 +35,20 @@ export default function() {
   if (error) {
     return <div>there was an error</div>;
   }
+
+  const { player, isReady } = useSpotifyWebPlayback();
+
+  useEffect(
+    () => {
+      if (isReady) {
+        player.connect();
+        console.log(player);
+      }
+    },
+    //eslint-disable-next-line
+    [isReady],
+  );
+
   return (
     <div>
       <div className="flex items-center justify-between">
