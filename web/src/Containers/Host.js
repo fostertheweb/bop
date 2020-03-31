@@ -26,6 +26,7 @@ export default function() {
   const [accessToken, setAccessToken] = useState(access_token);
   const [queue, dispatch] = useReducer(queueReducer, []);
   const [deviceId, setDeviceId] = useState("");
+  const [user, setUser] = useState({});
   const refreshAccessToken = useCallback(async () => {
     const response = await fetch(
       "http://localhost:4000/refresh?" + stringifyQueryString({ refresh_token }),
@@ -45,6 +46,18 @@ export default function() {
       updateAccessToken(accessToken);
     }
   }, [accessToken, updateAccessToken, access_token]);
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const response = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const me = await response.json();
+      setUser(me);
+    };
+    getUserInfo();
+  }, [accessToken]);
 
   if (error) {
     return <div>there was an error</div>;

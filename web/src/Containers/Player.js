@@ -7,9 +7,9 @@ import { DeviceContext } from "../context/DeviceContext";
 
 export default function() {
   const device_id = useContext(DeviceContext);
-  const { getAccessKeys, updateAccessToken } = useAccessStorage();
+  const { getAccessKeys } = useAccessStorage();
   const { access_token, error } = JSON.parse(getAccessKeys());
-  const tracks = ["spotify:track:20rCuKaiC6KaA2jQQqCSqV", "spotify:track:2aJDlirz6v2a4HREki98cP"];
+  const tracks = ["spotify:track:3ZO6UxR61HavlXuyohc14T", "spotify:track:1r1oITz34K73OEbz1ogvxk"];
   const playJam = async () => {
     const addedToQueue = await fetch(
       "https://api.spotify.com/v1/me/player/play?" + stringifyQueryString({ device_id }),
@@ -24,13 +24,22 @@ export default function() {
     console.log(addedToQueue);
   };
 
+  const skipPlayback = direction => {
+    fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+  };
+
   if (error) {
     return <div>there was an error</div>;
   }
   return (
     <div>
       <div className="flex items-center justify-between">
-        <button className="text-gray-500 hover:text-gray-400">
+        <button
+          className="text-gray-500 hover:text-gray-400"
+          onClick={() => skipPlayback("previous")}>
           <FontAwesomeIcon icon={faStepBackward} size="2x" />
         </button>
         <button className="text-indigo-600 px-4 hover:text-indigo-500" onClick={playJam}>
@@ -49,7 +58,7 @@ export default function() {
           </div>
         </div> */}
         {/* Next Song */}
-        <button className="text-gray-500 hover:text-gray-400">
+        <button className="text-gray-500 hover:text-gray-400" onClick={() => skipPlayback("next")}>
           <FontAwesomeIcon icon={faStepForward} size="2x" />
         </button>
       </div>

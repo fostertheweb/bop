@@ -46,12 +46,15 @@ const TYPES = {
   Unknown: "🔊",
 };
 
-function DeviceSelector(props) {
+function DeviceSelector({ options, onChange }) {
+  useEffect(() => {
+    onChange(options[0].id);
+  }, [onChange, options]);
   return (
     <select
-      onChange={e => props.onChange(e.target.value)}
+      onChange={e => onChange(e.target.value)}
       className="appearance-none bg-transparent border-2 border-gray-400 px-4 py-2 rounded text-gray-600 focus:outline-none focus:shadow-outline">
-      {props.options.map(device => (
+      {options.map(device => (
         <option value={device.id} className="px-4 py-2" key={device.id}>
           {(TYPES[device.type] || TYPES.Unknown) + " " + device.name}
         </option>

@@ -1,14 +1,37 @@
 import React, { useContext, useEffect } from "react";
 import { QueueContext } from "../context/QueueContext";
+import { DeviceContext } from "../context/DeviceContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-light-svg-icons";
+import useAccessStorage from "../hooks/useAccessStorage";
+import { stringify as stringifyQueryString } from "query-string";
 
 export default function({ dispatch }) {
   const queue = useContext(QueueContext);
+  const device_id = useContext(DeviceContext);
+  const { getAccessKeys } = useAccessStorage();
+  const { access_token } = JSON.parse(getAccessKeys());
 
   useEffect(() => {
-    console.log(queue);
-  }, [queue]);
+    const isFirstTrack = queue.length === 1;
+    const trackToQueue = queue.slice(-1)[0]?.uri;
+
+    if (isFirstTrack) {
+      console.log(queue[0].uri);
+      fetch("https://api.spotify.com/v1/me/player/play?" + stringifyQueryString({ device_id }), {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({ uris: [queue[0].uri] }),
+      });
+    } else if (trackToQueue) {
+      fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+    }
+  }, [queue, access_token]);
 
   return (
     <div className="">
