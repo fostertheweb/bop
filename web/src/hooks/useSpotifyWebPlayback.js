@@ -7,11 +7,10 @@ export function useSpotifyWebPlayback(props = {}) {
   const accountError = props.accountError || noop;
   const onReady = props.onReady || noop;
   const onPlayerStateChanged = props.onPlayerStateChanged || noop;
-  const { getAccessKeys } = useAccessStorage();
-  const { access_token } = JSON.parse(getAccessKeys());
   const [isReady, setIsReady] = useState(false);
   const [deviceId, setDeviceId] = useState("");
   const playerRef = useRef(null);
+  const { tokens } = useAccessStorage("useSpotifyWebPlayback");
 
   useEffect(() => {
     if (window.Spotify) {
@@ -19,7 +18,7 @@ export function useSpotifyWebPlayback(props = {}) {
       playerRef.current = new Spotify.Player({
         name: "bop",
         getOAuthToken: callback => {
-          callback(access_token);
+          callback(tokens.access_token);
         },
       });
       setIsReady(true);
@@ -30,7 +29,7 @@ export function useSpotifyWebPlayback(props = {}) {
       playerRef.current = new Spotify.Player({
         name: "bop",
         getOAuthToken: callback => {
-          callback(access_token);
+          callback(tokens.access_token);
         },
       });
       setIsReady(true);

@@ -8,7 +8,7 @@ import "./index.css";
 
 ReactDOM.render(
   <Router>
-    <App />
+    <App className="bg-gray-800" />
   </Router>,
   document.getElementById("root"),
 );

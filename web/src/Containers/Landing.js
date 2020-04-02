@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function() {
+export default function Landing() {
   return (
     <div className="flex flex-col justify-center h-screen w-full items-center">
       <h1 className="text-xl tracking-wide text-gray-700 font-medium">bop</h1>
