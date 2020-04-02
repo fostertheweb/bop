@@ -2,11 +2,12 @@ import React, { useEffect, useState, useReducer } from "react";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
 import { QueueContext } from "../context/QueueContext";
-import Player from "./Player";
 import Devices from "../Components/Devices";
 import { DeviceContext } from "../context/DeviceContext";
 import User from "../Components/User";
 import { useAccessStorage } from "../hooks/useAccessStorage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
 
 function queueReducer(state, { type, payload }) {
   switch (type) {
@@ -49,18 +50,25 @@ export default function Host() {
     <>
       <QueueContext.Provider value={queue}>
         <DeviceContext.Provider value={deviceId}>
-          <div className="flex bg-gray-800">
-            <div className="flex flex-col justify-between h-screen p-4 bg-gray-900 border-r-2 border-black text-gray-200 ">
-              <Player />
-              <User user={user} />
-              <Devices onDeviceChange={setDeviceId} />
+          <header className="flex items-center justify-between bg-black p-1">
+            <div className="tracking-wide text-gray-400 mx-2 font-medium">
+              <FontAwesomeIcon
+                icon={faListMusic}
+                size="lg"
+                className="text-pink-500 fill-current mr-2"
+              />{" "}
+              bop
             </div>
+            <Devices onDeviceChange={setDeviceId} />
+            <User user={user} />
+          </header>
+          <div className="flex bg-gray-800">
             <div className="flex-grow">
               <div className="flex items-start">
-                <div className="w-1/2 border-r border-black h-screen overflow-y-scroll hide-native-scrollbar">
+                <div className="w-1/2 border-r border-black overflow-y-scroll hide-native-scrollbar">
                   <Queue dispatch={dispatch} />
                 </div>
-                <div className="w-1/2 h-screen overflow-y-scroll hide-native-scrollbar">
+                <div className="w-1/2 overflow-y-scroll hide-native-scrollbar">
                   <Search dispatch={dispatch} />
                 </div>
               </div>
