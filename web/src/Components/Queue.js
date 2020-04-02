@@ -8,7 +8,7 @@ import NowPlaying from "./NowPlaying";
 export default function Queue({ dispatch }) {
   const queue = useContext(QueueContext);
   const device_id = useContext(DeviceContext);
-  const { tokens } = useAccessStorage("QUEUE");
+  const { tokens } = useAccessStorage();
 
   useEffect(() => {
     const isFirstTrack = queue.length === 1;

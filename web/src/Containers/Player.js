@@ -7,7 +7,7 @@ import { DeviceContext } from "../context/DeviceContext";
 
 export default function Player() {
   const device_id = useContext(DeviceContext);
-  const { tokens, error } = useAccessStorage("PLAYER");
+  const { tokens, error } = useAccessStorage();
   const tracks = ["spotify:track:3ZO6UxR61HavlXuyohc14T", "spotify:track:1r1oITz34K73OEbz1ogvxk"];
   const playJam = async () => {
     const addedToQueue = await fetch(

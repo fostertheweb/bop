@@ -10,7 +10,7 @@ export function useSpotifyWebPlayback(props = {}) {
   const [isReady, setIsReady] = useState(false);
   const [deviceId, setDeviceId] = useState("");
   const playerRef = useRef(null);
-  const { tokens } = useAccessStorage("useSpotifyWebPlayback");
+  const { tokens } = useAccessStorage();
 
   useEffect(() => {
     if (window.Spotify) {

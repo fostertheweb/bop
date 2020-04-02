@@ -13,7 +13,7 @@ export const useAccessStorage = () => {
   return useContext(TokensContext);
 };
 
-function useTokensProvider(component) {
+function useTokensProvider() {
   const [tokens, setTokens] = useState({});
   const [error, setError] = useState(null);
 
@@ -27,7 +27,6 @@ function useTokensProvider(component) {
   }
 
   function storeTokens(credentials) {
-    console.log(credentials);
     localStorage.setItem("bop:spotify:access", JSON.stringify(credentials));
     setTokens(credentials);
   }

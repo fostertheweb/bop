@@ -50,7 +50,7 @@ export default function Host() {
       <QueueContext.Provider value={queue}>
         <DeviceContext.Provider value={deviceId}>
           <div className="flex bg-gray-800">
-            <div className="flex flex-col justify-between h-screen p-4 bg-gray-900 border-r-2 border-black text-gray-200">
+            <div className="flex flex-col justify-between h-screen p-4 bg-gray-900 border-r-2 border-black text-gray-200 ">
               <Player />
               <User user={user} />
               <Devices onDeviceChange={setDeviceId} />

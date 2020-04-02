@@ -18,7 +18,7 @@ export default function Devices({ onDeviceChange }) {
   const [devices, setDevices] = useState(null);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(null);
-  const { tokens } = useAccessStorage("Devices");
+  const { tokens } = useAccessStorage();
 
   useEffect(() => {
     async function getDevices() {
@@ -70,12 +70,21 @@ export default function Devices({ onDeviceChange }) {
 function DeviceSelector({ current, options, onChange }) {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    onChange(options[0]);
+    //eslint-disable-next-line
+  }, [options]);
+
   return (
-    <div className="relative text-sm">
+    <div className="relative text-sm w-40">
       <div
         onClick={() => setOpen(!open)}
         className={`px-5 py-3 whitespace-no-wrap text-left text-gray-200 cursor-pointer rounded border border-transparent hover:bg-gray-800 hover:border-gray-700`}>
-        <FontAwesomeIcon icon={typeIcons[current.type]} className="fill-current mr-2" size="lg" />{" "}
+        <FontAwesomeIcon
+          icon={typeIcons[current.type] || faVolume}
+          className="fill-current mr-2"
+          size="lg"
+        />{" "}
         {current.name}
       </div>
       <div
