@@ -18,6 +18,8 @@ app.register(require("fastify-cookie"), {
   parseOptions: {}, // options for parsing cookies
 });
 
+app.register(require("./plugins/fastify-socket"));
+
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });
 app.register(require("./routes/login"), { prefix: "/login" });
