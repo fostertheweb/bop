@@ -1,9 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { motion } from "framer-motion";
-import { stringify as stringifyQueryString } from "query-string";
 
 import { QueueContext } from "../context/QueueContext";
-import { DeviceContext } from "../context/DeviceContext";
 import { useAccessStorage } from "../hooks/useAccessStorage";
 import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import NowPlaying from "./NowPlaying";
