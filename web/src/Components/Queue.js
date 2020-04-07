@@ -1,13 +1,24 @@
 import React, { useContext, useEffect } from "react";
+import { motion } from "framer-motion";
+import { stringify as stringifyQueryString } from "query-string";
+
 import { QueueContext } from "../context/QueueContext";
 import { DeviceContext } from "../context/DeviceContext";
 import { useAccessStorage } from "../hooks/useAccessStorage";
-import { stringify as stringifyQueryString } from "query-string";
+import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import NowPlaying from "./NowPlaying";
 
-export default function Queue({ dispatch }) {
+export default function Queue(props) {
+  return (
+    <PlayerProvider>
+      <QueueContents {...props} />
+    </PlayerProvider>
+  );
+}
+
+function QueueContents({ dispatch }) {
   const queue = useContext(QueueContext);
-  const device_id = useContext(DeviceContext);
+  const { playPause } = usePlayer();
   const { tokens } = useAccessStorage();
 
   useEffect(() => {
@@ -15,14 +26,7 @@ export default function Queue({ dispatch }) {
     const trackToQueue = queue.slice(-1)[0]?.uri;
 
     if (isFirstTrack) {
-      console.log(queue[0].uri);
-      fetch("https://api.spotify.com/v1/me/player/play?" + stringifyQueryString({ device_id }), {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${tokens.access_token}`,
-        },
-        body: JSON.stringify({ uris: [queue[0].uri] }),
-      });
+      playPause(queue[0].uri);
     } else if (trackToQueue) {
       fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
         method: "POST",
@@ -36,22 +40,57 @@ export default function Queue({ dispatch }) {
     <div>
       <NowPlaying />
       <>
-        {queue?.map(item => (
-          <div
-            key={item.id}
-            className="text-left p-2 flex items-center w-full border-t border-black">
-            <div className="p-2">
-              <img src={item.album.images[2].url} alt="album art" className="shadow w-10 h-10" />
-            </div>
-            <div className="ml-1">
-              <div className="text-gray-400">{item.name}</div>
-              <div className="text-gray-500">
-                {item.artists.map(artist => artist.name).join(", ")}
+        {queue?.map((item, index) => {
+          if (index === 0) {
+            return null;
+          }
+
+          return (
+            <motion.div
+              key={item.id}
+              className="text-left p-2 flex items-center w-full border-t border-gray-700 opacity-0"
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 200 },
+                opacity: { duration: 0.2 },
+              }}>
+              <div className="p-2">
+                <img src={item.album.images[2].url} alt="album art" className="shadow w-10 h-10" />
               </div>
-            </div>
-          </div>
-        ))}
+              <div className="ml-1">
+                <div className="text-gray-400">{item.name}</div>
+                <div className="text-gray-500">
+                  {item.artists.map(artist => artist.name).join(", ")}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </>
     </div>
   );
 }
+
+const variants = {
+  enter: direction => {
+    return {
+      x: direction > 0 ? -500 : 500,
+      opacity: 0,
+    };
+  },
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1,
+  },
+  exit: direction => {
+    return {
+      zIndex: 0,
+      x: direction < 0 ? -500 : 500,
+      opacity: 0,
+    };
+  },
+};

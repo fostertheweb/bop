@@ -56,19 +56,18 @@ export default function Host() {
                 icon={faListMusic}
                 size="lg"
                 className="text-pink-500 fill-current mr-2"
-              />{" "}
-              bop
+              />
+              <User user={user} />
             </div>
             <Devices onDeviceChange={setDeviceId} />
-            <User user={user} />
           </header>
-          <div className="flex bg-gray-800">
+          <div className="flex bg-gray-800 h-full">
             <div className="flex-grow">
-              <div className="flex items-start">
-                <div className="w-1/2 border-r border-black overflow-y-scroll hide-native-scrollbar">
+              <div className="flex items-stretch">
+                <div className="w-1/2 border-r border-gray-700 h-full overflow-y-scroll hide-native-scrollbar">
                   <Queue dispatch={dispatch} />
                 </div>
-                <div className="w-1/2 overflow-y-scroll hide-native-scrollbar">
+                <div className="w-1/2 h-full overflow-y-scroll hide-native-scrollbar">
                   <Search dispatch={dispatch} />
                 </div>
               </div>

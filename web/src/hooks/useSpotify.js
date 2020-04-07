@@ -4,7 +4,7 @@ import debounce from "lodash/debounce";
 const storageKey = "bop:spotify";
 const url = "https://api.spotify.com/v1";
 
-export default function() {
+export default function () {
   useEffect(() => {
     requestAuth();
   }, []);
@@ -24,11 +24,11 @@ export default function() {
         console.error(err);
       }
     } else {
-      return {};
+      return { tracks: [] };
     }
   };
 
-  const searchSpotify = debounce(search, 250, { leading: true });
+  const searchSpotify = debounce(search, 250, { leading: true, trailing: true });
 
   const createPlaylist = async user_id => {
     const response = await fetch(`${url}/users/${user_id}/playlists`, {
