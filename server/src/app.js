@@ -25,5 +25,6 @@ app.register(require("./routes/spotify"), { prefix: "/spotify" });
 app.register(require("./routes/login"), { prefix: "/login" });
 app.register(require("./routes/callback"), { prefix: "/callback" });
 app.register(require("./routes/refresh"), { prefix: "/refresh" });
+app.register(require("./routes/rooms"), { prefix: "/rooms" });
 
 module.exports = app;

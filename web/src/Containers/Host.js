@@ -42,6 +42,15 @@ export default function Host() {
     }
   }, [tokens]);
 
+  const createRoom = async () => {
+    const { id: spotify_id } = user;
+    const response = await fetch("http://localhost:4000/rooms", {
+      method: "POST",
+      body: JSON.stringify({ spotify_id }),
+    });
+    const poop = await response.json();
+  };
+
   if (error) {
     return <div>there was an error</div>;
   }
@@ -72,6 +81,7 @@ export default function Host() {
                 </div>
               </div>
             </div>
+            <button onClick={createRoom}>Connect</button>
           </div>
         </DeviceContext.Provider>
       </QueueContext.Provider>
