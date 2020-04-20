@@ -9,6 +9,10 @@ import { useAccessStorage } from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
 
+import io from "socket.io-client";
+
+const socket = io(`http://localhost:4000`);
+
 function queueReducer(state, { type, payload }) {
   switch (type) {
     case "addToQueue":
@@ -34,6 +38,8 @@ export default function Host() {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       });
       const me = await response.json();
+      const { id: room } = me;
+      socket.emit("join", { room, user: room });
       setUser(me);
     };
 
@@ -42,14 +48,16 @@ export default function Host() {
     }
   }, [tokens]);
 
-  const createRoom = async () => {
-    const { id: spotify_id } = user;
-    const response = await fetch("http://localhost:4000/rooms", {
-      method: "POST",
-      body: JSON.stringify({ spotify_id }),
+  useEffect(() => {
+    socket.on("clap", payload => {
+      console.log({ payload });
     });
-    const poop = await response.json();
-  };
+  }, []);
+  useEffect(() => {
+    socket.on("joined", payload => {
+      console.log({ payload });
+    });
+  }, []);
 
   if (error) {
     return <div>there was an error</div>;
@@ -81,7 +89,6 @@ export default function Host() {
                 </div>
               </div>
             </div>
-            <button onClick={createRoom}>Connect</button>
           </div>
         </DeviceContext.Provider>
       </QueueContext.Provider>

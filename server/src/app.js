@@ -1,4 +1,19 @@
 const app = require("fastify")({ logger: true });
+const io = require("socket.io")(app.server);
+
+io.on("connection", socket => {
+  socket.on("join", data => {
+    console.log(`${data.user} joining ${data.room}`);
+    socket.join(data.room);
+    // socket.broadcast.to(data.room).emit("joined", `${data.user}, joined.`);
+    io.to(data.room).emit("joined", `${data.user}, joined.`);
+  });
+
+  socket.on("clap", data => {
+    console.log(data);
+    socket.broadcast.to(data.room).emit("clap", `${data.user}, clapped!`);
+  });
+});
 
 // health check
 app.get("/ping", () => "PONG");
@@ -18,13 +33,10 @@ app.register(require("fastify-cookie"), {
   parseOptions: {}, // options for parsing cookies
 });
 
-app.register(require("./plugins/fastify-socket"));
-
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });
 app.register(require("./routes/login"), { prefix: "/login" });
 app.register(require("./routes/callback"), { prefix: "/callback" });
 app.register(require("./routes/refresh"), { prefix: "/refresh" });
-app.register(require("./routes/rooms"), { prefix: "/rooms" });
 
 module.exports = app;
