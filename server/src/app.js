@@ -13,6 +13,14 @@ io.on("connection", socket => {
     console.log(data);
     socket.broadcast.to(data.room).emit("clap", `${data.user}, clapped!`);
   });
+
+  socket.on("addToQueue", data => {
+    socket.broadcast.to(data.room).emit("addToQueue", data.payload);
+  });
+
+  socket.on("queueUpdated", data => {
+    socket.to(data.room).emit("queueUpdate", data.payload);
+  });
 });
 
 // health check

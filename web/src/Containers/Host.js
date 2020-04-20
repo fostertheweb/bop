@@ -52,12 +52,18 @@ export default function Host() {
     socket.on("clap", payload => {
       console.log({ payload });
     });
-  }, []);
-  useEffect(() => {
     socket.on("joined", payload => {
       console.log({ payload });
     });
+
+    socket.on("addToQueue", payload => {
+      dispatch({ type: "addToQueue", payload });
+    });
   }, []);
+
+  useEffect(() => {
+    socket.emit("queueUpdated", { room: user.id, payload: queue });
+  }, [queue, user.id]);
 
   if (error) {
     return <div>there was an error</div>;
