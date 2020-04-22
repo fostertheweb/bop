@@ -16,7 +16,8 @@
     "fastify-cors": "3.0.2",
     "fastify-plugin": "^1.6.0",
     "fastify-sensible": "^2.1.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "socket.io": "2.3.0"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",

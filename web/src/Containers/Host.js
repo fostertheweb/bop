@@ -9,6 +9,10 @@ import { useAccessStorage } from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
 
+import io from "socket.io-client";
+
+const socket = io(`http://localhost:4000`);
+
 function queueReducer(state, { type, payload }) {
   switch (type) {
     case "addToQueue":
@@ -34,6 +38,8 @@ export default function Host() {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       });
       const me = await response.json();
+      const { id: room } = me;
+      socket.emit("join", { room, user: room });
       setUser(me);
     };
 
@@ -41,6 +47,23 @@ export default function Host() {
       getUserInfo();
     }
   }, [tokens]);
+
+  useEffect(() => {
+    socket.on("clap", payload => {
+      console.log({ payload });
+    });
+    socket.on("joined", payload => {
+      console.log({ payload });
+    });
+
+    socket.on("addToQueue", payload => {
+      dispatch({ type: "addToQueue", payload });
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.emit("queueUpdated", { room: user.id, payload: queue });
+  }, [queue, user.id]);
 
   if (error) {
     return <div>there was an error</div>;
@@ -56,19 +79,18 @@ export default function Host() {
                 icon={faListMusic}
                 size="lg"
                 className="text-pink-500 fill-current mr-2"
-              />{" "}
-              bop
+              />
+              <User user={user} />
             </div>
             <Devices onDeviceChange={setDeviceId} />
-            <User user={user} />
           </header>
-          <div className="flex bg-gray-800">
+          <div className="flex bg-gray-800 h-full">
             <div className="flex-grow">
-              <div className="flex items-start">
-                <div className="w-1/2 border-r border-black overflow-y-scroll hide-native-scrollbar">
+              <div className="flex items-stretch">
+                <div className="w-1/2 border-r border-gray-700 h-full overflow-y-scroll hide-native-scrollbar">
                   <Queue dispatch={dispatch} />
                 </div>
-                <div className="w-1/2 overflow-y-scroll hide-native-scrollbar">
+                <div className="w-1/2 h-full overflow-y-scroll hide-native-scrollbar">
                   <Search dispatch={dispatch} />
                 </div>
               </div>
