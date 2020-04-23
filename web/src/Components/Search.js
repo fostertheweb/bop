@@ -17,7 +17,6 @@ export default function Search({ dispatch }) {
   return (
     <div className="p-2">
       <div className="sticky top-0 bg-gray-800">
-        <div className="px-2 text-gray-600">Add Songs to Queue</div>
         <div className="p-2 bg-gray-800 flex items-center">
           <div className="flex items-center border-2 border-gray-700 text-base rounded focus:outline-none focus:shadow-outline w-full bg-gray-900 text-gray-200">
             <FontAwesomeIcon

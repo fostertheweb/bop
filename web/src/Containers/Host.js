@@ -7,9 +7,10 @@ import { DeviceContext } from "../context/DeviceContext";
 import User from "../Components/User";
 import { useAccessStorage } from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic, faSearch, faCog } from "@fortawesome/pro-duotone-svg-icons";
 
 import io from "socket.io-client";
+import NowPlaying from "../Components/NowPlaying";
 
 const socket = io(`http://localhost:4000`);
 
@@ -73,27 +74,29 @@ export default function Host() {
     <>
       <QueueContext.Provider value={queue}>
         <DeviceContext.Provider value={deviceId}>
-          <header className="flex items-center justify-between bg-black p-1">
-            <div className="tracking-wide text-gray-400 mx-2 font-medium">
-              <FontAwesomeIcon
-                icon={faListMusic}
-                size="lg"
-                className="text-pink-500 fill-current mr-2"
-              />
+          <NowPlaying setDeviceId={setDeviceId} />
+          <div className="flex bg-gray-800 max-h-screen" style={{ paddingTop: "120px" }}>
+            <div className="bg-gray-900 px-2 flex flex-col">
+              <div className="text-center p-2 rounded text-teal-300 font-medium cursor-pointer">
+                <FontAwesomeIcon icon={faSearch} size="lg" className="fill-current" />
+                <div className="mt-1 text-sm">Search</div>
+              </div>
+              <div className="mt-2 text-center p-2 rounded text-gray-500">
+                <FontAwesomeIcon icon={faListMusic} size="lg" className="fill-current" />
+                <div className="mt-1 text-sm">Playlists</div>
+              </div>
+              <div className="mt-2 text-center p-2 rounded text-gray-500">
+                <FontAwesomeIcon icon={faCog} size="lg" className="fill-current" />
+                <div className="mt-1 text-sm">Settings</div>
+              </div>
+              <div className="flex-grow">&nbsp;</div>
               <User user={user} />
             </div>
-            <Devices onDeviceChange={setDeviceId} />
-          </header>
-          <div className="flex bg-gray-800 h-full">
+            <div className="w-1/2">
+              <Search dispatch={dispatch} />
+            </div>
             <div className="flex-grow">
-              <div className="flex items-stretch">
-                <div className="w-1/2 border-r border-gray-700 h-full overflow-y-scroll hide-native-scrollbar">
-                  <Queue dispatch={dispatch} />
-                </div>
-                <div className="w-1/2 h-full overflow-y-scroll hide-native-scrollbar">
-                  <Search dispatch={dispatch} />
-                </div>
-              </div>
+              <Queue dispatch={dispatch} />
             </div>
           </div>
         </DeviceContext.Provider>
