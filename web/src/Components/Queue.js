@@ -36,10 +36,10 @@ function QueueContents() {
   }, [queue, tokens]);
 
   return (
-    <div>
-      <div className="p-4 text-gray-600">
+    <div className="bg-gray-900">
+      <div className="pt-6 pb-4 pl-4 text-base text-gray-600">
         <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
-        <span>Play Queue</span>
+        <span className="border-b-2 border-transparent">Play Queue</span>
       </div>
       {queue?.map((item, index) => {
         if (index === 0) {
@@ -77,7 +77,7 @@ function QueueContents() {
 const variants = {
   enter: direction => {
     return {
-      x: direction > 0 ? -500 : 500,
+      x: direction > 0 ? 500 : -500,
       opacity: 0,
     };
   },
@@ -89,7 +89,7 @@ const variants = {
   exit: direction => {
     return {
       zIndex: 0,
-      x: direction < 0 ? -500 : 500,
+      x: direction < 0 ? 500 : -500,
       opacity: 0,
     };
   },

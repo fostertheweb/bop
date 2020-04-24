@@ -33,7 +33,7 @@ export default function Search({ dispatch }) {
           </div>
         </div>
       </div>
-      <div>
+      <div className="overflow-y-scroll">
         {results?.items?.map(item => (
           <button
             onClick={() => addToQueue(item)}

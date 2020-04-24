@@ -2,9 +2,7 @@ import React, { useEffect, useState, useReducer } from "react";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
 import { QueueContext } from "../context/QueueContext";
-import Devices from "../Components/Devices";
-import { DeviceContext } from "../context/DeviceContext";
-import User from "../Components/User";
+import { DeviceProvider } from "../hooks/useDevices";
 import { useAccessStorage } from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic, faSearch, faCog } from "@fortawesome/pro-duotone-svg-icons";
@@ -28,7 +26,6 @@ function queueReducer(state, { type, payload }) {
 export default function Host() {
   const { tokens, error } = useAccessStorage();
   const [queue, dispatch] = useReducer(queueReducer, []);
-  const [deviceId, setDeviceId] = useState("");
   const [user, setUser] = useState({});
 
   useEffect(() => {
@@ -73,10 +70,10 @@ export default function Host() {
   return (
     <>
       <QueueContext.Provider value={queue}>
-        <DeviceContext.Provider value={deviceId}>
-          <NowPlaying setDeviceId={setDeviceId} />
-          <div className="flex bg-gray-800 max-h-screen" style={{ paddingTop: "80px" }}>
-            <div className="bg-gray-900 flex flex-col" style={{ width: "80px" }}>
+        <DeviceProvider>
+          <NowPlaying />
+          <div className="flex bg-gray-800 h-content">
+            <div className="bg-gray-950 flex flex-col" style={{ width: "80px" }}>
               <div className="mt-2 text-center p-2 rounded text-teal-300 font-medium cursor-pointer">
                 <FontAwesomeIcon icon={faSearch} size="lg" className="fill-current" />
                 <div className="mt-1 text-sm">Search</div>
@@ -94,11 +91,11 @@ export default function Host() {
             <div className="w-1/2">
               <Search dispatch={dispatch} />
             </div>
-            <div className="flex-grow">
+            <div className="flex-grow bg-gray-900">
               <Queue dispatch={dispatch} />
             </div>
           </div>
-        </DeviceContext.Provider>
+        </DeviceProvider>
       </QueueContext.Provider>
     </>
   );

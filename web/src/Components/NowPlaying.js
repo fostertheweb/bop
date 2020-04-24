@@ -10,7 +10,7 @@ export default function NowPlaying({ setDeviceId }) {
 
   return (
     <div
-      className="bg-gray-900 fixed top-0 w-full flex items-center justify-between border-b-2 border-gray-700 shadow"
+      className="bg-gray-1000 sticky top-0 w-full flex items-center justify-between border-b-2 border-gray-700 shadow z-50"
       style={{ height: "80px" }}>
       <div className="w-1/3">
         {item ? (
@@ -48,7 +48,7 @@ export default function NowPlaying({ setDeviceId }) {
           <FontAwesomeIcon icon={faVolume} size="lg" color="white" />
           <input type="range" className="ml-2" />
         </div>
-        <Devices onDeviceChange={setDeviceId} />
+        <Devices />
       </div>
     </div>
   );

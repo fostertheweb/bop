@@ -14,13 +14,12 @@ export const useAccessStorage = () => {
 };
 
 function useTokensProvider() {
-  const [tokens, setTokens] = useState({});
+  const [tokens, setTokens] = useState(getTokensFromStorage());
   const [error, setError] = useState(null);
 
   function getTokensFromStorage() {
     try {
-      const tokens = JSON.parse(localStorage.getItem("bop:spotify:access"));
-      setTokens(tokens);
+      return JSON.parse(localStorage.getItem("bop:spotify:access"));
     } catch (err) {
       setError(err);
     }

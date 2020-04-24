@@ -1,6 +1,10 @@
 module.exports = {
   theme: {
-    extend: {},
+    extend: {
+      top: {
+        "-1": "-1px",
+      },
+    },
   },
   variants: {
     backgroundColor: ["group-hover", "hover"],
