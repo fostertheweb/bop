@@ -10,7 +10,7 @@ export default function Player() {
 
   return (
     <div>
-      <div className="flex items-center justify-around">
+      <div className="flex items-center justify-center">
         <motion.button
           className="text-gray-500 hover:text-gray-400"
           whileTap={{ scale: 0.8 }}

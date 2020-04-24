@@ -2,14 +2,13 @@ import React, { useEffect, useState, useReducer } from "react";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
 import { QueueContext } from "../context/QueueContext";
-import Devices from "../Components/Devices";
-import { DeviceContext } from "../context/DeviceContext";
-import User from "../Components/User";
+import { DeviceProvider } from "../hooks/useDevices";
 import { useAccessStorage } from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic, faSearch, faCog } from "@fortawesome/pro-duotone-svg-icons";
 
 import io from "socket.io-client";
+import NowPlaying from "../Components/NowPlaying";
 
 const socket = io(`http://localhost:4000`);
 
@@ -27,7 +26,6 @@ function queueReducer(state, { type, payload }) {
 export default function Host() {
   const { tokens, error } = useAccessStorage();
   const [queue, dispatch] = useReducer(queueReducer, []);
-  const [deviceId, setDeviceId] = useState("");
   const [user, setUser] = useState({});
 
   useEffect(() => {
@@ -72,31 +70,32 @@ export default function Host() {
   return (
     <>
       <QueueContext.Provider value={queue}>
-        <DeviceContext.Provider value={deviceId}>
-          <header className="flex items-center justify-between bg-black p-1">
-            <div className="tracking-wide text-gray-400 mx-2 font-medium">
-              <FontAwesomeIcon
-                icon={faListMusic}
-                size="lg"
-                className="text-pink-500 fill-current mr-2"
-              />
-              <User user={user} />
-            </div>
-            <Devices onDeviceChange={setDeviceId} />
-          </header>
-          <div className="flex bg-gray-800 h-full">
-            <div className="flex-grow">
-              <div className="flex items-stretch">
-                <div className="w-1/2 border-r border-gray-700 h-full overflow-y-scroll hide-native-scrollbar">
-                  <Queue dispatch={dispatch} />
-                </div>
-                <div className="w-1/2 h-full overflow-y-scroll hide-native-scrollbar">
-                  <Search dispatch={dispatch} />
-                </div>
+        <DeviceProvider>
+          <NowPlaying />
+          <div className="flex bg-gray-800 h-content">
+            <div className="bg-gray-950 flex flex-col" style={{ width: "80px" }}>
+              <div className="mt-2 text-center p-2 rounded text-teal-300 font-medium cursor-pointer">
+                <FontAwesomeIcon icon={faSearch} size="lg" className="fill-current" />
+                <div className="mt-1 text-sm">Search</div>
               </div>
+              <div className="mt-2 text-center p-2 rounded text-gray-500">
+                <FontAwesomeIcon icon={faListMusic} size="lg" className="fill-current" />
+                <div className="mt-1 text-sm">Playlists</div>
+              </div>
+              <div className="mt-2 text-center p-2 rounded text-gray-500">
+                <FontAwesomeIcon icon={faCog} size="lg" className="fill-current" />
+                <div className="mt-1 text-sm">Settings</div>
+              </div>
+              <div className="flex-grow">&nbsp;</div>
+            </div>
+            <div className="w-1/2">
+              <Search dispatch={dispatch} />
+            </div>
+            <div className="flex-grow bg-gray-900">
+              <Queue dispatch={dispatch} />
             </div>
           </div>
-        </DeviceContext.Provider>
+        </DeviceProvider>
       </QueueContext.Provider>
     </>
   );

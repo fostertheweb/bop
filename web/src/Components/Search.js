@@ -17,7 +17,6 @@ export default function Search({ dispatch }) {
   return (
     <div className="p-2">
       <div className="sticky top-0 bg-gray-800">
-        <div className="px-2 text-gray-600">Add Songs to Queue</div>
         <div className="p-2 bg-gray-800 flex items-center">
           <div className="flex items-center border-2 border-gray-700 text-base rounded focus:outline-none focus:shadow-outline w-full bg-gray-900 text-gray-200">
             <FontAwesomeIcon
@@ -26,7 +25,7 @@ export default function Search({ dispatch }) {
               className="text-gray-500 fill-current ml-2"
             />
             <input
-              className="text-base rounded px-4 py-2 pl-2 focus:outline-none w-full bg-gray-900 text-gray-200"
+              className="appearance-none text-base rounded px-4 py-2 pl-2 focus:outline-none w-full bg-gray-900 text-gray-200"
               id="search"
               placeholder="Search by track or artist"
               onChange={({ target }) => handleSearch(target.value)}
@@ -34,7 +33,7 @@ export default function Search({ dispatch }) {
           </div>
         </div>
       </div>
-      <div>
+      <div className="overflow-y-scroll">
         {results?.items?.map(item => (
           <button
             onClick={() => addToQueue(item)}

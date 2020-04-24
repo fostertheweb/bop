@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useAccessStorage } from "../hooks/useAccessStorage";
-import { DeviceContext } from "../context/DeviceContext";
+import { DeviceContext } from "./useDevices";
 import { PlayerContext } from "../context/PlayerContext";
 import { stringify as stringifyQueryString } from "query-string";
 
@@ -15,7 +15,9 @@ export const usePlayer = () => {
 };
 
 function usePlayerProvider() {
-  const device_id = useContext(DeviceContext);
+  const {
+    currentDevice: { device_id },
+  } = useContext(DeviceContext);
   const [isPlaying, setIsPlaying] = useState(false);
   const { tokens } = useAccessStorage();
 
