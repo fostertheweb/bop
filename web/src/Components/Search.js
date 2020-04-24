@@ -25,7 +25,7 @@ export default function Search({ dispatch }) {
               className="text-gray-500 fill-current ml-2"
             />
             <input
-              className="text-base rounded px-4 py-2 pl-2 focus:outline-none w-full bg-gray-900 text-gray-200"
+              className="appearance-none text-base rounded px-4 py-2 pl-2 focus:outline-none w-full bg-gray-900 text-gray-200"
               id="search"
               placeholder="Search by track or artist"
               onChange={({ target }) => handleSearch(target.value)}

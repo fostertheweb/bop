@@ -75,9 +75,9 @@ export default function Host() {
       <QueueContext.Provider value={queue}>
         <DeviceContext.Provider value={deviceId}>
           <NowPlaying setDeviceId={setDeviceId} />
-          <div className="flex bg-gray-800 max-h-screen" style={{ paddingTop: "120px" }}>
-            <div className="bg-gray-900 px-2 flex flex-col">
-              <div className="text-center p-2 rounded text-teal-300 font-medium cursor-pointer">
+          <div className="flex bg-gray-800 max-h-screen" style={{ paddingTop: "80px" }}>
+            <div className="bg-gray-900 flex flex-col" style={{ width: "80px" }}>
+              <div className="mt-2 text-center p-2 rounded text-teal-300 font-medium cursor-pointer">
                 <FontAwesomeIcon icon={faSearch} size="lg" className="fill-current" />
                 <div className="mt-1 text-sm">Search</div>
               </div>
@@ -90,7 +90,6 @@ export default function Host() {
                 <div className="mt-1 text-sm">Settings</div>
               </div>
               <div className="flex-grow">&nbsp;</div>
-              <User user={user} />
             </div>
             <div className="w-1/2">
               <Search dispatch={dispatch} />
