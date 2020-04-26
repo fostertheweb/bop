@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import useSpotify from "../hooks/useSpotify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { useSpotify } from "../hooks/useSpotify";
 import { useQueue } from "../hooks/useQueue";
 
 export default function Search() {
   const { send } = useQueue();
-  const { searchSpotify } = useSpotify();
+  const { search } = useSpotify();
   const [results, setResults] = useState([]);
 
   const handleSearch = async query => {
-    const { tracks } = await searchSpotify(query);
+    const { tracks } = await search(query);
     setResults(tracks);
   };
 

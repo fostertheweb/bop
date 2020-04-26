@@ -1,16 +1,15 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect } from "react";
 import { NavLink, Outlet, Routes, Route } from "react-router-dom";
-import Search from "../Components/Search";
-import Queue from "../Components/Queue";
-import { useQueue, QueueProvider } from "../hooks/useQueue";
-import { DeviceProvider } from "../hooks/useDevices";
-import { useAccessStorage } from "../hooks/useAccessStorage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic, faSearch, faCog } from "@fortawesome/pro-duotone-svg-icons";
+import io from "socket.io-client";
+import { useSpotify } from "../hooks/useSpotify";
+import { useQueue, QueueProvider } from "../hooks/useQueue";
+import { DeviceProvider } from "../hooks/useDevices";
+import Queue from "../Components/Queue";
+import Search from "../Components/Search";
 import Playlists from "../Components/Playlists";
 import Settings from "../Components/Settings";
-
-import io from "socket.io-client";
 import NowPlaying from "../Components/NowPlaying";
 
 const socket = io(`http://localhost:4000`);
@@ -29,31 +28,20 @@ export default function Host() {
 
 function Layout() {
   const { queue, send } = useQueue();
-  const { tokens, error } = useAccessStorage();
-  const [user, setUser] = useState({});
+  const { userDetails } = useSpotify();
 
   useEffect(() => {
-    // TODO: maybe move this? for sure will soon
-    const getUserInfo = async () => {
-      const response = await fetch("https://api.spotify.com/v1/me", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
-      });
-      const me = await response.json();
-      const { id: room } = me;
+    if (userDetails) {
+      const { id: room } = userDetails;
       socket.emit("join", { room, user: room });
-      setUser(me);
-    };
-
-    if (tokens.access_token) {
-      getUserInfo();
     }
-  }, [tokens]);
+  }, [userDetails]);
 
   useEffect(() => {
     socket.on("clap", payload => {
       console.log({ payload });
     });
+
     socket.on("joined", payload => {
       console.log({ payload });
     });
@@ -64,12 +52,10 @@ function Layout() {
   }, []);
 
   useEffect(() => {
-    socket.emit("queueUpdated", { room: user.id, payload: queue });
-  }, [queue, user.id]);
-
-  if (error) {
-    return <div>there was an error</div>;
-  }
+    if (userDetails) {
+      socket.emit("queueUpdated", { room: userDetails.id, payload: queue });
+    }
+  }, [queue, userDetails]);
 
   return (
     <QueueProvider>

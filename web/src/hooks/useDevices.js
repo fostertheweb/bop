@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useAccessStorage } from "./useAccessStorage";
+import { useSpotify } from "./useSpotify";
 import { useQuery } from "react-query";
 
 export const DeviceContext = React.createContext("");
@@ -16,12 +16,12 @@ export const useDevices = () => {
 const DEVICE_STORAGE_KEY = "bop:device";
 
 export function useDevicesProvider() {
-  const { tokens } = useAccessStorage();
+  const { userCredentials } = useSpotify();
   const [currentDevice, setCurrentDevice] = useState(getStoredDevice());
-  const { status, data } = useQuery("devices", [tokens.access_token], async () => {
+  const { status, data } = useQuery("devices", [userCredentials.access_token], async () => {
     const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
       headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
+        Authorization: `Bearer ${userCredentials.access_token}`,
       },
     });
     const { devices } = await response.json();
@@ -46,10 +46,5 @@ export function useDevicesProvider() {
 
   return { status, currentDevice, setCurrentDevice, devices: data };
 }
-
-// Hook Returns
-// ------------
-// currentDevice
-// setCurrentDevice
-//   - persist selected device in local storage
-//   - play music on selected device
+// TODO
+// - resume music on newly selected device if currently playing

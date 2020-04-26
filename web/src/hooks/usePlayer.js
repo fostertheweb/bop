@@ -1,5 +1,5 @@
 import React, { useState, useContext, createContext } from "react";
-import { useAccessStorage } from "../hooks/useAccessStorage";
+import { useSpotify } from "./useSpotify";
 import { DeviceContext } from "./useDevices";
 import { stringify as stringifyQueryString } from "query-string";
 
@@ -18,7 +18,7 @@ export const usePlayer = () => {
 function usePlayerProvider() {
   const { currentDevice } = useContext(DeviceContext);
   const [isPlaying, setIsPlaying] = useState(false);
-  const { tokens } = useAccessStorage();
+  const { userCredentials } = useSpotify();
 
   async function playOrPause(uris) {
     if (currentDevice) {
@@ -28,7 +28,7 @@ function usePlayerProvider() {
         {
           method: "PUT",
           headers: {
-            Authorization: `Bearer ${tokens.access_token}`,
+            Authorization: `Bearer ${userCredentials.access_token}`,
           },
           body: uris ? JSON.stringify({ uris: [uris] }) : null,
         },
@@ -40,7 +40,7 @@ function usePlayerProvider() {
   async function skipPlayback(direction) {
     await fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${tokens.access_token}` },
+      headers: { Authorization: `Bearer ${userCredentials.access_token}` },
     });
   }
 

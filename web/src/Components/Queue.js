@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useSpotify } from "../hooks/useSpotify";
 import { useQueue } from "../hooks/useQueue";
-import { useAccessStorage } from "../hooks/useAccessStorage";
 import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
@@ -17,7 +17,7 @@ export default function Queue(props) {
 function QueueContents() {
   const { queue } = useQueue();
   const { playOrPause } = usePlayer();
-  const { tokens } = useAccessStorage();
+  const { userCredentials } = useSpotify();
 
   useEffect(() => {
     console.log(queue);
@@ -29,11 +29,11 @@ function QueueContents() {
     } else if (trackToQueue) {
       fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
+        headers: { Authorization: `Bearer ${userCredentials.access_token}` },
       });
     }
     //eslint-disable-next-line
-  }, [queue, tokens]);
+  }, [queue, userCredentials]);
 
   return (
     <div className="bg-gray-900">
