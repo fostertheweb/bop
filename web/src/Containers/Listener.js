@@ -3,7 +3,7 @@ import Search from "../Components/Search";
 import Queue from "../Components/Queue";
 import { QueueContext, QueueProvider } from "../hooks/useQueue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router-dom";
 
 import io from "socket.io-client";

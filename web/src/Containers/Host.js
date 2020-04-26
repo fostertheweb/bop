@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, Routes, Route } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic, faSearch, faCog } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic, faSearch, faCog } from "@fortawesome/pro-solid-svg-icons";
 import io from "socket.io-client";
 import { useSpotify } from "../hooks/useSpotify";
 import { useQueue, QueueProvider } from "../hooks/useQueue";
 import { DeviceProvider } from "../hooks/useDevices";
+import { PlaylistsProvider } from "../hooks/usePlaylists";
 import Queue from "../Components/Queue";
 import Search from "../Components/Search";
 import Playlists from "../Components/Playlists";
@@ -19,7 +20,14 @@ export default function Host() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route path="search" element={<Search />} />
-        <Route path="playlists" element={<Playlists />} />
+        <Route
+          path="playlists"
+          element={
+            <PlaylistsProvider>
+              <Playlists />
+            </PlaylistsProvider>
+          }
+        />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
@@ -49,6 +57,7 @@ function Layout() {
     socket.on("addToQueue", payload => {
       send({ type: "addToQueue", payload });
     });
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -60,7 +69,6 @@ function Layout() {
   return (
     <QueueProvider>
       <DeviceProvider>
-        <NowPlaying />
         <div className="flex bg-gray-800 h-content overflow-hidden">
           <Sidebar />
           <div className="w-1/2 overflow-y-scroll">
@@ -70,6 +78,7 @@ function Layout() {
             <Queue />
           </div>
         </div>
+        <NowPlaying />
       </DeviceProvider>
     </QueueProvider>
   );

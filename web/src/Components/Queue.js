@@ -4,7 +4,7 @@ import { useSpotify } from "../hooks/useSpotify";
 import { useQueue } from "../hooks/useQueue";
 import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 
 export default function Queue(props) {
   return (

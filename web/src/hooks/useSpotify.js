@@ -72,6 +72,9 @@ export function useSpotifyProvider() {
 
   function getUserCredentialsFromStorage() {
     const credentials = localStorage.getItem(USER_ACCESS_STORAGE_KEY);
+
+    console.log({ credentials: JSON.parse(credentials) });
+
     if (credentials) {
       return JSON.parse(credentials);
     } else {
@@ -87,12 +90,12 @@ export function useSpotifyProvider() {
     storeUserCredentials(userCredentials);
   }, [userCredentials]);
 
-  const headers = {
-    Authorization: `Bearer ${userCredentials.access_token}`,
-  };
-
-  const getUserDetails = useQuery("user", [userCredentials.access_token], async () => {
-    const response = await fetch(`${SPOTIFY_API_URL}/me`, { headers });
+  const getUserDetails = useQuery("user", [userCredentials], async () => {
+    const response = await fetch(`${SPOTIFY_API_URL}/me`, {
+      headers: {
+        Authorization: `Bearer ${userCredentials.access_token}`,
+      },
+    });
     return await response.json();
   });
 
