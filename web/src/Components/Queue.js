@@ -1,7 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-
-import { QueueContext } from "../context/QueueContext";
+import { useQueue } from "../hooks/useQueue";
 import { useAccessStorage } from "../hooks/useAccessStorage";
 import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,16 +15,17 @@ export default function Queue(props) {
 }
 
 function QueueContents() {
-  const queue = useContext(QueueContext);
-  const { playPause } = usePlayer();
+  const { queue } = useQueue();
+  const { playOrPause } = usePlayer();
   const { tokens } = useAccessStorage();
 
   useEffect(() => {
+    console.log(queue);
     const isFirstTrack = queue.length === 1;
     const trackToQueue = queue.slice(-1)[0]?.uri;
 
     if (isFirstTrack) {
-      playPause(queue[0].uri);
+      playOrPause(queue[0].uri);
     } else if (trackToQueue) {
       fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
         method: "POST",

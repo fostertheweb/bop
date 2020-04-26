@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import useSpotify from "../hooks/useSpotify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { useQueue } from "../hooks/useQueue";
 
-export default function Search({ dispatch }) {
+export default function Search() {
+  const { send } = useQueue();
   const { searchSpotify } = useSpotify();
   const [results, setResults] = useState([]);
 
@@ -12,7 +14,7 @@ export default function Search({ dispatch }) {
     setResults(tracks);
   };
 
-  const addToQueue = payload => dispatch({ type: "addToQueue", payload });
+  const addToQueue = payload => send({ type: "addToQueue", payload });
 
   return (
     <div className="p-2">
@@ -33,7 +35,7 @@ export default function Search({ dispatch }) {
           </div>
         </div>
       </div>
-      <div className="overflow-y-scroll">
+      <div>
         {results?.items?.map(item => (
           <button
             onClick={() => addToQueue(item)}

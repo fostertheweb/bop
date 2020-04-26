@@ -1,12 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import Player from "../Containers/Player";
-import { QueueContext } from "../context/QueueContext";
+import { useQueue } from "../hooks/useQueue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-duotone-svg-icons";
 import Devices from "./Devices";
 
-export default function NowPlaying({ setDeviceId }) {
-  const [item] = useContext(QueueContext);
+export default function NowPlaying() {
+  const {
+    queue: [item],
+  } = useQueue();
+
+  console.log(item);
 
   return (
     <div

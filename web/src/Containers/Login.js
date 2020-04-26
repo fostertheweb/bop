@@ -25,7 +25,7 @@ export default function Login() {
         const { access_token, refresh_token } = await response.json();
         storeTokens({ code: query.code, access_token, refresh_token });
 
-        navigate("/host");
+        navigate("/host/search");
       } catch (err) {
         console.error(err);
       }

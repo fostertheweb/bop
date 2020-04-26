@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { usePlayer } from "../hooks/usePlayer";
 
 export default function Player() {
-  const { skipPlayback, playPause, isPlaying } = usePlayer();
+  const { skipPlayback, playOrPause, isPlaying } = usePlayer();
 
   return (
     <div>
@@ -20,7 +20,7 @@ export default function Player() {
         <motion.button
           className="text-teal-500 px-4 hover:text-teal-400"
           whileTap={{ scale: 0.8 }}
-          onClick={() => playPause()}>
+          onClick={() => playOrPause()}>
           <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="3x" />
         </motion.button>
 

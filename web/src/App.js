@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="login" element={<Login />} />
-        <Route path="host" element={<Host />} />
+        <Route path="host/*" element={<Host />} />
         <Route path="join" element={<Join />} />
         <Route path="listen/:room" element={<Listener />} />
       </Routes>
