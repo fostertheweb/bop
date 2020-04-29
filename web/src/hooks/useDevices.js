@@ -18,15 +18,20 @@ const DEVICE_STORAGE_KEY = "bop:device";
 export function useDevicesProvider() {
   const { userCredentials } = useSpotify();
   const [currentDevice, setCurrentDevice] = useState(getStoredDevice());
-  const { status, data } = useQuery("devices", [userCredentials.access_token], async () => {
-    const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
-      headers: {
-        Authorization: `Bearer ${userCredentials.access_token}`,
-      },
-    });
-    const { devices } = await response.json();
-    return devices;
-  });
+  const { status, data } = useQuery(
+    "devices",
+    [userCredentials.access_token],
+    async () => {
+      const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
+        headers: {
+          Authorization: `Bearer ${userCredentials.access_token}`,
+        },
+      });
+      const { devices } = await response.json();
+      return devices;
+    },
+    { onError: err => console.log(err), retry: 3 },
+  );
 
   function getStoredDevice() {
     return JSON.parse(localStorage.getItem(DEVICE_STORAGE_KEY));

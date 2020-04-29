@@ -7,6 +7,7 @@ export const PlayerContext = createContext(false);
 
 export const PlayerProvider = ({ children }) => {
   const player = usePlayerProvider();
+  console.log({ player });
 
   return <PlayerContext.Provider value={player}>{children}</PlayerContext.Provider>;
 };

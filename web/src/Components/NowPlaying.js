@@ -1,6 +1,8 @@
 import React from "react";
 import Player from "../Containers/Player";
 import { useQueue } from "../hooks/useQueue";
+import { PlayerProvider } from "../hooks/usePlayer";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "./Devices";
@@ -45,7 +47,9 @@ export default function NowPlaying() {
         )}
       </div>
       <div className="w-1/3">
-        <Player />
+        <PlayerProvider>
+          <Player />
+        </PlayerProvider>
       </div>
       <div className="w-1/3 flex items-center justify-end">
         <div className="flex items-center mr-6">
