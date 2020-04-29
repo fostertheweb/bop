@@ -12,8 +12,6 @@ export default function NowPlaying() {
     queue: [item],
   } = useQueue();
 
-  console.log({ firstQueueItem: item });
-
   return (
     <div
       className="bg-gray-1000 sticky top-0 w-full flex items-center justify-between border-t-2 border-gray-700 shadow z-50"

@@ -73,8 +73,6 @@ export function useSpotifyProvider() {
   function getUserCredentialsFromStorage() {
     const credentials = localStorage.getItem(USER_ACCESS_STORAGE_KEY);
 
-    console.log({ credentials: JSON.parse(credentials) });
-
     if (credentials) {
       return JSON.parse(credentials);
     } else {
@@ -111,6 +109,10 @@ export function useSpotifyProvider() {
       setUserDetails(getUserDetails.data);
     }
   }, [getUserDetails, userDetails]);
+
+  useEffect(() => {
+    getUserDetails.refetch();
+  }, [userCredentials]);
 
   async function refreshUserAccessToken() {
     try {
