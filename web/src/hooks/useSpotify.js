@@ -87,6 +87,13 @@ export function useSpotifyProvider() {
   }
 
   useEffect(() => {
+    if (userCredentials !== null) {
+      refreshUserAccessToken();
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
     storeUserCredentials(userCredentials);
   }, [userCredentials]);
 
@@ -105,14 +112,15 @@ export function useSpotifyProvider() {
     }
   }, [getUserDetails, userDetails]);
 
-  async function refreshUserAccess() {
+  async function refreshUserAccessToken() {
     try {
       const response = await fetch(
-        `${API_BASE_URL}${stringifyQueryString({
+        `${API_BASE_URL}/refresh?${stringifyQueryString({
           refresh_token: userCredentials.refresh_token,
         })}`,
       );
       const { access_token } = await response.json();
+      console.log("Refreshing Spotify User Access Token");
       setUserCredentials({ ...userCredentials, access_token });
     } catch (err) {
       console.error(err);
@@ -139,7 +147,7 @@ export function useSpotifyProvider() {
     userCredentials,
     userDetails,
     fetchUserCredentials,
-    refreshUserAccess,
+    refreshUserAccessToken,
     search: debounce(search, 250, { leading: true, tailing: true }),
   };
 }

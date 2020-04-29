@@ -8,7 +8,7 @@ import { useSpotify } from "../hooks/useSpotify";
 const API_BASE_URL = "http://localhost:4000";
 
 export default function Login() {
-  const { userCredentials, fetchUserCredentials } = useSpotify();
+  const { userCredentials, fetchUserCredentials, refreshUserAccessToken } = useSpotify();
   const location = useLocation();
   const navigate = useNavigate();
   const query = parse(location.search);
@@ -22,9 +22,11 @@ export default function Login() {
 
   useEffect(() => {
     if (userCredentials) {
+      refreshUserAccessToken();
       navigate("/host/search");
     }
-  }, [userCredentials]);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div className="flex flex-col justify-center h-screen w-full items-center">
