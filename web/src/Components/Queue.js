@@ -1,11 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-
-import { QueueContext } from "../context/QueueContext";
-import { useAccessStorage } from "../hooks/useAccessStorage";
+import { useSpotify } from "../hooks/useSpotify";
+import { useQueue } from "../hooks/useQueue";
 import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 
 export default function Queue(props) {
   return (
@@ -16,24 +15,25 @@ export default function Queue(props) {
 }
 
 function QueueContents() {
-  const queue = useContext(QueueContext);
-  const { playPause } = usePlayer();
-  const { tokens } = useAccessStorage();
+  const { queue } = useQueue();
+  const { playOrPause } = usePlayer();
+  const { userCredentials } = useSpotify();
 
   useEffect(() => {
+    console.log(queue);
     const isFirstTrack = queue.length === 1;
     const trackToQueue = queue.slice(-1)[0]?.uri;
 
     if (isFirstTrack) {
-      playPause(queue[0].uri);
+      playOrPause(queue[0].uri);
     } else if (trackToQueue) {
       fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
+        headers: { Authorization: `Bearer ${userCredentials.access_token}` },
       });
     }
     //eslint-disable-next-line
-  }, [queue, tokens]);
+  }, [queue, userCredentials]);
 
   return (
     <div className="bg-gray-900">

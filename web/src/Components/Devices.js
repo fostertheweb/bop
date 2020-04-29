@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCar,
@@ -9,19 +9,24 @@ import {
   faSpeaker,
   faTablet,
   faVolume,
-} from "@fortawesome/pro-duotone-svg-icons";
+} from "@fortawesome/pro-solid-svg-icons";
 import { faChromecast, faUsb } from "@fortawesome/free-brands-svg-icons";
 import { useDevices } from "../hooks/useDevices";
 
 export default function Devices() {
   const [open, setOpen] = useState(false);
   const { currentDevice, setCurrentDevice, status, devices } = useDevices();
+  const [options, setDeviceOptions] = useState(devices);
+
+  useEffect(() => {
+    setDeviceOptions(devices);
+  }, [devices]);
 
   return (
     <div className="pr-4">
       {status === "loading" ? (
-        <b>loading...</b>
-      ) : status === "success" && currentDevice ? (
+        <b className="text-white">loading...</b>
+      ) : status === "success" && currentDevice && options ? (
         <div className="relative text-sm">
           <div
             onClick={() => setOpen(!open)}
@@ -36,8 +41,8 @@ export default function Devices() {
           <div
             className={`${
               open ? "block" : "hidden"
-            } absolute top-0 right-0 flex flex-col bg-white rounded shadow z-10`}>
-            {devices.map(device => (
+            } absolute bottom-0 right-0 flex flex-col bg-white rounded shadow z-10`}>
+            {options.map(device => (
               <button
                 key={device.id}
                 onClick={() => {

@@ -1,8 +1,9 @@
-import React, { useState, useContext } from "react";
-import { useAccessStorage } from "../hooks/useAccessStorage";
+import React, { useState, useContext, createContext } from "react";
+import { useSpotify } from "./useSpotify";
 import { DeviceContext } from "./useDevices";
-import { PlayerContext } from "../context/PlayerContext";
 import { stringify as stringifyQueryString } from "query-string";
+
+export const PlayerContext = createContext(false);
 
 export const PlayerProvider = ({ children }) => {
   const player = usePlayerProvider();
@@ -15,33 +16,33 @@ export const usePlayer = () => {
 };
 
 function usePlayerProvider() {
-  const {
-    currentDevice: { device_id },
-  } = useContext(DeviceContext);
+  const { currentDevice } = useContext(DeviceContext);
   const [isPlaying, setIsPlaying] = useState(false);
-  const { tokens } = useAccessStorage();
+  const { userCredentials } = useSpotify();
 
-  const playPause = async uris => {
-    await fetch(
-      `https://api.spotify.com/v1/me/player/${isPlaying ? "pause" : "play"}?` +
-        stringifyQueryString({ device_id }),
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${tokens.access_token}`,
+  async function playOrPause(uris) {
+    if (currentDevice) {
+      await fetch(
+        `https://api.spotify.com/v1/me/player/${isPlaying ? "pause" : "play"}?` +
+          stringifyQueryString({ device_id: currentDevice.id }),
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${userCredentials.access_token}`,
+          },
+          body: uris ? JSON.stringify({ uris: [uris] }) : null,
         },
-        body: uris ? JSON.stringify({ uris: [uris] }) : null,
-      },
-    );
-    setIsPlaying(!isPlaying);
-  };
+      );
+      setIsPlaying(!isPlaying);
+    }
+  }
 
-  const skipPlayback = direction => {
-    fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
+  async function skipPlayback(direction) {
+    await fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${tokens.access_token}` },
+      headers: { Authorization: `Bearer ${userCredentials.access_token}` },
     });
-  };
+  }
 
-  return { isPlaying, playPause, skipPlayback };
+  return { isPlaying, playOrPause, skipPlayback };
 }

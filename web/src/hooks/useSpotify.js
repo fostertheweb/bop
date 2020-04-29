@@ -1,72 +1,156 @@
-import { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import debounce from "lodash/debounce";
+import { stringify as stringifyQueryString } from "query-string";
 
-const storageKey = "bop:spotify";
-const url = "https://api.spotify.com/v1";
+export const SpotifyContext = React.createContext(null);
 
-export default function () {
+export function SpotifyProvider({ children }) {
+  const spotify = useSpotifyProvider();
+  return <SpotifyContext.Provider value={spotify}>{children}</SpotifyContext.Provider>;
+}
+
+export function useSpotify() {
+  return useContext(SpotifyContext);
+}
+
+const CLIENT_ACCESS_STORAGE_KEY = "bop:spotify";
+const USER_ACCESS_STORAGE_KEY = "bop:spotify:access";
+const SPOTIFY_API_URL = "https://api.spotify.com/v1";
+const API_BASE_URL = "http://localhost:4000";
+
+export function useSpotifyProvider() {
+  const [clientAccessToken, setClientAccessToken] = useState(getClientAccessTokenFromStorage());
+  const [userCredentials, setUserCredentials] = useState(getUserCredentialsFromStorage());
+  const [userDetails, setUserDetails] = useState(null);
+
+  async function fetchClientAccess() {
+    try {
+      const url = `${API_BASE_URL}/spotify`;
+      const response = await fetch(url);
+      const { access_token } = await response.json();
+      setClientAccessToken(access_token);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function storeClientAccessToken(token) {
+    localStorage.setItem(CLIENT_ACCESS_STORAGE_KEY, token);
+  }
+
+  function getClientAccessTokenFromStorage() {
+    return localStorage.getItem(CLIENT_ACCESS_STORAGE_KEY);
+  }
+
   useEffect(() => {
-    requestAuth();
+    if (clientAccessToken === null) {
+      fetchClientAccess();
+    }
+    // eslint-disable-next-line
   }, []);
 
-  const token = getSpotifyAccessToken();
+  useEffect(() => {
+    storeClientAccessToken(clientAccessToken);
+  }, [clientAccessToken]);
 
-  const search = async query => {
-    if (query) {
-      try {
-        const response = await fetch(`${url}/search?query=${query}&type=track&market=US`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return await response.json();
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      return { tracks: [] };
+  async function fetchUserCredentials(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: "POST",
+        body: JSON.stringify(query),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const { access_token, refresh_token } = await response.json();
+      setUserCredentials({ code: query.code, access_token, refresh_token });
+    } catch (err) {
+      console.error(err);
     }
-  };
+  }
 
-  const searchSpotify = debounce(search, 250, { leading: true, trailing: true });
+  function getUserCredentialsFromStorage() {
+    const credentials = localStorage.getItem(USER_ACCESS_STORAGE_KEY);
 
-  const createPlaylist = async user_id => {
-    const response = await fetch(`${url}/users/${user_id}/playlists`, {
-      method: "POST",
+    console.log({ credentials: JSON.parse(credentials) });
+
+    if (credentials) {
+      return JSON.parse(credentials);
+    } else {
+      return null;
+    }
+  }
+
+  function storeUserCredentials(credentials) {
+    localStorage.setItem(USER_ACCESS_STORAGE_KEY, JSON.stringify(credentials));
+  }
+
+  useEffect(() => {
+    if (userCredentials !== null) {
+      refreshUserAccessToken();
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    storeUserCredentials(userCredentials);
+  }, [userCredentials]);
+
+  const getUserDetails = useQuery("user", [userCredentials], async () => {
+    const response = await fetch(`${SPOTIFY_API_URL}/me`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${userCredentials.access_token}`,
       },
-      body: JSON.stringify({
-        name: "Lets bop",
-        description: "this was created by bop :) happy bopping",
-      }),
     });
     return await response.json();
+  });
+
+  useEffect(() => {
+    if (getUserDetails.status === "success" && userDetails === null && getUserDetails.data) {
+      setUserDetails(getUserDetails.data);
+    }
+  }, [getUserDetails, userDetails]);
+
+  async function refreshUserAccessToken() {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/refresh?${stringifyQueryString({
+          refresh_token: userCredentials.refresh_token,
+        })}`,
+      );
+      const { access_token } = await response.json();
+      console.log("Refreshing Spotify User Access Token");
+      setUserCredentials({ ...userCredentials, access_token });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function search(query) {
+    try {
+      const response = await fetch(
+        `${SPOTIFY_API_URL}/search?query=${query}&type=track&market=US`,
+        {
+          headers: {
+            Authorization: `Bearer ${userCredentials.access_token}`,
+          },
+        },
+      );
+      return await response.json();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  return {
+    userCredentials,
+    userDetails,
+    fetchUserCredentials,
+    refreshUserAccessToken,
+    search: debounce(search, 250, { leading: true, tailing: true }),
   };
-
-  return { searchSpotify, createPlaylist };
 }
 
-async function requestAuth() {
-  const url = `http://localhost:4000/spotify`;
-  try {
-    const response = await fetch(url);
-    const credentials = await response.json();
-    storeSpotifyAccessToken(credentials.access_token);
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-function storeSpotifyAccessToken(token) {
-  localStorage.setItem(storageKey, token);
-}
-
-export function getSpotifyAccessToken() {
-  try {
-    return localStorage.getItem(storageKey);
-  } catch (err) {
-    console.log(err);
-  }
-}
+// TODO
+// does react-query give us debouce functionality?

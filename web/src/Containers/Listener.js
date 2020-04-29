@@ -1,28 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
-import { QueueContext } from "../context/QueueContext";
+import { QueueContext, QueueProvider } from "../hooks/useQueue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router-dom";
 
 import io from "socket.io-client";
 
 const socket = io(`http://localhost:4000`);
 
-// function queueReducer(state, { type, payload }) {
-//   switch (type) {
-//     case "addToQueue":
-//       return [...state, payload];
-//     default:
-//       throw new Error();
-//   }
-// }
-
 export default function Listener() {
-  // const [queue, dispatch] = useReducer(queueReducer, []);
   const { room } = useParams();
-
   const [queue, setQueue] = useState([]);
 
   const addToQueue = ({ payload }) => {
@@ -49,7 +38,7 @@ export default function Listener() {
 
   return (
     <>
-      <QueueContext.Provider value={queue}>
+      <QueueProvider>
         <header className="flex items-center justify-between bg-black p-1">
           <div className="tracking-wide text-gray-400 mx-2 font-medium">
             <FontAwesomeIcon
@@ -72,7 +61,7 @@ export default function Listener() {
             </div>
           </div>
         </div>
-      </QueueContext.Provider>
+      </QueueProvider>
     </>
   );
 }

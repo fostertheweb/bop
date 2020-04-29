@@ -1,16 +1,20 @@
-import React, { useContext } from "react";
+import React from "react";
 import Player from "../Containers/Player";
-import { QueueContext } from "../context/QueueContext";
+import { useQueue } from "../hooks/useQueue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash, faVolume } from "@fortawesome/pro-duotone-svg-icons";
+import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "./Devices";
 
-export default function NowPlaying({ setDeviceId }) {
-  const [item] = useContext(QueueContext);
+export default function NowPlaying() {
+  const {
+    queue: [item],
+  } = useQueue();
+
+  console.log({ firstQueueItem: item });
 
   return (
     <div
-      className="bg-gray-1000 sticky top-0 w-full flex items-center justify-between border-b-2 border-gray-700 shadow z-50"
+      className="bg-gray-1000 sticky top-0 w-full flex items-center justify-between border-t-2 border-gray-700 shadow z-50"
       style={{ height: "80px" }}>
       <div className="w-1/3">
         {item ? (
