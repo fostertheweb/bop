@@ -26,7 +26,7 @@ export default function Login() {
       navigate("/host/search");
     }
     // eslint-disable-next-line
-  }, []);
+  }, [userCredentials]);
 
   return (
     <div className="flex flex-col justify-center h-screen w-full items-center">

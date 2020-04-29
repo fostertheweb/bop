@@ -6,6 +6,7 @@ import Login from "./Containers/Login";
 import Host from "./Containers/Host";
 import Join from "./Containers/Join";
 import Listener from "./Containers/Listener";
+import { PrivateRoute } from "./Components/PrivateRoute";
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="login" element={<Login />} />
-        <Route path="host/*" element={<Host />} />
+        <PrivateRoute path="host/*" element={<Host />} />
         <Route path="join" element={<Join />} />
         <Route path="listen/:room" element={<Listener />} />
       </Routes>
