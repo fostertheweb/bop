@@ -18,7 +18,7 @@ const DEVICE_STORAGE_KEY = "bop:device";
 export function useDevicesProvider() {
   const { userCredentials } = useSpotify();
   const [currentDevice, setCurrentDevice] = useState(getStoredDevice());
-  const { status, data } = useQuery(
+  const { status, data, refetch } = useQuery(
     "devices",
     [userCredentials.access_token],
     async () => {
@@ -30,8 +30,12 @@ export function useDevicesProvider() {
       const { devices } = await response.json();
       return devices;
     },
-    { onError: err => console.log(err), retry: 3 },
+    { retry: 3 },
   );
+
+  useEffect(() => {
+    refetch();
+  }, [userCredentials, refetch]);
 
   function getStoredDevice() {
     return JSON.parse(localStorage.getItem(DEVICE_STORAGE_KEY));
