@@ -7,6 +7,8 @@ import { useSpotify } from "../hooks/useSpotify";
 import { useQueue, QueueProvider } from "../hooks/useQueue";
 import { DeviceProvider } from "../hooks/useDevices";
 import { PlaylistsProvider } from "../hooks/usePlaylists";
+import { PlayerProvider } from "../hooks/usePlayer";
+
 import Queue from "../Components/Queue";
 import Search from "../Components/Search";
 import Playlists from "../Components/Playlists";
@@ -78,7 +80,9 @@ function Layout() {
             <Queue />
           </div>
         </div>
-        <NowPlaying />
+        <PlayerProvider>
+          <NowPlaying />
+        </PlayerProvider>
       </DeviceProvider>
     </QueueProvider>
   );

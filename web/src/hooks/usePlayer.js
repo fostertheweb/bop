@@ -1,4 +1,4 @@
-import React, { useState, useContext, createContext } from "react";
+import React, { useState, useContext, createContext, useEffect } from "react";
 import { useSpotify } from "./useSpotify";
 import { DeviceContext } from "./useDevices";
 import { stringify as stringifyQueryString } from "query-string";
@@ -18,7 +18,28 @@ export const usePlayer = () => {
 function usePlayerProvider() {
   const { currentDevice } = useContext(DeviceContext);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentPlayback, setCurrentPlayback] = useState(null);
   const { userCredentials } = useSpotify();
+
+  useEffect(() => {
+    async function getCurrentPlayback() {
+      const response = await fetch("https://api.spotify.com/v1/me/player", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userCredentials.access_token}`,
+        },
+      });
+
+      try {
+        const { is_playing, item } = await response.json();
+        setIsPlaying(is_playing);
+        setCurrentPlayback(item);
+      } catch (err) {
+        console.log("error", err);
+      }
+    }
+    getCurrentPlayback();
+  }, [userCredentials.access_token]);
 
   async function playOrPause(uris) {
     if (currentDevice) {
@@ -44,5 +65,5 @@ function usePlayerProvider() {
     });
   }
 
-  return { isPlaying, playOrPause, skipPlayback };
+  return { isPlaying, playOrPause, skipPlayback, currentPlayback };
 }
