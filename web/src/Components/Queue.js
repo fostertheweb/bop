@@ -16,22 +16,26 @@ export default function Queue(props) {
 
 function QueueContents() {
   const { queue } = useQueue();
-  const { playOrPause } = usePlayer();
+  const { playOrPause, currentPlayback } = usePlayer();
   const { userCredentials } = useSpotify();
 
   useEffect(() => {
-    console.log(queue);
     const isFirstTrack = queue.length === 1;
     const trackToQueue = queue.slice(-1)[0]?.uri;
 
-    if (isFirstTrack) {
-      playOrPause(queue[0].uri);
-    } else if (trackToQueue) {
-      fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${userCredentials.access_token}` },
-      });
+    if (currentPlayback) {
+      return;
+    } else {
+      if (isFirstTrack) {
+        playOrPause(queue[0].uri);
+      } else if (trackToQueue) {
+        fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${userCredentials.access_token}` },
+        });
+      }
     }
+
     //eslint-disable-next-line
   }, [queue, userCredentials]);
 

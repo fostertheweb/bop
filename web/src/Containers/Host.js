@@ -7,7 +7,7 @@ import { useSpotify } from "../hooks/useSpotify";
 import { useQueue, QueueProvider } from "../hooks/useQueue";
 import { DeviceProvider } from "../hooks/useDevices";
 import { PlaylistsProvider } from "../hooks/usePlaylists";
-import { PlayerProvider } from "../hooks/usePlayer";
+import { PlayerProvider, usePlayer } from "../hooks/usePlayer";
 
 import Queue from "../Components/Queue";
 import Search from "../Components/Search";
@@ -20,7 +20,17 @@ const socket = io(`http://localhost:4000`);
 export default function Host() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route
+        path="/"
+        element={
+          <DeviceProvider>
+            <QueueProvider>
+              <PlayerProvider>
+                <Layout />
+              </PlayerProvider>
+            </QueueProvider>
+          </DeviceProvider>
+        }>
         <Route path="search" element={<Search />} />
         <Route
           path="playlists"
@@ -39,6 +49,7 @@ export default function Host() {
 function Layout() {
   const { queue, send } = useQueue();
   const { userDetails } = useSpotify();
+  const { currentPlayback } = usePlayer();
 
   useEffect(() => {
     if (userDetails) {
@@ -63,28 +74,30 @@ function Layout() {
   }, []);
 
   useEffect(() => {
+    if (currentPlayback) {
+      send({ type: "addToQueue", payload: currentPlayback });
+    }
+  }, [currentPlayback]);
+
+  useEffect(() => {
     if (userDetails) {
       socket.emit("queueUpdated", { room: userDetails.id, payload: queue });
     }
   }, [queue, userDetails]);
 
   return (
-    <QueueProvider>
-      <DeviceProvider>
-        <div className="flex bg-gray-800 h-content overflow-hidden">
-          <Sidebar />
-          <div className="w-1/2 overflow-y-scroll">
-            <Outlet />
-          </div>
-          <div className="flex-grow bg-gray-900 overflow-y-scroll">
-            <Queue />
-          </div>
+    <>
+      <div className="flex bg-gray-800 h-content overflow-hidden">
+        <Sidebar />
+        <div className="w-1/2 overflow-y-scroll">
+          <Outlet />
         </div>
-        <PlayerProvider>
-          <NowPlaying />
-        </PlayerProvider>
-      </DeviceProvider>
-    </QueueProvider>
+        <div className="flex-grow bg-gray-900 overflow-y-scroll">
+          <Queue />
+        </div>
+      </div>
+      <NowPlaying />
+    </>
   );
 }
 

@@ -1,14 +1,16 @@
 import React from "react";
 import Player from "../Containers/Player";
 import { useQueue } from "../hooks/useQueue";
-import { usePlayer } from "../hooks/usePlayer";
+// import { usePlayer } from "../hooks/usePlayer";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "./Devices";
 
 export default function NowPlaying() {
-  const { currentPlayback: item } = usePlayer();
+  const {
+    queue: [item],
+  } = useQueue();
 
   return (
     <div
