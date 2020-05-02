@@ -7,7 +7,7 @@ import { useSpotify } from "../hooks/useSpotify";
 import { useQueue, QueueProvider } from "../hooks/useQueue";
 import { DeviceProvider } from "../hooks/useDevices";
 import { PlaylistsProvider } from "../hooks/usePlaylists";
-import { PlayerProvider, usePlayer } from "../hooks/usePlayer";
+import { PlayerProvider } from "../hooks/usePlayer";
 
 import Queue from "../Components/Queue";
 import Search from "../Components/Search";
@@ -49,7 +49,6 @@ export default function Host() {
 function Layout() {
   const { queue, send } = useQueue();
   const { userDetails } = useSpotify();
-  const { currentPlayback } = usePlayer();
 
   useEffect(() => {
     if (userDetails) {
@@ -72,12 +71,6 @@ function Layout() {
     });
     // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    if (currentPlayback) {
-      send({ type: "addToQueue", payload: currentPlayback });
-    }
-  }, [currentPlayback]);
 
   useEffect(() => {
     if (userDetails) {

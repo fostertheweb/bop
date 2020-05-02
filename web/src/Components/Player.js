@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PlayerControls from "../Containers/PlayerControls";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,19 +7,62 @@ import { usePlayer } from "../hooks/usePlayer";
 import Devices from "./Devices";
 
 export default function Player() {
-  const { currentPlayback: item } = usePlayer();
+  const { currentPlayback, isPlaying } = usePlayer();
+  const [progressPosition, setProgressPosition] = useState(0);
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [start, setStart] = useState(Date.now());
+
+  const timer = useRef(null);
+
+  useEffect(() => {
+    if (currentPlayback?.id && isPlaying) {
+      clearInterval(timer.current);
+      const incrementProgress = () => {
+        const tick = Date.now() - start + progressPosition + currentPlayback.progress_ms;
+        setProgressPosition(tick);
+      };
+      timer.current = setInterval(() => incrementProgress(), 500);
+
+      return () => clearInterval(timer.current);
+    }
+
+    if (isPlaying === false) {
+      clearInterval(timer.current);
+    }
+
+    // eslint-disable-next-line
+  }, [currentPlayback, isPlaying]);
+
+  useEffect(() => {
+    if (currentPlayback) {
+      setProgressPercent(((progressPosition * 100) / currentPlayback.duration_ms).toFixed(2));
+    }
+
+    if (progressPercent >= 100) {
+      clearInterval(timer.current);
+      resetProgress();
+    }
+    // eslint-disable-next-line
+  }, [progressPosition, currentPlayback]);
+
+  const resetProgress = () => {
+    setProgressPercent(0);
+    setProgressPosition(0);
+    setStart(Date.now());
+  };
 
   return (
     <div
       className="bg-gray-1000 sticky top-0 w-full flex items-center justify-between border-t-2 border-gray-700 shadow z-50"
       style={{ height: "80px" }}>
       <div className="w-1/3">
-        {item ? (
+        {currentPlayback ? (
           <>
-            <div key={item.id} className="text-left flex items-center w-full">
+            <div key={currentPlayback.id} className="text-left flex items-center w-full">
+              <h1 className="text-white">Progress:{progressPercent}%</h1>
               <div className="pl-4">
                 <img
-                  src={item.album.images[1].url}
+                  src={currentPlayback.album.images[1].url}
                   width="48"
                   height="48"
                   alt="album art"
@@ -27,9 +70,9 @@ export default function Player() {
                 />
               </div>
               <div className="pl-4">
-                <div className="text-gray-400">{item.name}</div>
+                <div className="text-gray-400">{currentPlayback.name}</div>
                 <div className="text-gray-500">
-                  {item.artists.map(artist => artist.name).join(", ")}
+                  {currentPlayback.artists.map(artist => artist.name).join(", ")}
                 </div>
               </div>
             </div>
