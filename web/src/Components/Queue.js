@@ -15,7 +15,7 @@ export default function Queue(props) {
 }
 
 function QueueContents() {
-  const { queue } = useQueue();
+  const { queue, removeFromQueue } = useQueue();
   const { isPlaying, playOrPause } = usePlayer();
   const { userCredentials } = useSpotify();
 
@@ -35,11 +35,12 @@ function QueueContents() {
         <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
         <span className="border-b-2 border-transparent">Play Queue</span>
       </div>
-      {queue?.map(item => {
+      {queue?.map((item, index) => {
         return (
           <motion.div
             key={item.id}
-            className="text-left p-2 flex items-center w-full border-t border-gray-700 opacity-0"
+            onClick={() => removeFromQueue(index)}
+            className="text-left p-2 flex items-center w-full border-t border-gray-700 opacity-0 cursor-pointer hover:bg-gray-800"
             variants={variants}
             initial="enter"
             animate="center"

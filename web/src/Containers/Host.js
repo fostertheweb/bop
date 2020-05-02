@@ -7,13 +7,14 @@ import { useSpotify } from "../hooks/useSpotify";
 import { useQueue, QueueProvider } from "../hooks/useQueue";
 import { DeviceProvider } from "../hooks/useDevices";
 import { PlaylistsProvider } from "../hooks/usePlaylists";
-import { PlayerProvider, usePlayer } from "../hooks/usePlayer";
+import { PlayerProvider } from "../hooks/usePlayer";
 
 import Queue from "../Components/Queue";
 import Search from "../Components/Search";
 import Playlists from "../Components/Playlists";
 import Settings from "../Components/Settings";
 import Player from "../Components/Player";
+import Playlist from "../Components/Playlist";
 
 const socket = io(`http://localhost:4000`);
 
@@ -40,6 +41,14 @@ export default function Host() {
             </PlaylistsProvider>
           }
         />
+        <Route
+          path="playlists/:playlistId"
+          element={
+            <PlaylistsProvider>
+              <Playlist />
+            </PlaylistsProvider>
+          }
+        />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
@@ -47,9 +56,8 @@ export default function Host() {
 }
 
 function Layout() {
-  const { queue, send } = useQueue();
+  const { queue, addToQueue } = useQueue();
   const { userDetails } = useSpotify();
-  const { currentPlayback } = usePlayer();
 
   useEffect(() => {
     if (userDetails) {
@@ -67,17 +75,11 @@ function Layout() {
       console.log({ payload });
     });
 
-    socket.on("addToQueue", payload => {
-      send({ type: "addToQueue", payload });
+    socket.on("addToQueue", item => {
+      addToQueue(item);
     });
     // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    if (currentPlayback) {
-      send({ type: "addToQueue", payload: currentPlayback });
-    }
-  }, [currentPlayback]);
 
   useEffect(() => {
     if (userDetails) {

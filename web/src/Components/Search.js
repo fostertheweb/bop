@@ -5,7 +5,7 @@ import { useSpotify } from "../hooks/useSpotify";
 import { useQueue } from "../hooks/useQueue";
 
 export default function Search() {
-  const { send } = useQueue();
+  const { addToQueue } = useQueue();
   const { search } = useSpotify();
   const [results, setResults] = useState([]);
 
@@ -13,8 +13,6 @@ export default function Search() {
     const { tracks } = await search(query);
     setResults(tracks);
   };
-
-  const addToQueue = payload => send({ type: "addToQueue", payload });
 
   return (
     <div className="p-2">

@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useState } from "react";
 
 export const QueueContext = React.createContext([]);
 
@@ -12,18 +12,15 @@ export function useQueue() {
 }
 
 export function useQueueProvider() {
-  const [queue, dispatch] = useReducer(queueReducer, []);
+  const [queue, setQueue] = useState([]);
 
-  return { queue, send: dispatch };
-}
-
-function queueReducer(state, { type, payload }) {
-  switch (type) {
-    case "addToQueue":
-      return [...state, payload];
-    case "removeFromQueue":
-      return [...payload];
-    default:
-      throw new Error();
+  function addToQueue(item) {
+    setQueue([...queue, item]);
   }
+
+  function removeFromQueue(index) {
+    setQueue([...queue.slice(0, index), ...queue.slice(index + 1)]);
+  }
+
+  return { queue, addToQueue, removeFromQueue };
 }
