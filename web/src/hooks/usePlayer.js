@@ -31,9 +31,9 @@ function usePlayerProvider() {
       });
 
       try {
-        const { is_playing, item } = await response.json();
+        const { is_playing, item, progress_ms } = await response.json();
         setIsPlaying(is_playing);
-        setCurrentPlayback(item);
+        setCurrentPlayback({ ...item, progress_ms });
       } catch (err) {
         console.log("error", err);
       }
