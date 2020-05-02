@@ -5,14 +5,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
 import { usePlayer } from "../hooks/usePlayer";
 import Devices from "./Devices";
+import { useQueue } from "../hooks/useQueue";
 
 export default function Player() {
-  const { currentPlayback, isPlaying } = usePlayer();
+  const { queue } = useQueue();
+  const { setCurrentPlayback, currentPlayback, isPlaying } = usePlayer();
   const [progressPosition, setProgressPosition] = useState(0);
   const [progressPercent, setProgressPercent] = useState(0);
   const [start, setStart] = useState(Date.now());
 
   const timer = useRef(null);
+
+  useEffect(() => {
+    setCurrentPlayback(queue[0]);
+  }, [queue]);
 
   useEffect(() => {
     if (currentPlayback?.id && isPlaying) {

@@ -27,11 +27,17 @@ export default function Playlist() {
 
   return (
     <div>
-      <div className="flex items-center p-4 text-gray-500">
-        <button className="appearance-none" onClick={() => navigate("/host/playlists")}>
-          <FontAwesomeIcon icon={faChevronLeft} size="lg" className="fill-current" />
+      <div className="flex items-center justify-between p-4 text-gray-500">
+        <button
+          className="appearance-none cursor-pointer hover:text-gray-300 font-medium"
+          onClick={() => navigate("/host/playlists")}>
+          <FontAwesomeIcon icon={faChevronLeft} size="lg" className="fill-current mr-2" />
+          Back
         </button>
-        <h1 className="p-4 text-gray-500 font-medium text-lg tracking-wide">{playlist?.name}</h1>
+        <h1 className="text-center text-gray-500 font-medium text-lg tracking-wide">
+          {playlist?.name}
+        </h1>
+        <span>&nbsp;</span>
       </div>
       <div>
         {status === "loading" ? (

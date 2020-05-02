@@ -65,5 +65,5 @@ function usePlayerProvider() {
     });
   }
 
-  return { isPlaying, playOrPause, skipPlayback, currentPlayback };
+  return { isPlaying, playOrPause, skipPlayback, currentPlayback, setCurrentPlayback };
 }
