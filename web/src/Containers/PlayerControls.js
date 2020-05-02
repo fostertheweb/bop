@@ -5,7 +5,7 @@ import { faPlay, faStepBackward, faStepForward, faPause } from "@fortawesome/pro
 import { motion } from "framer-motion";
 import { usePlayer } from "../hooks/usePlayer";
 
-export default function Player() {
+export default function PlayerControls() {
   const { skipPlayback, playOrPause, isPlaying } = usePlayer();
 
   return (

@@ -13,7 +13,7 @@ import Queue from "../Components/Queue";
 import Search from "../Components/Search";
 import Playlists from "../Components/Playlists";
 import Settings from "../Components/Settings";
-import NowPlaying from "../Components/NowPlaying";
+import Player from "../Components/Player";
 
 const socket = io(`http://localhost:4000`);
 
@@ -96,7 +96,7 @@ function Layout() {
           <Queue />
         </div>
       </div>
-      <NowPlaying />
+      <Player />
     </>
   );
 }

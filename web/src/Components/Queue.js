@@ -16,24 +16,14 @@ export default function Queue(props) {
 
 function QueueContents() {
   const { queue } = useQueue();
-  const { playOrPause, currentPlayback } = usePlayer();
+  const { isPlaying, playOrPause } = usePlayer();
   const { userCredentials } = useSpotify();
 
   useEffect(() => {
     const isFirstTrack = queue.length === 1;
-    const trackToQueue = queue.slice(-1)[0]?.uri;
 
-    if (currentPlayback) {
-      return;
-    } else {
-      if (isFirstTrack) {
-        playOrPause(queue[0].uri);
-      } else if (trackToQueue) {
-        fetch(`https://api.spotify.com/v1/me/player/queue?uri=${trackToQueue}`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${userCredentials.access_token}` },
-        });
-      }
+    if (isFirstTrack && !isPlaying) {
+      playOrPause(queue[0].uri);
     }
 
     //eslint-disable-next-line
@@ -45,11 +35,7 @@ function QueueContents() {
         <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
         <span className="border-b-2 border-transparent">Play Queue</span>
       </div>
-      {queue?.map((item, index) => {
-        if (index === 0) {
-          return null;
-        }
-
+      {queue?.map(item => {
         return (
           <motion.div
             key={item.id}

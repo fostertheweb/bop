@@ -1,16 +1,13 @@
 import React from "react";
-import Player from "../Containers/Player";
-import { useQueue } from "../hooks/useQueue";
-// import { usePlayer } from "../hooks/usePlayer";
+import PlayerControls from "../Containers/PlayerControls";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
+import { usePlayer } from "../hooks/usePlayer";
 import Devices from "./Devices";
 
-export default function NowPlaying() {
-  const {
-    queue: [item],
-  } = useQueue();
+export default function Player() {
+  const { currentPlayback: item } = usePlayer();
 
   return (
     <div
@@ -45,7 +42,7 @@ export default function NowPlaying() {
         )}
       </div>
       <div className="w-1/3">
-        <Player />
+        <PlayerControls />
       </div>
       <div className="w-1/3 flex items-center justify-end">
         <div className="flex items-center mr-6">
