@@ -10,24 +10,27 @@ import { useQueue } from "../hooks/useQueue";
 export default function Player() {
   const { queue } = useQueue();
   const { setCurrentPlayback, currentPlayback, isPlaying } = usePlayer();
-  const [progressPosition, setProgressPosition] = useState(0);
-  const [progressPercent, setProgressPercent] = useState(0);
-  const [start, setStart] = useState(Date.now());
+  const [progress, setProgress] = useState(0);
 
   const timer = useRef(null);
 
   useEffect(() => {
     setCurrentPlayback(queue[0]);
-  }, [queue]);
+  }, [queue, setCurrentPlayback]);
+
+  useEffect(() => {
+    if (currentPlayback) {
+      setProgress(parseInt(currentPlayback.progress_ms));
+    }
+  }, [currentPlayback, setProgress]);
 
   useEffect(() => {
     if (currentPlayback?.id && isPlaying) {
       clearInterval(timer.current);
       const incrementProgress = () => {
-        const tick = Date.now() - start + progressPosition + currentPlayback.progress_ms;
-        setProgressPosition(tick);
+        setProgress(progress + 1000);
       };
-      timer.current = setInterval(() => incrementProgress(), 500);
+      timer.current = setInterval(() => incrementProgress(), 1000);
 
       return () => clearInterval(timer.current);
     }
@@ -37,25 +40,16 @@ export default function Player() {
     }
 
     // eslint-disable-next-line
-  }, [currentPlayback, isPlaying]);
+  }, [currentPlayback, isPlaying, progress]);
 
   useEffect(() => {
     if (currentPlayback) {
-      setProgressPercent(((progressPosition * 100) / currentPlayback.duration_ms).toFixed(2));
-    }
-
-    if (progressPercent >= 100) {
-      clearInterval(timer.current);
-      resetProgress();
+      if (((progress * 100) / currentPlayback.duration_ms).toFixed(2) >= 100) {
+        clearInterval(timer.current);
+      }
     }
     // eslint-disable-next-line
-  }, [progressPosition, currentPlayback]);
-
-  const resetProgress = () => {
-    setProgressPercent(0);
-    setProgressPosition(0);
-    setStart(Date.now());
-  };
+  }, [progress, currentPlayback]);
 
   return (
     <div
@@ -65,7 +59,9 @@ export default function Player() {
         {currentPlayback ? (
           <>
             <div key={currentPlayback.id} className="text-left flex items-center w-full">
-              <h1 className="text-white">Progress:{progressPercent}%</h1>
+              <h1 className="text-white">
+                Progress:{((progress * 100) / currentPlayback.duration_ms).toFixed(2)}%
+              </h1>
               <div className="pl-4">
                 <img
                   src={currentPlayback.album.images[1].url}
