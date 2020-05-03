@@ -18,7 +18,7 @@ export default function Search() {
     <div className="p-2">
       <div className="sticky top-0 bg-gray-800">
         <div className="p-2 bg-gray-800 flex items-center">
-          <div className="flex items-center border-2 border-gray-700 text-base rounded focus:outline-none focus:shadow-outline w-full bg-gray-900 text-gray-200">
+          <div className="flex items-center border-2 border-gray-700 text-base rounded focus-within:border-green-500 w-full bg-gray-900 text-gray-200">
             <FontAwesomeIcon
               icon={faSpotify}
               size="lg"

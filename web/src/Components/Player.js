@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import PlayerControls from "../Containers/PlayerControls";
 import { motion } from "framer-motion";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
 import { usePlayer } from "../hooks/usePlayer";
@@ -55,14 +54,14 @@ export default function Player() {
   return (
     <div className="w-full overflow-hidden">
       <motion.div
-        className="bg-teal-900 absolute bottom-0 z-49 max-w-full"
+        className="bg-gray-850 absolute bottom-0 z-49 max-w-full"
         animate={{ width: `${((progress * 100) / currentPlayback?.duration_ms).toFixed(2)}%` }}
         transition={{ ease: "linear", duration: 1.6 }}
         style={{
           height: 80,
         }}></motion.div>
       <div
-        className="bg-transparent sticky top-0 w-full flex items-center justify-between border-t-2 border-gray-700 shadow z-50"
+        className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between border-t border-gray-700 shadow z-50"
         style={{ height: "80px" }}>
         <div className="w-1/3">
           {currentPlayback ? (
