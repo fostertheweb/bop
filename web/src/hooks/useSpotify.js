@@ -14,8 +14,8 @@ export function useSpotify() {
   return useContext(SpotifyContext);
 }
 
-const CLIENT_ACCESS_STORAGE_KEY = "bop:spotify";
-const USER_ACCESS_STORAGE_KEY = "bop:spotify:access";
+const CLIENT_STORAGE_KEY = "BOP_APP";
+const USER_STORAGE_KEY = "BOP_USER";
 const SPOTIFY_API_URL = "https://api.spotify.com/v1";
 const API_BASE_URL = "http://localhost:4000";
 
@@ -26,7 +26,7 @@ export function useSpotifyProvider() {
 
   async function fetchClientAccess() {
     try {
-      const url = `${API_BASE_URL}/spotify`;
+      const url = `${API_BASE_URL}/authorize`;
       const response = await fetch(url);
       const { access_token } = await response.json();
       setClientAccessToken(access_token);
@@ -36,11 +36,11 @@ export function useSpotifyProvider() {
   }
 
   function storeClientAccessToken(token) {
-    localStorage.setItem(CLIENT_ACCESS_STORAGE_KEY, token);
+    localStorage.setItem(CLIENT_STORAGE_KEY, token);
   }
 
   function getClientAccessTokenFromStorage() {
-    return localStorage.getItem(CLIENT_ACCESS_STORAGE_KEY);
+    return localStorage.getItem(CLIENT_STORAGE_KEY);
   }
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export function useSpotifyProvider() {
   }
 
   function getUserCredentialsFromStorage() {
-    const credentials = localStorage.getItem(USER_ACCESS_STORAGE_KEY);
+    const credentials = localStorage.getItem(USER_STORAGE_KEY);
 
     if (credentials) {
       return JSON.parse(credentials);
@@ -81,7 +81,7 @@ export function useSpotifyProvider() {
   }
 
   function storeUserCredentials(credentials) {
-    localStorage.setItem(USER_ACCESS_STORAGE_KEY, JSON.stringify(credentials));
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(credentials));
   }
 
   useEffect(() => {

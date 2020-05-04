@@ -42,7 +42,7 @@ app.register(require("fastify-cookie"), {
 });
 
 // routes
-app.register(require("./routes/spotify"), { prefix: "/spotify" });
+app.register(require("./routes/authorize"), { prefix: "/authorize" });
 app.register(require("./routes/login"), { prefix: "/login" });
 app.register(require("./routes/callback"), { prefix: "/callback" });
 app.register(require("./routes/refresh"), { prefix: "/refresh" });
