@@ -13,7 +13,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "@xstate/react": "^0.8.1",
     "autoprefixer": "^9.7.3",
     "classnames": "^2.2.6",
     "framer-motion": "1.10.3",
@@ -25,12 +24,12 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-query": "^1.2.9",
-    "react-router": "6.0.0-alpha.3",
-    "react-router-dom": "6.0.0-alpha.3",
+    "react-router": "6.0.0-alpha.5",
+    "react-router-dom": "6.0.0-alpha.5",
     "react-scripts": "3.4.0",
+    "recoil": "^0.0.7",
     "socket.io-client": "2.3.0",
-    "tailwindcss": "^1.4.0",
-    "xstate": "^4.9.1"
+    "tailwindcss": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

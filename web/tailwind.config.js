@@ -13,4 +13,5 @@ module.exports = {
     maxWidth: ["responsive"],
   },
   plugins: [],
+  purge: ["./src/**/*.js"],
 };
