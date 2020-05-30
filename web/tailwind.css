@@ -3,36 +3,45 @@
 
 /* vars then custom classes */
 
+.bop-primary-color {
+}
+
+.bop-secondary-color {
+}
+
+.bop-bg-primary {
+}
+
 .bg-gray-850 {
-  background-color: #242c3e;
+	background-color: #242c3e;
 }
 
 .bg-gray-950 {
-  background-color: #121724;
+	background-color: #121724;
 }
 
 .bg-gray-1000 {
-  background-color: #0a0d1c;
+	background-color: #0a0d1c;
 }
 
 .border-gray-850 {
-  border-color: #242c3e;
+	border-color: #242c3e;
 }
 
 .border-gray-950 {
-  border-color: #121724;
+	border-color: #121724;
 }
 
 .border-gray-1000 {
-  border-color: #0a0d1c;
+	border-color: #0a0d1c;
 }
 
 .h-content {
-  height: calc(100vh - 80px);
+	height: calc(100vh - 80px);
 }
 
 .filter-drop-shadow {
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
+	filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
 }
 
 @tailwind utilities;

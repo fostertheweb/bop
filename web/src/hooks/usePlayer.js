@@ -1,7 +1,7 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
 import { useSpotify } from "./useSpotify";
 import { stringify as stringifyQueryString } from "query-string";
-import { currentDeviceState } from "../state/current-device";
+import { currentDeviceState } from "../atoms/current-device";
 import { useRecoilValue } from "recoil";
 
 export const PlayerContext = createContext(false);

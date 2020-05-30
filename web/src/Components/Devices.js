@@ -13,7 +13,7 @@ import {
 import { faChromecast, faUsb } from "@fortawesome/free-brands-svg-icons";
 import { useDevices } from "../hooks/useDevices";
 import { useRecoilState } from "recoil";
-import { currentDeviceState } from "../state/current-device";
+import { currentDeviceState } from "../atoms/current-device";
 
 export default function Devices() {
 	const [open, setOpen] = useState(false);
