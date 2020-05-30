@@ -3,10 +3,10 @@ import { NavLink, Outlet, Routes, Route } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic, faSearch, faCog } from "@fortawesome/pro-solid-svg-icons";
 import io from "socket.io-client";
-import { useSpotify } from "../hooks/useSpotify";
 import { useQueue, QueueProvider } from "../hooks/useQueue";
 import { PlaylistsProvider } from "../hooks/usePlaylists";
 import { PlayerProvider } from "../hooks/usePlayer";
+import { useRecoilValueLoadable } from "recoil";
 
 import Queue from "../Components/Queue";
 import Search from "../Components/Search";
@@ -14,6 +14,7 @@ import Playlists from "../Components/Playlists";
 import Settings from "../Components/Settings";
 import Player from "../Components/Player";
 import Playlist from "../Components/Playlist";
+import { userDetailsSelector } from "../atoms/user-details";
 
 const socket = io(`http://localhost:4000`);
 
@@ -54,7 +55,7 @@ export default function Host() {
 
 function Layout() {
 	const { queue, addToQueue } = useQueue();
-	const { userDetails } = useSpotify();
+	const userDetails = useRecoilValueLoadable(userDetailsSelector);
 
 	useEffect(() => {
 		if (userDetails) {
@@ -83,6 +84,14 @@ function Layout() {
 			socket.emit("queueUpdated", { room: userDetails.id, payload: queue });
 		}
 	}, [queue, userDetails]);
+
+	switch (userDetails.state) {
+		case "loading":
+			return "loading...";
+		default:
+			console.log(userDetails.contents);
+			break;
+	}
 
 	return (
 		<>

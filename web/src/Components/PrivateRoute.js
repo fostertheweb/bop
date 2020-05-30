@@ -1,12 +1,13 @@
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
-import { useSpotify } from "../hooks/useSpotify";
+import { useRecoilValue } from "recoil";
+import { userAccessToken } from "../atoms/user-credentials";
 
 export function PrivateRoute({ element, ...rest }) {
-  const { userCredentials } = useSpotify();
-  if (userCredentials) {
-    return <Route {...rest} element={element} />;
-  } else {
-    return <Navigate to="/login" />;
-  }
+	const token = useRecoilValue(userAccessToken);
+	if (token) {
+		return <Route {...rest} element={element} />;
+	} else {
+		return <Navigate to="/login" />;
+	}
 }

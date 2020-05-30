@@ -1,15 +1,17 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
-import { useSpotify } from "./useSpotify";
 import { stringify as stringifyQueryString } from "query-string";
 import { currentDeviceState } from "../atoms/current-device";
 import { useRecoilValue } from "recoil";
+import { userAccessToken } from "../atoms/user-credentials";
 
 export const PlayerContext = createContext(false);
 
 export const PlayerProvider = ({ children }) => {
 	const player = usePlayerProvider();
 
-	return <PlayerContext.Provider value={player}>{children}</PlayerContext.Provider>;
+	return (
+		<PlayerContext.Provider value={player}>{children}</PlayerContext.Provider>
+	);
 };
 
 export const usePlayer = () => {
@@ -20,14 +22,14 @@ function usePlayerProvider() {
 	const currentDevice = useRecoilValue(currentDeviceState);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentPlayback, setCurrentPlayback] = useState(null);
-	const { userCredentials } = useSpotify();
+	const token = useRecoilValue(userAccessToken);
 
 	useEffect(() => {
 		async function getCurrentPlayback() {
 			const response = await fetch("https://api.spotify.com/v1/me/player", {
 				method: "GET",
 				headers: {
-					Authorization: `Bearer ${userCredentials.access_token}`,
+					Authorization: `Bearer ${token}`,
 				},
 			});
 
@@ -40,17 +42,18 @@ function usePlayerProvider() {
 			}
 		}
 		getCurrentPlayback();
-	}, [userCredentials.access_token]);
+	}, [token]);
 
 	async function playOrPause(uris) {
 		if (currentDevice) {
 			await fetch(
-				`https://api.spotify.com/v1/me/player/${isPlaying ? "pause" : "play"}?` +
-					stringifyQueryString({ device_id: currentDevice.id }),
+				`https://api.spotify.com/v1/me/player/${
+					isPlaying ? "pause" : "play"
+				}?` + stringifyQueryString({ device_id: currentDevice.id }),
 				{
 					method: "PUT",
 					headers: {
-						Authorization: `Bearer ${userCredentials.access_token}`,
+						Authorization: `Bearer ${token}`,
 					},
 					body: uris ? JSON.stringify({ uris: [uris] }) : null,
 				},
@@ -62,9 +65,15 @@ function usePlayerProvider() {
 	async function skipPlayback(direction) {
 		await fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
 			method: "POST",
-			headers: { Authorization: `Bearer ${userCredentials.access_token}` },
+			headers: { Authorization: `Bearer ${token}` },
 		});
 	}
 
-	return { isPlaying, playOrPause, skipPlayback, currentPlayback, setCurrentPlayback };
+	return {
+		isPlaying,
+		playOrPause,
+		skipPlayback,
+		currentPlayback,
+		setCurrentPlayback,
+	};
 }

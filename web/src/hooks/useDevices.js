@@ -1,18 +1,22 @@
 import React, { useEffect } from "react";
-import { useSpotify } from "./useSpotify";
 import { useQuery } from "react-query";
+import { userAccessToken } from "../atoms/user-credentials";
+import { useRecoilValue } from "recoil";
 
 export function useDevices() {
-	const { userCredentials } = useSpotify();
+	const token = useRecoilValue(userAccessToken);
 	const { status, data, refetch } = useQuery(
 		"devices",
-		[userCredentials.access_token],
+		[token],
 		async () => {
-			const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
-				headers: {
-					Authorization: `Bearer ${userCredentials.access_token}`,
+			const response = await fetch(
+				"https://api.spotify.com/v1/me/player/devices",
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
 				},
-			});
+			);
 			const { devices } = await response.json();
 			return devices;
 		},
@@ -21,7 +25,7 @@ export function useDevices() {
 
 	useEffect(() => {
 		refetch();
-	}, [userCredentials, refetch]);
+	}, [token, refetch]);
 
 	return { status, devices: data };
 }
