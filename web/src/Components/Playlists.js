@@ -2,9 +2,11 @@ import React from "react";
 import { usePlaylists } from "../hooks/usePlaylists";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+import { useNavigate } from "react-router";
 
 export default function Playlists() {
   const { status, playlists } = usePlaylists();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -14,13 +16,17 @@ export default function Playlists() {
           <FontAwesomeIcon icon={faSpinnerThird} />
         ) : (
           playlists.map(playlist => (
-            <div className="p-4 text-gray-400 flex items-center">
-              <div className="p-2">
-                <img src={playlist.images[0].url} alt="playlist image" width="48" height="48" />
-              </div>
-              <div>
-                <div>{playlist.name}</div>
-                <div className="text-gray-600">{playlist.description}</div>
+            <div
+              onClick={() => navigate(`${playlist.id}`)}
+              className="p-4 text-gray-400 flex items-center cursor-pointer hover:bg-gray-700 transition ease-in-out duration-150">
+              <div
+                className="h-16 w-16 bg-cover flex-shrink-0"
+                style={{
+                  backgroundImage: `url(${playlist.images[0].url})`,
+                }}></div>
+              <div className="truncate flex-shrink ml-4">
+                <div className="text-base truncate">{playlist.name}</div>
+                <div className="truncate">{playlist.description}</div>
               </div>
             </div>
           ))
