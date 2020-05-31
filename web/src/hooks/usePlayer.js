@@ -34,6 +34,7 @@ function usePlayerProvider() {
 			});
 
 			try {
+				const json = await response.json();
 				const { is_playing, item, progress_ms } = await response.json();
 				setIsPlaying(is_playing);
 				setCurrentPlayback({ ...item, progress_ms });

@@ -1,28 +1,33 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { parse } from "query-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { loginQuery } from "../atoms/user-credentials";
+import {
+	loginQuery,
+	userAccessTokenAtom,
+	userRefreshTokenAtom,
+} from "../atoms/user-credentials";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 
 const API_BASE_URL = "http://localhost:4000";
 
 export default function Login() {
 	const location = useLocation();
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const query = parse(location.search);
 	const { state, contents } = useRecoilValueLoadable(loginQuery(query));
+	const setUserAccessToken = useSetRecoilState(userAccessTokenAtom);
+	const setUserRefreshToken = useSetRecoilState(userRefreshTokenAtom);
 
-	if (state === "hasValue") {
-		console.log({ value: contents });
-		// navigate("/host/search");
-	}
-
-	if (state === "hasError") {
-		console.error({ error: contents });
-	}
+	useEffect(() => {
+		if (state === "hasValue" && contents) {
+			setUserAccessToken(contents.access_token);
+			setUserRefreshToken(contents.refresh_token);
+			navigate("/host/search");
+		}
+	}, [state, contents, navigate]);
 
 	return (
 		<div className="flex flex-col justify-center h-screen w-full items-center">

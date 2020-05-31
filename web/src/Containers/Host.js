@@ -55,14 +55,14 @@ export default function Host() {
 
 function Layout() {
 	const { queue, addToQueue } = useQueue();
-	const userDetails = useRecoilValueLoadable(userDetailsSelector);
+	const { state, contents } = useRecoilValueLoadable(userDetailsSelector);
 
 	useEffect(() => {
-		if (userDetails) {
-			const { id: room } = userDetails;
+		if (state === "hasValue") {
+			const { id: room } = contents;
 			socket.emit("join", { room, user: room });
 		}
-	}, [userDetails]);
+	}, [state]);
 
 	useEffect(() => {
 		socket.on("clap", (payload) => {
@@ -80,18 +80,10 @@ function Layout() {
 	}, []);
 
 	useEffect(() => {
-		if (userDetails) {
-			socket.emit("queueUpdated", { room: userDetails.id, payload: queue });
+		if (state === "hasValue") {
+			socket.emit("queueUpdated", { room: contents.id, payload: queue });
 		}
-	}, [queue, userDetails]);
-
-	switch (userDetails.state) {
-		case "loading":
-			return "loading...";
-		default:
-			console.log(userDetails.contents);
-			break;
-	}
+	}, [queue, state]);
 
 	return (
 		<>
