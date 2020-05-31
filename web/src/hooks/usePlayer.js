@@ -2,7 +2,7 @@ import React, { useState, useContext, createContext, useEffect } from "react";
 import { stringify as stringifyQueryString } from "query-string";
 import { currentDeviceState } from "../atoms/current-device";
 import { useRecoilValue } from "recoil";
-import { userAccessToken } from "../atoms/user-credentials";
+import { userAccessTokenAtom } from "../atoms/user-credentials";
 
 export const PlayerContext = createContext(false);
 
@@ -22,14 +22,14 @@ function usePlayerProvider() {
 	const currentDevice = useRecoilValue(currentDeviceState);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentPlayback, setCurrentPlayback] = useState(null);
-	const token = useRecoilValue(userAccessToken);
+	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 
 	useEffect(() => {
 		async function getCurrentPlayback() {
 			const response = await fetch("https://api.spotify.com/v1/me/player", {
 				method: "GET",
 				headers: {
-					Authorization: `Bearer ${token}`,
+					Authorization: `Bearer ${userAccessToken}`,
 				},
 			});
 
@@ -42,7 +42,7 @@ function usePlayerProvider() {
 			}
 		}
 		getCurrentPlayback();
-	}, [token]);
+	}, [userAccessToken]);
 
 	async function playOrPause(uris) {
 		if (currentDevice) {
@@ -53,7 +53,7 @@ function usePlayerProvider() {
 				{
 					method: "PUT",
 					headers: {
-						Authorization: `Bearer ${token}`,
+						Authorization: `Bearer ${userAccessToken}`,
 					},
 					body: uris ? JSON.stringify({ uris: [uris] }) : null,
 				},
@@ -65,7 +65,7 @@ function usePlayerProvider() {
 	async function skipPlayback(direction) {
 		await fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
 			method: "POST",
-			headers: { Authorization: `Bearer ${token}` },
+			headers: { Authorization: `Bearer ${userAccessToken}` },
 		});
 	}
 

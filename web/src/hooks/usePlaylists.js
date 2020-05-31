@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { userAccessToken } from "../atoms/user-credentials";
+import { userAccessTokenAtom } from "../atoms/user-credentials";
 import { useRecoilValue } from "recoil";
 import { userDetailsSelector } from "../atoms/user-details";
 
@@ -23,17 +23,17 @@ const SPOTIFY_API_URL = "https://api.spotify.com/v1";
 
 export function usePlaylistsProvider() {
 	const userDetails = useRecoilValue(userDetailsSelector);
-	const token = useRecoilValue(userAccessToken);
+	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 	const [cachedPlaylists, setPlaylistsCache] = useState([]);
 	const { status, data } = useQuery(
 		"playlists",
-		[token, userDetails],
+		[userAccessToken, userDetails],
 		async () => {
 			const response = await fetch(
 				`${SPOTIFY_API_URL}/users/${userDetails.id}/playlists`,
 				{
 					headers: {
-						Authorization: `Bearer ${token}`,
+						Authorization: `Bearer ${userAccessToken}`,
 					},
 				},
 			);

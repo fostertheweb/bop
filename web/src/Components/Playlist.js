@@ -9,11 +9,11 @@ import { usePlaylists } from "../hooks/usePlaylists";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueue } from "../hooks/useQueue";
 import { useRecoilValue } from "recoil";
-import { userAccessToken } from "../atoms/user-credentials";
+import { userAccessTokenAtom } from "../atoms/user-credentials";
 const SPOTIFY_API_URL = "https://api.spotify.com/v1";
 
 export default function Playlist() {
-	const token = useRecoilValue(userAccessToken);
+	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 	const { addToQueue } = useQueue();
 	const { playlists } = usePlaylists();
 	const { playlistId } = useParams();
@@ -24,7 +24,7 @@ export default function Playlist() {
 			`${SPOTIFY_API_URL}/playlists/${playlistId}/tracks`,
 			{
 				headers: {
-					Authorization: `Bearer ${token}`,
+					Authorization: `Bearer ${userAccessToken}`,
 				},
 			},
 		);

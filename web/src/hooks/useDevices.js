@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { userAccessToken } from "../atoms/user-credentials";
+import { userAccessTokenAtom } from "../atoms/user-credentials";
 import { useRecoilValue } from "recoil";
 
 export function useDevices() {
-	const token = useRecoilValue(userAccessToken);
+	const token = useRecoilValue(userAccessTokenAtom);
 	const { status, data, refetch } = useQuery(
 		"devices",
 		[token],

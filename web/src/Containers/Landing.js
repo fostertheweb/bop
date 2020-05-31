@@ -4,7 +4,12 @@ import { Link } from "react-router-dom";
 export default function Landing() {
 	return (
 		<div className="flex flex-col justify-center h-screen w-full items-center">
-			<h1 className="text-xl tracking-wide text-gray-700 font-medium">c r o w d Q 🐦</h1>
+			<h1 className="text-xl tracking-wide text-gray-700 font-medium">
+				c r o w d Q{" "}
+				<span role="img" aria-label="bird">
+					🐦
+				</span>
+			</h1>
 			<div className="mt-8">
 				<Link
 					to="login"

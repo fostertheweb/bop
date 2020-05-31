@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { parse } from "query-string";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
@@ -11,17 +11,17 @@ const API_BASE_URL = "http://localhost:4000";
 
 export default function Login() {
 	const location = useLocation();
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const query = parse(location.search);
 	const { state, contents } = useRecoilValueLoadable(loginQuery(query));
 
 	if (state === "hasValue") {
-		console.log(contents);
+		console.log({ value: contents });
 		// navigate("/host/search");
 	}
 
 	if (state === "hasError") {
-		console.error(contents);
+		console.error({ error: contents });
 	}
 
 	return (
