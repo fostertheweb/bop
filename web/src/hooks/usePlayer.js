@@ -63,6 +63,18 @@ function usePlayerProvider() {
 		}
 	}
 
+	async function restartCurrentTrack() {
+		await fetch(
+			`https://api.spotify.com/v1/me/player/seek?${stringifyQueryString({
+				position_ms: 0,
+			})}`,
+			{
+				method: "PUT",
+				headers: { Authorization: `Bearer ${userAccessToken}` },
+			},
+		);
+	}
+
 	async function skipPlayback(direction) {
 		await fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
 			method: "POST",
@@ -75,6 +87,7 @@ function usePlayerProvider() {
 		playOrPause,
 		skipPlayback,
 		currentPlayback,
+		restartCurrentTrack,
 		setCurrentPlayback,
 	};
 }
