@@ -3,7 +3,7 @@ import { NavLink, Outlet, Routes, Route } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic, faSearch, faCog } from "@fortawesome/pro-solid-svg-icons";
 import io from "socket.io-client";
-import { useQueue, QueueProvider } from "../hooks/useQueue";
+import { useQueue, QueueProvider } from "../hooks/use-queue";
 import { PlaylistsProvider } from "../hooks/usePlaylists";
 import { PlayerProvider } from "../hooks/usePlayer";
 import { useRecoilValueLoadable } from "recoil";

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
 import { usePlayer } from "../hooks/usePlayer";
 import Devices from "./Devices";
-import { useQueue } from "../hooks/useQueue";
+import { useQueue } from "../hooks/use-queue";
 
 export default function Player() {
 	const { queue } = useQueue();

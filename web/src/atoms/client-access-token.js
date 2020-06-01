@@ -1,6 +1,6 @@
 import { selector } from "recoil";
 
-const API_BASE_URL = "http://localhost:4000";
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export const clientAccessTokenSelector = selector({
 	key: "crowdQ.storage.clientAccessToken",

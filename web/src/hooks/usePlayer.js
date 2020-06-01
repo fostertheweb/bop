@@ -1,9 +1,9 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
 import { stringify } from "query-string";
-import { currentDeviceState } from "../atoms/current-device";
+import { currentDeviceAtom } from "../atoms/current-device";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom } from "../atoms/user-credentials";
-import { useQueue } from "./useQueue";
+import { useQueue } from "./use-queue";
 
 export const PlayerContext = createContext(false);
 
@@ -20,7 +20,7 @@ export const usePlayer = () => {
 };
 
 function usePlayerProvider() {
-	const currentDevice = useRecoilValue(currentDeviceState);
+	const currentDevice = useRecoilValue(currentDeviceAtom);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentPlayback, setCurrentPlayback] = useState(null);
 	const userAccessToken = useRecoilValue(userAccessTokenAtom);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Search from "../Components/Search";
 import Queue from "../Components/Queue";
-import { QueueProvider } from "../hooks/useQueue";
+import { QueueProvider } from "../hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router-dom";

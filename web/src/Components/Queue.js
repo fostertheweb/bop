@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { useQueue } from "../hooks/useQueue";
+import { useQueue } from "../hooks/use-queue";
 import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";

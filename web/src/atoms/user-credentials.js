@@ -1,7 +1,7 @@
 import { atom, selector, selectorFamily } from "recoil";
 import { stringify } from "query-string";
 
-const API_BASE_URL = "http://localhost:4000";
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export const userAccessTokenAtom = atom({
 	key: "crowdQ.storage.userAccessToken",

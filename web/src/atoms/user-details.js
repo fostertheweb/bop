@@ -1,7 +1,7 @@
 import { selector } from "recoil";
 import { userAccessTokenAtom } from "./user-credentials";
 
-const SPOTIFY_API_URL = "https://api.spotify.com/v1";
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export const userDetailsSelector = selector({
 	key: "crowdQ.storage.userDetails",

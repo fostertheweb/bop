@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 
-export const currentDeviceState = atom({
-	key: "crowdQ.storage.currentDeviceState",
+export const currentDeviceAtom = atom({
+	key: "crowdQ.storage.currentDevice",
 	default: null,
 	persistence_UNSTABLE: true,
 });

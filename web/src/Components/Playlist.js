@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/pro-solid-svg-icons";
 import { usePlaylists } from "../hooks/usePlaylists";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQueue } from "../hooks/useQueue";
+import { useQueue } from "../hooks/use-queue";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom } from "../atoms/user-credentials";
 const SPOTIFY_API_URL = "https://api.spotify.com/v1";
