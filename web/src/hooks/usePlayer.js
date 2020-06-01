@@ -1,8 +1,9 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
-import { stringify as stringifyQueryString } from "query-string";
+import { stringify } from "query-string";
 import { currentDeviceState } from "../atoms/current-device";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom } from "../atoms/user-credentials";
+import { useQueue } from "./useQueue";
 
 export const PlayerContext = createContext(false);
 
@@ -23,6 +24,11 @@ function usePlayerProvider() {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentPlayback, setCurrentPlayback] = useState(null);
 	const userAccessToken = useRecoilValue(userAccessTokenAtom);
+	const { queue, removeFromQueue } = useQueue();
+
+	useEffect(() => {
+		console.log({ isPlaying });
+	}, [isPlaying]);
 
 	useEffect(() => {
 		async function getCurrentPlayback() {
@@ -34,7 +40,6 @@ function usePlayerProvider() {
 			});
 
 			try {
-				const json = await response.json();
 				const { is_playing, item, progress_ms } = await response.json();
 				setIsPlaying(is_playing);
 				setCurrentPlayback({ ...item, progress_ms });
@@ -45,28 +50,11 @@ function usePlayerProvider() {
 		getCurrentPlayback();
 	}, [userAccessToken]);
 
-	async function playOrPause(uris) {
-		if (currentDevice) {
-			await fetch(
-				`https://api.spotify.com/v1/me/player/${
-					isPlaying ? "pause" : "play"
-				}?` + stringifyQueryString({ device_id: currentDevice.id }),
-				{
-					method: "PUT",
-					headers: {
-						Authorization: `Bearer ${userAccessToken}`,
-					},
-					body: uris ? JSON.stringify({ uris: [uris] }) : null,
-				},
-			);
-			setIsPlaying(!isPlaying);
-		}
-	}
-
 	async function restartCurrentTrack() {
 		await fetch(
-			`https://api.spotify.com/v1/me/player/seek?${stringifyQueryString({
+			`https://api.spotify.com/v1/me/player/seek?${stringify({
 				position_ms: 0,
+				device_id: currentDevice.id,
 			})}`,
 			{
 				method: "PUT",
@@ -75,17 +63,62 @@ function usePlayerProvider() {
 		);
 	}
 
-	async function skipPlayback(direction) {
-		await fetch(`https://api.spotify.com/v1/me/player/${direction}`, {
-			method: "POST",
-			headers: { Authorization: `Bearer ${userAccessToken}` },
-		});
+	async function playNextTrack() {
+		const nextTrack = queue[0];
+
+		if (nextTrack) {
+			await fetch(
+				`https://api.spotify.com/v1/me/player/play?${stringify({
+					device_id: currentDevice.id,
+				})}`,
+				{
+					method: "PUT",
+					headers: {
+						Authorization: `Bearer ${userAccessToken}`,
+					},
+					body: JSON.stringify({ uris: [nextTrack.uri] }),
+				},
+			);
+			setIsPlaying(true);
+			removeFromQueue(0);
+		}
+	}
+
+	async function play() {
+		await fetch(
+			`https://api.spotify.com/v1/me/player/play?${stringify({
+				device_id: currentDevice.id,
+			})}`,
+			{
+				method: "PUT",
+				headers: {
+					Authorization: `Bearer ${userAccessToken}`,
+				},
+			},
+		);
+		setIsPlaying(true);
+	}
+
+	async function pause() {
+		await fetch(
+			`https://api.spotify.com/v1/me/player/pause?${stringify({
+				device_id: currentDevice.id,
+			})}`,
+			{
+				method: "PUT",
+				headers: {
+					Authorization: `Bearer ${userAccessToken}`,
+				},
+			},
+		);
+		setIsPlaying(false);
 	}
 
 	return {
 		isPlaying,
-		playOrPause,
-		skipPlayback,
+		pause,
+		play,
+		playNextTrack,
 		currentPlayback,
 		restartCurrentTrack,
 		setCurrentPlayback,

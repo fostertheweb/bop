@@ -58,7 +58,7 @@ function Layout() {
 	const { state, contents } = useRecoilValueLoadable(userDetailsSelector);
 
 	useEffect(() => {
-		if (state === "hasValue") {
+		if (state === "hasValue" && contents) {
 			const { id: room } = contents;
 			socket.emit("join", { room, user: room });
 		}
