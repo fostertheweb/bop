@@ -4,17 +4,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic, faSearch, faCog } from "@fortawesome/pro-solid-svg-icons";
 import io from "socket.io-client";
 import { useQueue } from "../hooks/use-queue";
-import { PlaylistsProvider } from "../hooks/usePlaylists";
 import { PlayerProvider } from "../hooks/usePlayer";
 import { useRecoilValueLoadable } from "recoil";
 
-import Queue from "../Components/Queue";
-import Search from "../Components/Search";
-import Playlists from "../Components/Playlists";
-import Settings from "../Components/Settings";
-import Player from "../Components/Player";
-import Playlist from "../Components/Playlist";
-import { userDetailsSelector } from "../atoms/user-details";
+import Queue from "Components/Queue";
+import Search from "Components/Search";
+import Playlists from "Components/Playlists";
+import Settings from "Components/Settings";
+import Player from "Components/Player";
+import Playlist from "Components/Playlist";
+import { userDetailsSelector } from "atoms/user-details";
 
 const socket = io(`http://localhost:4000`);
 
@@ -29,22 +28,8 @@ export default function Host() {
 					</PlayerProvider>
 				}>
 				<Route path="search" element={<Search />} />
-				<Route
-					path="playlists"
-					element={
-						<PlaylistsProvider>
-							<Playlists />
-						</PlaylistsProvider>
-					}
-				/>
-				<Route
-					path="playlists/:playlistId"
-					element={
-						<PlaylistsProvider>
-							<Playlist />
-						</PlaylistsProvider>
-					}
-				/>
+				<Route path="playlists" element={<Playlists />} />
+				<Route path="playlists/:playlistId" element={<Playlist />} />
 				<Route path="settings" element={<Settings />} />
 			</Route>
 		</Routes>
@@ -85,12 +70,12 @@ function Layout() {
 
 	return (
 		<>
-			<div className="flex bg-gray-800 h-content overflow-hidden">
+			<div className="flex cq-bg h-content overflow-hidden">
 				<Sidebar />
-				<div className="w-1/2 overflow-y-scroll">
+				<div className="w-1/2 overflow-y-scroll hide-native-scrollbar">
 					<Outlet />
 				</div>
-				<div className="flex-grow bg-gray-900 overflow-y-scroll">
+				<div className="flex-grow cq-bg-darker overflow-y-scroll hide-native-scrollbar">
 					<Queue />
 				</div>
 			</div>
@@ -113,7 +98,7 @@ function SidebarLink({ path, icon, children }) {
 
 function Sidebar() {
 	return (
-		<div className="bg-gray-950 flex flex-col" style={{ width: "80px" }}>
+		<div className="cq-bg-darker flex flex-col" style={{ width: "80px" }}>
 			<SidebarLink path="search" icon={faSearch}>
 				Search
 			</SidebarLink>

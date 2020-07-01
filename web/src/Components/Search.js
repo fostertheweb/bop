@@ -1,40 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useQueue } from "../hooks/use-queue";
 import { useSearch } from "../hooks/use-search";
+import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+import { useDebounce } from "hooks/use-debounce";
 
 export default function Search() {
 	const { addToQueue } = useQueue();
-	const { search } = useSearch();
+	const search = useSearch();
+	const [searching, setSearching] = useState(false);
+	const [query, setQuery] = useState("");
 	const [results, setResults] = useState([]);
+	const debounced = useDebounce(query, 500);
 
-	const handleSearch = async (query) => {
-		const { tracks } = await search(query);
-		setResults(tracks);
-	};
+	useEffect(() => {
+		if (debounced) {
+			setSearching(true);
+			search(debounced).then(({ items = [] }) => {
+				setResults(items);
+				setSearching(false);
+			});
+		} else {
+			setResults([]);
+		}
+	}, [debounced]);
 
 	return (
 		<div className="p-2">
-			<div className="sticky top-0 bg-gray-800">
-				<div className="p-2 bg-gray-800 flex items-center">
-					<div className="flex items-center border-2 border-gray-700 text-base rounded focus-within:border-green-500 w-full bg-gray-900 text-gray-200">
+			<div className="sticky top-0">
+				<div className="p-2 flex items-center">
+					<div className="cq-bg-darker flex items-center border-2 border-gray-700 text-base rounded focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-200">
 						<FontAwesomeIcon
-							icon={faSpotify}
+							icon={searching ? faSpinnerThird : faSpotify}
 							size="lg"
 							className="text-gray-500 fill-current ml-2"
+							spin={searching}
 						/>
 						<input
-							className="appearance-none text-base rounded px-4 py-2 pl-2 focus:outline-none w-full bg-gray-900 text-gray-200"
+							className="appearance-none bg-transparent text-base rounded px-4 py-2 pl-2 focus:outline-none w-full text-gray-200"
 							id="search"
 							placeholder="Search by track or artist"
-							onChange={({ target }) => handleSearch(target.value)}
+							onChange={({ target }) => setQuery(target.value)}
+							autoComplete="false"
 						/>
 					</div>
 				</div>
 			</div>
 			<div>
-				{results?.items?.map((item) => (
+				{results?.map((item) => (
 					<button
 						onClick={() => addToQueue(item)}
 						key={item.id}

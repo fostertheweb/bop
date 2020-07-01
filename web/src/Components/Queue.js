@@ -1,34 +1,26 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useQueue } from "../hooks/use-queue";
-import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
+// import { usePlayer, PlayerProvider } from "../hooks/usePlayer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 
-export default function Queue(props) {
-	return (
-		<PlayerProvider>
-			<QueueContents {...props} />
-		</PlayerProvider>
-	);
-}
-
-function QueueContents() {
+export default function Queue() {
 	const { queue, removeFromQueue } = useQueue();
-	const { isPlaying, playOrPause } = usePlayer();
+	// const { isPlaying, playOrPause } = usePlayer();
 
 	useEffect(() => {
 		const isFirstTrack = queue.length === 1;
 
-		if (isFirstTrack && !isPlaying) {
-			playOrPause(queue[0].uri);
+		if (isFirstTrack) {
+			//playOrPause(queue[0].uri);
 		}
 
 		//eslint-disable-next-line
 	}, [queue]);
 
 	return (
-		<div className="bg-gray-900">
+		<>
 			<div className="pt-6 pb-4 pl-4 text-base text-gray-600">
 				<FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
 				<span className="border-b-2 border-transparent">Play Queue</span>
@@ -63,7 +55,7 @@ function QueueContents() {
 					</motion.div>
 				);
 			})}
-		</div>
+		</>
 	);
 }
 

@@ -27,7 +27,9 @@ export const loginQuery = selectorFamily({
 				},
 			});
 			const json = await response.json();
+
 			if (response.ok) {
+				console.log({ ["GET login"]: json });
 				return json;
 			}
 
@@ -36,12 +38,6 @@ export const loginQuery = selectorFamily({
 
 		return null;
 	},
-	// Does not seem to run, added set state methods in Login.js
-	// set: () => ({ set }, newValue) => {
-	// 	console.log({ newValue });
-	// 	set(userAccessTokenAtom, newValue.access_token);
-	// 	set(userRefreshTokenAtom, newValue.refresh_token);
-	// },
 });
 
 export const refreshUserAccessTokenQuery = selector({

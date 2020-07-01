@@ -5,20 +5,20 @@ import {
 	faSpinnerThird,
 	faChevronLeft,
 } from "@fortawesome/pro-solid-svg-icons";
-import { usePlaylists } from "../hooks/usePlaylists";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueue } from "../hooks/use-queue";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom } from "../atoms/user-credentials";
+
 const SPOTIFY_API_URL = "https://api.spotify.com/v1";
 
-export default function Playlist() {
+export default function Playlist(props) {
+	console.log(props);
 	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 	const { addToQueue } = useQueue();
-	const { playlists } = usePlaylists();
 	const { playlistId } = useParams();
 	const navigate = useNavigate();
-	const playlist = playlists.find(({ id }) => id === playlistId);
+
 	const { status, data: items } = useQuery("playlistTracks", [], async () => {
 		const response = await fetch(
 			`${SPOTIFY_API_URL}/playlists/${playlistId}/tracks`,
@@ -45,9 +45,7 @@ export default function Playlist() {
 					/>
 					Back
 				</button>
-				<h1 className="text-center text-gray-500 font-medium text-lg tracking-wide">
-					{playlist?.name}
-				</h1>
+				<h1 className="text-center text-gray-500 font-medium text-lg tracking-wide"></h1>
 				<span>&nbsp;</span>
 			</div>
 			<div>

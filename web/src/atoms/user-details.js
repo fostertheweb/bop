@@ -1,11 +1,16 @@
-import { selector } from "recoil";
+import { atom, selector } from "recoil";
 import { userAccessTokenAtom } from "./user-credentials";
 
 const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
+export const currentUserIdState = atom({
+	key: "crowdQ.currentUserId",
+	default: null,
+});
+
 export const userDetailsSelector = selector({
 	key: "crowdQ.storage.userDetails",
-	get: async ({ get }) => {
+	get: async ({ get, set }) => {
 		const userAccessToken = get(userAccessTokenAtom);
 
 		if (userAccessToken) {
@@ -17,6 +22,7 @@ export const userDetailsSelector = selector({
 			const json = await response.json();
 
 			if (response.ok) {
+				set(currentUserIdState, json.id);
 				return json;
 			}
 
