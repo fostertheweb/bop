@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
-import PlayerControls from "../Containers/PlayerControls";
+import PlayerControls from "containers/PlayerControls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
-import { usePlayer } from "../hooks/usePlayer";
-import Devices from "./Devices";
-import { useQueue } from "../hooks/use-queue";
+import Devices from "components/Devices";
+import { useQueue } from "hooks/use-queue";
+import { currentPlaybackAtom, isPlayingAtom } from "atoms/player";
+import { useRecoilValue, useRecoilState } from "recoil";
 
 export default function Player() {
 	const { queue } = useQueue();
-	const { setCurrentPlayback, currentPlayback, isPlaying } = usePlayer();
+	const isPlaying = useRecoilValue(isPlayingAtom);
 	const [progress, setProgress] = useState(0);
-
+	const [currentPlayback, setCurrentPlayback] = useRecoilState(
+		currentPlaybackAtom,
+	);
 	const timer = useRef(null);
 
 	useEffect(() => {
@@ -52,9 +55,9 @@ export default function Player() {
 	}, [progress, currentPlayback]);
 
 	return (
-		<div className="w-full overflow-hidden">
+		<div className="w-full">
 			<motion.div
-				className="bg-gray-850 absolute bottom-0 z-49 max-w-full"
+				className="cq-bg-dark absolute bottom-0 z-49 max-w-full"
 				animate={{
 					width: `${((progress * 100) / currentPlayback?.duration_ms).toFixed(
 						2,

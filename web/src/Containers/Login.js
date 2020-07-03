@@ -11,7 +11,7 @@ import {
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 
-const API_BASE_URL = "http://localhost:4000";
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Login() {
 	const location = useLocation();

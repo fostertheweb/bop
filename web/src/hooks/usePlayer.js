@@ -1,28 +1,17 @@
-import React, { useState, useContext, createContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { stringify } from "query-string";
 import { currentDeviceAtom } from "../atoms/current-device";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
 import { userAccessTokenAtom } from "../atoms/user-credentials";
 import { useQueue } from "./use-queue";
+import { currentPlaybackAtom, isPlayingAtom } from "atoms/player";
 
-export const PlayerContext = createContext(false);
-
-export const PlayerProvider = ({ children }) => {
-	const player = usePlayerProvider();
-
-	return (
-		<PlayerContext.Provider value={player}>{children}</PlayerContext.Provider>
-	);
-};
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export const usePlayer = () => {
-	return useContext(PlayerContext);
-};
-
-function usePlayerProvider() {
 	const currentDevice = useRecoilValue(currentDeviceAtom);
-	const [isPlaying, setIsPlaying] = useState(false);
-	const [currentPlayback, setCurrentPlayback] = useState(null);
+	const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom);
+	const setCurrentPlayback = useSetRecoilState(currentPlaybackAtom);
 	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 	const { queue, removeFromQueue } = useQueue();
 
@@ -32,7 +21,7 @@ function usePlayerProvider() {
 
 	useEffect(() => {
 		async function getCurrentPlayback() {
-			const response = await fetch("https://api.spotify.com/v1/me/player", {
+			const response = await fetch(`${SPOTIFY_API_URL}/me/player`, {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${userAccessToken}`,
@@ -52,7 +41,7 @@ function usePlayerProvider() {
 
 	async function restartCurrentTrack() {
 		await fetch(
-			`https://api.spotify.com/v1/me/player/seek?${stringify({
+			`${SPOTIFY_API_URL}/me/player/seek?${stringify({
 				position_ms: 0,
 				device_id: currentDevice.id,
 			})}`,
@@ -68,7 +57,7 @@ function usePlayerProvider() {
 
 		if (nextTrack) {
 			await fetch(
-				`https://api.spotify.com/v1/me/player/play?${stringify({
+				`${SPOTIFY_API_URL}/me/player/play?${stringify({
 					device_id: currentDevice.id,
 				})}`,
 				{
@@ -86,7 +75,7 @@ function usePlayerProvider() {
 
 	async function play() {
 		await fetch(
-			`https://api.spotify.com/v1/me/player/play?${stringify({
+			`${SPOTIFY_API_URL}/me/player/play?${stringify({
 				device_id: currentDevice.id,
 			})}`,
 			{
@@ -101,7 +90,7 @@ function usePlayerProvider() {
 
 	async function pause() {
 		await fetch(
-			`https://api.spotify.com/v1/me/player/pause?${stringify({
+			`${SPOTIFY_API_URL}/me/player/pause?${stringify({
 				device_id: currentDevice.id,
 			})}`,
 			{
@@ -115,12 +104,9 @@ function usePlayerProvider() {
 	}
 
 	return {
-		isPlaying,
 		pause,
 		play,
 		playNextTrack,
-		currentPlayback,
 		restartCurrentTrack,
-		setCurrentPlayback,
 	};
-}
+};

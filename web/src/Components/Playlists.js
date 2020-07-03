@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { useRecoilValueLoadable, useRecoilValue } from "recoil";
+import React from "react";
+import { useRecoilValue } from "recoil";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useNavigate } from "react-router";
 import { currentUserIdState } from "atoms/user-details";
-import { userPlaylistsQuery } from "atoms/playlists";
+import { useQuery } from "react-query";
+import { userAccessTokenAtom } from "atoms/user-credentials";
+
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export default function Playlists() {
-	const [playlists, setPlaylists] = useState([]);
 	const userId = useRecoilValue(currentUserIdState);
-	const { state, contents } = useRecoilValueLoadable(
-		userPlaylistsQuery(userId),
-	);
+	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (state === "hasValue" && contents) {
-			setPlaylists(contents);
-		}
-	}, [state]);
+	const { status, data } = useQuery("playlists", async () => {
+		const response = await fetch(
+			`${SPOTIFY_API_URL}/users/${userId}/playlists`,
+			{
+				headers: {
+					Authorization: `Bearer ${userAccessToken}`,
+				},
+			},
+		);
+		return await response.json();
+	});
 
 	return (
 		<>
@@ -26,10 +31,10 @@ export default function Playlists() {
 				Playlists
 			</h1>
 			<div>
-				{state === "loading" ? (
+				{status === "loading" ? (
 					<FontAwesomeIcon icon={faSpinnerThird} />
 				) : (
-					playlists.map((playlist) => (
+					data.items.map((playlist) => (
 						<div
 							onClick={() =>
 								navigate(`${playlist.id}`, { state: { playlist } })

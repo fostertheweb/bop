@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Search from "../Components/Search";
-import Queue from "../Components/Queue";
+import Search from "components/Search";
+import Queue from "components/Queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router-dom";
 
 import io from "socket.io-client";
 
-const socket = io(`http://localhost:4000`);
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+
+const socket = io(API_BASE_URL);
 
 export default function Listener() {
 	const { room } = useParams();

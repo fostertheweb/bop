@@ -1,5 +1,5 @@
-import React from "react";
-import { useTable } from "react-table";
+import React from "components/node_modules/react";
+import { useTable } from "components/node_modules/react-table";
 
 export function TrackList() {
 	return (

@@ -1,10 +1,10 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Landing from "./Containers/Landing";
-import Login from "./Containers/Login";
-import Host from "./Containers/Host";
-import Join from "./Containers/Join";
-import Listener from "./Containers/Listener";
+import Start from "containers/Start";
+import Login from "containers/Login";
+import Host from "containers/Host";
+import Join from "containers/Join";
+import Listener from "containers/Listener";
 import { RecoilRoot } from "recoil";
 import { PersistenceObserver, initializeState } from "./store";
 
@@ -13,7 +13,7 @@ function App() {
 		<RecoilRoot initializeState={initializeState}>
 			<PersistenceObserver />
 			<Routes>
-				<Route path="/" element={<Landing />} />
+				<Route path="/" element={<Start />} />
 				<Route path="login" element={<Login />} />
 				<Route path="host/*" element={<Host />} />
 				<Route path="join" element={<Join />} />

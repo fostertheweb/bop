@@ -6,11 +6,11 @@ import {
 	faChevronLeft,
 } from "@fortawesome/pro-solid-svg-icons";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQueue } from "../hooks/use-queue";
+import { useQueue } from "hooks/use-queue";
 import { useRecoilValue } from "recoil";
-import { userAccessTokenAtom } from "../atoms/user-credentials";
+import { userAccessTokenAtom } from "atoms/user-credentials";
 
-const SPOTIFY_API_URL = "https://api.spotify.com/v1";
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export default function Playlist(props) {
 	console.log(props);

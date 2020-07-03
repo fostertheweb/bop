@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { useQueue } from "../hooks/use-queue";
-import { useSearch } from "../hooks/use-search";
+import { useQueue } from "hooks/use-queue";
+import { useSearch } from "hooks/use-search";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
 

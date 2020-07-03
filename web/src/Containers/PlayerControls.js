@@ -8,16 +8,13 @@ import {
 	faPause,
 } from "@fortawesome/pro-solid-svg-icons";
 import { motion } from "framer-motion";
-import { usePlayer } from "../hooks/usePlayer";
+import { usePlayer } from "hooks/usePlayer";
+import { useRecoilValue } from "recoil";
+import { isPlayingAtom } from "atoms/player";
 
 export default function PlayerControls() {
-	const {
-		restartCurrentTrack,
-		playNextTrack,
-		play,
-		pause,
-		isPlaying,
-	} = usePlayer();
+	const { restartCurrentTrack, playNextTrack, play, pause } = usePlayer();
+	const isPlaying = useRecoilValue(isPlayingAtom);
 
 	return (
 		<div>

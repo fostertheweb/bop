@@ -3,16 +3,15 @@ import { NavLink, Outlet, Routes, Route } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic, faSearch, faCog } from "@fortawesome/pro-solid-svg-icons";
 import io from "socket.io-client";
-import { useQueue } from "../hooks/use-queue";
-import { PlayerProvider } from "../hooks/usePlayer";
+import { useQueue } from "hooks/use-queue";
 import { useRecoilValueLoadable } from "recoil";
 
-import Queue from "Components/Queue";
-import Search from "Components/Search";
-import Playlists from "Components/Playlists";
-import Settings from "Components/Settings";
-import Player from "Components/Player";
-import Playlist from "Components/Playlist";
+import Queue from "components/Queue";
+import Search from "components/Search";
+import Playlists from "components/Playlists";
+import Settings from "components/Settings";
+import Player from "components/Player";
+import Playlist from "components/Playlist";
 import { userDetailsSelector } from "atoms/user-details";
 
 const socket = io(`http://localhost:4000`);
@@ -20,13 +19,7 @@ const socket = io(`http://localhost:4000`);
 export default function Host() {
 	return (
 		<Routes>
-			<Route
-				path="/"
-				element={
-					<PlayerProvider>
-						<Layout />
-					</PlayerProvider>
-				}>
+			<Route path="/" element={<Layout />}>
 				<Route path="search" element={<Search />} />
 				<Route path="playlists" element={<Playlists />} />
 				<Route path="playlists/:playlistId" element={<Playlist />} />
