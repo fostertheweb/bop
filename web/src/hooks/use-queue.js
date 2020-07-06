@@ -12,5 +12,9 @@ export function useQueue() {
 		setQueue([...queue.slice(0, index), ...queue.slice(index + 1)]);
 	}
 
-	return { queue, addToQueue, removeFromQueue };
+	function nextTrackInQueue() {
+		setQueue(queue.slice(1));
+	}
+
+	return { queue, addToQueue, removeFromQueue, nextTrackInQueue };
 }

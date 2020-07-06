@@ -3,12 +3,17 @@ import ReactDOM from "react-dom";
 import App from "./app";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router } from "react-router-dom";
+
+import "typeface-cabin";
+import "typeface-catamaran";
+import "typeface-londrina-solid";
+
 import "./styles.css";
 import "./index.css";
 
 ReactDOM.render(
 	<Router>
-		<App className="bg-gray-900 h-full" />
+		<App className="cq-bg-dark h-full" />
 	</Router>,
 	document.getElementById("root"),
 );

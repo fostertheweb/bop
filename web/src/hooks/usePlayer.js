@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { stringify } from "query-string";
 import { currentDeviceAtom } from "../atoms/current-device";
-import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userAccessTokenAtom } from "../atoms/user-credentials";
 import { useQueue } from "./use-queue";
 import { currentPlaybackAtom, isPlayingAtom } from "atoms/player";
@@ -10,34 +10,33 @@ const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export const usePlayer = () => {
 	const currentDevice = useRecoilValue(currentDeviceAtom);
-	const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom);
+	const setIsPlaying = useSetRecoilState(isPlayingAtom);
 	const setCurrentPlayback = useSetRecoilState(currentPlaybackAtom);
 	const userAccessToken = useRecoilValue(userAccessTokenAtom);
-	const { queue, removeFromQueue } = useQueue();
-
-	useEffect(() => {
-		console.log({ isPlaying });
-	}, [isPlaying]);
+	const { queue, nextTrackInQueue } = useQueue();
 
 	useEffect(() => {
 		async function getCurrentPlayback() {
-			const response = await fetch(`${SPOTIFY_API_URL}/me/player`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${userAccessToken}`,
-				},
-			});
-
 			try {
+				const response = await fetch(`${SPOTIFY_API_URL}/me/player`, {
+					method: "GET",
+					headers: {
+						Authorization: `Bearer ${userAccessToken}`,
+					},
+				});
 				const { is_playing, item, progress_ms } = await response.json();
-				setIsPlaying(is_playing);
-				setCurrentPlayback({ ...item, progress_ms });
+
+				if (response.ok) {
+					setIsPlaying(is_playing);
+					setCurrentPlayback({ ...item, progress_ms });
+				}
 			} catch (err) {
 				console.log("error", err);
 			}
 		}
+
 		getCurrentPlayback();
-	}, [userAccessToken]);
+	}, [userAccessToken, queue]);
 
 	async function restartCurrentTrack() {
 		await fetch(
@@ -53,10 +52,12 @@ export const usePlayer = () => {
 	}
 
 	async function playNextTrack() {
+		console.log({ playNextTrack: queue });
 		const nextTrack = queue[0];
+		console.log({ nextTrack });
 
 		if (nextTrack) {
-			await fetch(
+			const response = await fetch(
 				`${SPOTIFY_API_URL}/me/player/play?${stringify({
 					device_id: currentDevice.id,
 				})}`,
@@ -68,13 +69,15 @@ export const usePlayer = () => {
 					body: JSON.stringify({ uris: [nextTrack.uri] }),
 				},
 			);
-			setIsPlaying(true);
-			removeFromQueue(0);
+
+			if (response.ok) {
+				nextTrackInQueue();
+			}
 		}
 	}
 
 	async function play() {
-		await fetch(
+		const response = await fetch(
 			`${SPOTIFY_API_URL}/me/player/play?${stringify({
 				device_id: currentDevice.id,
 			})}`,
@@ -85,11 +88,14 @@ export const usePlayer = () => {
 				},
 			},
 		);
-		setIsPlaying(true);
+
+		if (response.ok) {
+			setIsPlaying(true);
+		}
 	}
 
 	async function pause() {
-		await fetch(
+		const response = await fetch(
 			`${SPOTIFY_API_URL}/me/player/pause?${stringify({
 				device_id: currentDevice.id,
 			})}`,
@@ -100,7 +106,10 @@ export const usePlayer = () => {
 				},
 			},
 		);
-		setIsPlaying(false);
+
+		if (response.ok) {
+			setIsPlaying(false);
+		}
 	}
 
 	return {

@@ -11433,6 +11433,21 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
+typeface-cabin@^0.0.72:
+  version "0.0.72"
+  resolved "https://registry.yarnpkg.com/typeface-cabin/-/typeface-cabin-0.0.72.tgz#33667852f30d574b5136f6cd08d162384b19a0d2"
+  integrity sha512-YN3MG1CaqyGygSekamQ8HnuZEv6hvn4XHITPf1N/v9sp0sCQ3VHM+e9xDjiIVPjsTyScC8s/TZ79xZvcOZYJ+g==
+
+typeface-catamaran@^0.0.72:
+  version "0.0.72"
+  resolved "https://registry.yarnpkg.com/typeface-catamaran/-/typeface-catamaran-0.0.72.tgz#eddb2c8cf2e75696c89f055e25057b85538efc9b"
+  integrity sha512-6l9gq/IPseoC40lv/etxdUlIR2RHBKpAm+vu3lwt03Jd4i2+VOhKS/fOz1n0YpRjkz8QyG2qFwYjcoLT02/2qw==
+
+typeface-londrina-solid@^0.0.71:
+  version "0.0.71"
+  resolved "https://registry.yarnpkg.com/typeface-londrina-solid/-/typeface-londrina-solid-0.0.71.tgz#2396846ee73644173ffa9846470c6738f65ef92e"
+  integrity sha512-gTp+sVxs3gBO4J/SNfkcf9Ut77TUfnSQKNcIfbVkJU1ouALR2nxig2qoTv6U+HRk/xWsw9g5ch+SYD6Zpw3uJQ==
+
 undefsafe@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/undefsafe/-/undefsafe-2.0.3.tgz#6b166e7094ad46313b2202da7ecc2cd7cc6e7aae"
