@@ -105,10 +105,10 @@ export default function Player() {
 					<PlayerControls />
 				</div>
 				<div className="w-1/3 flex items-center justify-end">
-					<div className="flex items-center mr-6">
+					{/* <div className="flex items-center mr-6">
 						<FontAwesomeIcon icon={faVolume} size="lg" color="white" />
 						<input type="range" className="ml-2" />
-					</div>
+					</div> */}
 					<Devices />
 				</div>
 			</div>

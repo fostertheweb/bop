@@ -36,7 +36,7 @@ export const usePlayer = () => {
 		}
 
 		getCurrentPlayback();
-	}, [userAccessToken, queue]);
+	}, [userAccessToken]);
 
 	async function restartCurrentTrack() {
 		await fetch(
@@ -72,6 +72,7 @@ export const usePlayer = () => {
 
 			if (response.ok) {
 				nextTrackInQueue();
+				setCurrentPlayback({ ...nextTrack, progress_ms: 0 });
 			}
 		}
 	}

@@ -13,8 +13,12 @@ import Settings from "components/Settings";
 import Player from "components/Player";
 import Playlist from "components/Playlist";
 import { userDetailsSelector } from "atoms/user-details";
+import { faUsers } from "@fortawesome/pro-duotone-svg-icons";
+import ListenersList from "components/listeners";
 
-const socket = io(`http://localhost:4000`);
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+
+const socket = io(API_BASE_URL);
 
 export default function Host() {
 	return (
@@ -23,6 +27,7 @@ export default function Host() {
 				<Route path="search" element={<Search />} />
 				<Route path="playlists" element={<Playlists />} />
 				<Route path="playlists/:playlistId" element={<Playlist />} />
+				<Route path="listeners" element={<ListenersList />} />
 				<Route path="settings" element={<Settings />} />
 			</Route>
 		</Routes>
@@ -41,10 +46,6 @@ function Layout() {
 	}, [state]);
 
 	useEffect(() => {
-		socket.on("clap", (payload) => {
-			console.log({ payload });
-		});
-
 		socket.on("joined", (payload) => {
 			console.log({ payload });
 		});
@@ -97,6 +98,9 @@ function Sidebar() {
 			</SidebarLink>
 			<SidebarLink path="playlists" icon={faListMusic}>
 				Playlists
+			</SidebarLink>
+			<SidebarLink path="listeners" icon={faUsers}>
+				Listeners
 			</SidebarLink>
 			<SidebarLink path="settings" icon={faCog}>
 				Settings

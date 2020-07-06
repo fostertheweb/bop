@@ -18,7 +18,7 @@ export default function Queue() {
 					<motion.div
 						key={item.id}
 						onClick={() => removeFromQueue(index)}
-						className="text-left p-2 flex items-center w-full border-t border-gray-700 opacity-0 cursor-pointer hover:bg-gray-800"
+						className="text-left p-2 flex items-center w-full opacity-0 cursor-pointer hover:bg-gray-800"
 						variants={variants}
 						initial="enter"
 						animate="center"

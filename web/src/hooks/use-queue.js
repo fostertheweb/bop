@@ -13,6 +13,7 @@ export function useQueue() {
 	}
 
 	function nextTrackInQueue() {
+		console.log(queue.slice(1));
 		setQueue(queue.slice(1));
 	}
 

@@ -1,67 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Search from "components/Search";
 import Queue from "components/Queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router-dom";
-
 import io from "socket.io-client";
+import { useRecoilValue } from "recoil";
+import { displayNameState } from "atoms/display-name";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
-
 const socket = io(API_BASE_URL);
 
 export default function Listener() {
+	const displayName = useRecoilValue(displayNameState);
 	const { room } = useParams();
-	//eslint-disable-next-line
-	const [_, setQueue] = useState([]);
-
-	const addToQueue = ({ payload }) => {
-		socket.emit("addToQueue", { room, payload });
-	};
 
 	useEffect(() => {
-		socket.on("clap", (payload) => {
-			console.log({ payload });
-		});
-	}, []);
-	useEffect(() => {
-		socket.on("joined", (payload) => {
-			console.log({ payload });
-		});
-		socket.on("queueUpdate", (payload) => {
-			setQueue(payload);
-		});
+		socket.emit("join", { room, user: displayName });
 	}, []);
 
-	const clap = () => {
-		socket.emit("clap", { room, user: "test" });
-	};
-
-	return (
-		<>
-			<header className="flex items-center justify-between bg-black p-1">
-				<div className="tracking-wide text-gray-400 mx-2 font-medium">
-					<FontAwesomeIcon
-						icon={faListMusic}
-						size="lg"
-						className="text-pink-500 fill-current mr-2"
-					/>
-					<button onClick={clap}>clap</button>
-				</div>
-			</header>
-			<div className="flex bg-gray-800 h-full">
-				<div className="flex-grow">
-					<div className="flex items-stretch">
-						<div className="w-1/2 border-r border-gray-700 h-full overflow-y-scroll hide-native-scrollbar">
-							<Queue dispatch={addToQueue} />
-						</div>
-						<div className="w-1/2 h-full overflow-y-scroll hide-native-scrollbar">
-							<Search dispatch={addToQueue} />
-						</div>
-					</div>
-				</div>
-			</div>
-		</>
-	);
+	return <div>Listening to the music</div>;
 }
