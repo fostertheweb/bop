@@ -8,7 +8,7 @@ import {
 	faPause,
 } from "@fortawesome/pro-solid-svg-icons";
 import { motion } from "framer-motion";
-import { usePlayer } from "hooks/usePlayer";
+import { usePlayer } from "hooks/use-player";
 import { useRecoilValue } from "recoil";
 import { isPlayingAtom } from "atoms/player";
 

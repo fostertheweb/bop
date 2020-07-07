@@ -12,8 +12,7 @@ import { userAccessTokenAtom } from "atoms/user-credentials";
 
 const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
-export default function Playlist(props) {
-	console.log(props);
+export default function Playlist() {
 	const userAccessToken = useRecoilValue(userAccessTokenAtom);
 	const { addToQueue } = useQueue();
 	const { playlistId } = useParams();

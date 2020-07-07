@@ -73,6 +73,7 @@ export const usePlayer = () => {
 			if (response.ok) {
 				nextTrackInQueue();
 				setCurrentPlayback({ ...nextTrack, progress_ms: 0 });
+				setIsPlaying(true);
 			}
 		}
 	}

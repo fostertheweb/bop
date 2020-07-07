@@ -42,9 +42,9 @@ function ResumeSession() {
 function JoinSession() {
 	return (
 		<div className="flex flex-col p-8 items-center">
-			<di className="mt-4 p-8 text-center">
+			<div className="mt-4 p-8 text-center">
 				<FontAwesomeIcon icon={faSheep} size="4x" className="theme-sheep" />
-			</di>
+			</div>
 			<Link
 				to="join"
 				className={classNames(

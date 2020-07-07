@@ -29,7 +29,6 @@ export const loginQuery = selectorFamily({
 			const json = await response.json();
 
 			if (response.ok) {
-				console.log({ ["GET login"]: json });
 				return json;
 			}
 

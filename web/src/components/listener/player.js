@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import PlayerControls from "containers/PlayerControls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash, faVolume } from "@fortawesome/pro-solid-svg-icons";
-import Devices from "components/Devices";
+import { faMusicSlash } from "@fortawesome/pro-solid-svg-icons";
 import { currentPlaybackAtom, isPlayingAtom } from "atoms/player";
 import { useRecoilValue } from "recoil";
 
-export default function Player() {
+export default function ListenerPlayer() {
 	const isPlaying = useRecoilValue(isPlayingAtom);
 	const [progress, setProgress] = useState(0);
 	const currentPlayback = useRecoilValue(currentPlaybackAtom);
@@ -97,20 +95,15 @@ export default function Player() {
 								size="lg"
 								className="fill-current mr-2"
 							/>
-							Add songs to the Play Queue
+							No music!
+							<span role="img" aria-label="clap clap clap" className="ml-2">
+								👏👏👏
+							</span>
 						</div>
 					)}
 				</div>
-				<div className="w-1/3">
-					<PlayerControls />
-				</div>
-				<div className="w-1/3 flex items-center justify-end">
-					{/* <div className="flex items-center mr-6">
-						<FontAwesomeIcon icon={faVolume} size="lg" color="white" />
-						<input type="range" className="ml-2" />
-					</div> */}
-					<Devices />
-				</div>
+				<div className="w-1/3">&nbsp;</div>
+				<div className="w-1/3 flex items-center justify-end">&nbsp;</div>
 			</div>
 		</div>
 	);

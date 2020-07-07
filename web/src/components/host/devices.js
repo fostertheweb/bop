@@ -11,7 +11,7 @@ import {
 	faVolume,
 } from "@fortawesome/pro-solid-svg-icons";
 import { faChromecast, faUsb } from "@fortawesome/free-brands-svg-icons";
-import { useDevices } from "hooks/useDevices";
+import { useDevices } from "hooks/use-devices";
 import { useRecoilState } from "recoil";
 import { currentDeviceAtom } from "atoms/current-device";
 

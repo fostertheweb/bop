@@ -1,12 +1,16 @@
-import { selector } from "recoil";
+import { atom, selector } from "recoil";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
-export const clientAccessTokenSelector = selector({
-	key: "crowdQ.storage.clientAccessToken",
+export const clientAccessTokenQuery = selector({
+	key: "crowdQ.clientAccessTokenQuery",
 	get: async () => {
 		const response = await fetch(`${API_BASE_URL}/authorize`);
-		const { access_token } = await response.json();
-		return access_token;
+		return await response.json();
 	},
+});
+
+export const clientAccessTokenState = atom({
+	key: "crowdQ.clientAccessToken",
+	default: null,
 });
