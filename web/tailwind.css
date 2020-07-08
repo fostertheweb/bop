@@ -83,6 +83,13 @@
 	--fa-secondary-opacity: 1;
 }
 
+.theme-logo {
+	--fa-primary-color: #537bec;
+	--fa-secondary-color: #38b2ac;
+	--fa-primary-opacity: 1;
+	--fa-secondary-opacity: 1;
+}
+
 /* ff */
 
 .londrina-solid {

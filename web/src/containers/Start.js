@@ -4,15 +4,24 @@ import { useRecoilValue } from "recoil";
 import { playQueueAtom } from "atoms/play-queue";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSheep, faUsersCrown } from "@fortawesome/pro-duotone-svg-icons";
+import {
+	faSheep,
+	faUsersCrown,
+	faListMusic,
+} from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Start() {
 	const playQueue = useRecoilValue(playQueueAtom);
 
 	return (
 		<div className="flex flex-col justify-center items-center p-4">
-			<div>
-				<h1 className="cq-text-white text-4xl font-bold tracking-wide catamaran">
+			<div className="flex items-center">
+				<FontAwesomeIcon
+					icon={faListMusic}
+					size="lg"
+					className="theme-logo mr-2"
+				/>
+				<h1 className="cq-text-white text-2xl font-medium tracking-wider cabin">
 					CrowdQ
 				</h1>
 			</div>
