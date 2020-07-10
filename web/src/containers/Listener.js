@@ -27,11 +27,9 @@ export default function Listener() {
 	const setClientAccessToken = useSetRecoilState(clientAccessTokenState);
 	const setQueue = useSetRecoilState(playQueueAtom);
 
-	useEffect(() => {
-		socket.on("queueUpdated", ({ payload: queue }) => {
-			console.log("Hi, new queue here.");
-			setQueue(queue);
-		});
+	socket.on("queueUpdated", ({ payload: queue }) => {
+		console.log({ action: "queueUpdated", state: queue });
+		setQueue(queue);
 	});
 
 	useEffect(() => {

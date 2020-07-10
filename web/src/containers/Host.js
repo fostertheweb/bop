@@ -29,20 +29,21 @@ export default function Host() {
 
 	useEffect(() => {
 		socket.on("joined", (payload) => {
-			console.log({ payload });
+			console.log({ on: "joined", arg: payload });
 		});
 
 		socket.on("addToQueue", (item) => {
-			console.log(item);
-			addToQueue(item);
+			console.log({ on: "addToQueue", arg: item });
+			// addToQueue(item);
 		});
 		// eslint-disable-next-line
 	}, []);
 
 	useEffect(() => {
 		if (contents?.id) {
-			console.log("Updating queue for remote users.");
-			socket.emit("queueUpdated", { room: contents.id, payload: queue });
+			const payload = { room: contents.id, payload: queue };
+			console.log({ emit: "queueUpdated", payload });
+			socket.emit("queueUpdated", payload);
 		}
 		//eslint-disable-next-line
 	}, [queue]);

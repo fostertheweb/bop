@@ -11,6 +11,7 @@ export function useRemoteQueue() {
 	const { room } = useParams();
 
 	function addToQueue(item) {
+		console.log({ emit: "addToQueue", arg: item });
 		socket.emit("addToQueue", { room, user: displayName, payload: item });
 	}
 
