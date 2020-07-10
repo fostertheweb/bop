@@ -8,7 +8,7 @@ import { useDebounce } from "hooks/use-debounce";
 
 export default function Search() {
 	const { addToQueue } = useRemoteQueue();
-	const search = useSearch();
+	const search = useSearch(true);
 	const [searching, setSearching] = useState(false);
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState([]);

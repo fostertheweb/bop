@@ -1,9 +1,13 @@
 import { useRecoilValue } from "recoil";
 import { clientAccessTokenState } from "atoms/client-access-token";
+import { userAccessTokenAtom } from "atoms/user-credentials";
 const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
-export function useSearch() {
-	const token = useRecoilValue(clientAccessTokenState);
+export function useSearch(anonymousRequest = false) {
+	const clientToken = useRecoilValue(clientAccessTokenState);
+	const userToken = useRecoilValue(userAccessTokenAtom);
+	const token = anonymousRequest && clientToken ? clientToken : userToken;
+
 	const headers = {
 		Authorization: `Bearer ${token}`,
 	};
