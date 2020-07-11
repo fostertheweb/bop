@@ -15,6 +15,7 @@
     "fastify-cookie": "3.6.0",
     "fastify-cors": "3.0.2",
     "fastify-plugin": "^1.6.0",
+    "fastify-redis": "^4.0.3",
     "fastify-sensible": "^2.1.1",
     "node-fetch": "^2.6.0",
     "socket.io": "2.3.0"

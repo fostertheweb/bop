@@ -1,6 +1,8 @@
 const app = require("fastify")({ logger: true });
 const io = require("socket.io")(app.server);
 
+const { REDIS_HOST, REDIS_PORT } = process.env;
+
 io.on("connection", (socket) => {
 	socket.on("join", (data) => {
 		console.log(`${data.user} joining ${data.room}`);
@@ -39,6 +41,10 @@ app.register(require("fastify-sensible"));
 app.register(require("fastify-cookie"), {
 	secret: "almond-milk", // we'll change this
 	parseOptions: {}, // options for parsing cookies
+});
+app.register(require("fastify-redis"), {
+	host: REDIS_HOST,
+	port: REDIS_PORT,
 });
 
 // routes
