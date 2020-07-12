@@ -4938,6 +4938,15 @@ fastify-sensible@^2.1.1:
     type-is "^1.6.18"
     vary "^1.1.2"
 
+fastify-websocket@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/fastify-websocket/-/fastify-websocket-2.0.5.tgz#8b858760d0321b6e9edd53a694506b5b67641a9f"
+  integrity sha512-7Tng7He+qykMdAo1zCKWug8PyLmyQJa0wYhSQKpI0DPHrB2Wk2pSRWabwSQNj3TRDtWB+0J3IeO1Za6/maG7jQ==
+  dependencies:
+    fastify-plugin "^2.0.0"
+    find-my-way "^3.0.0"
+    ws "^7.2.3"
+
 fastify@^2.12.0:
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/fastify/-/fastify-2.14.1.tgz#2946e8e9adebcd1b4f634178c8fb7162fb816cf4"
@@ -5084,6 +5093,15 @@ find-my-way@^2.2.2:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/find-my-way/-/find-my-way-2.2.3.tgz#529f5969dbd1e6ebed674a7a1087c3430988e39e"
   integrity sha512-C7dxfbX8pV1maLd31ygkBEOaD51Ls4dROuHjeSQZf1FeQinUzq3UA/kSPecLSDy9iAQufd8w1zgp7j64kyLdhw==
+  dependencies:
+    fast-decode-uri-component "^1.0.0"
+    safe-regex2 "^2.0.0"
+    semver-store "^0.3.0"
+
+find-my-way@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/find-my-way/-/find-my-way-3.0.1.tgz#3df89fd2b145446c09291e1fd0bb67af1177deda"
+  integrity sha512-tHUHIRGTcfl3phGKLZeD2Xkb+I0QZr4xduSwCJG5Ke11pdJTGuMDtAyAiJzUdWBZJgHA0H42Pb0WF3H321KbRA==
   dependencies:
     fast-decode-uri-component "^1.0.0"
     safe-regex2 "^2.0.0"
@@ -12227,6 +12245,11 @@ ws@^7.1.2:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.0.tgz#4b2f7f219b3d3737bc1a2fbf145d825b94d38ffd"
   integrity sha512-iFtXzngZVXPGgpTlP1rBqsUK82p9tKqsWRPg5L56egiljujJT3vGAYnHANvFxBieXrTFavhzhxW52jnaWV+w2w==
+
+ws@^7.2.3:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.1.tgz#d0547bf67f7ce4f12a72dfe31262c68d7dc551c8"
+  integrity sha512-D3RuNkynyHmEJIpD2qrgVkc9DQ23OrN/moAwZX4L8DfvszsJxpjQuUq3LMx6HoYji9fbIOBY18XWBsAux1ZZUA==
 
 ws@~6.1.0:
   version "6.1.4"
