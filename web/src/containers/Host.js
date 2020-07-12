@@ -21,8 +21,7 @@ export default function Host() {
 
   useEffect(() => {
     if (state === "hasValue" && contents) {
-      const { id: room } = contents;
-      socket.emit("join", { room, user: room });
+      // POST /api/queue
     }
   }, [state, contents]);
 

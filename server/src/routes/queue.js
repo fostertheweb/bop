@@ -1,9 +1,16 @@
 module.exports = function (app, _options, next) {
-  app.get("/:room/add", async function (req, res) {});
+  app.post("/", async function (request, reply) {
+    // redis set list for user key
+    // redis set session hash for user key
+  });
 
-  app.get("/:room/request", async function (req, res) {});
+  app.get("/", async function (request, reply) {
+    // return all redis hashes
+  });
 
-  app.get("/:room/add", async function (req, res) {});
+  app.put("/:room", async function (request, reply) {
+    // request host to add song
+  });
 
   next();
 };
