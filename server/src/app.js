@@ -1,27 +1,6 @@
 const app = require("fastify")({ logger: true });
-const io = require("socket.io")(app.server);
 
-io.on("connection", socket => {
-  socket.on("join", data => {
-    console.log(`${data.user} joining ${data.room}`);
-    socket.join(data.room);
-    // socket.broadcast.to(data.room).emit("joined", `${data.user}, joined.`);
-    io.to(data.room).emit("joined", `${data.user}, joined.`);
-  });
-
-  socket.on("clap", data => {
-    console.log(data);
-    socket.broadcast.to(data.room).emit("clap", `${data.user}, clapped!`);
-  });
-
-  socket.on("addToQueue", data => {
-    socket.broadcast.to(data.room).emit("addToQueue", data.payload);
-  });
-
-  socket.on("queueUpdated", data => {
-    socket.to(data.room).emit("queueUpdate", data.payload);
-  });
-});
+const { REDIS_HOST, REDIS_PORT } = process.env;
 
 // health check
 app.get("/ping", () => "PONG");
@@ -35,16 +14,19 @@ app.register(require("fastify-cors"), {
   maxAge: 300,
 });
 app.register(require("fastify-sensible"));
-
 app.register(require("fastify-cookie"), {
   secret: "almond-milk", // we'll change this
   parseOptions: {}, // options for parsing cookies
 });
+app.register(require("fastify-redis"), {
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+});
+app.register(require("fastify-websocket"));
 
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });
-app.register(require("./routes/login"), { prefix: "/login" });
-app.register(require("./routes/callback"), { prefix: "/callback" });
-app.register(require("./routes/refresh"), { prefix: "/refresh" });
+app.register(require("./routes/queues"), { prefix: "/queues" });
+app.register(require("./routes/rooms"), { prefix: "/rooms" });
 
 module.exports = app;
