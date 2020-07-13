@@ -7,7 +7,7 @@ const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 export const clientAccessTokenQuery = selector({
   key: "crowdQ.clientAccessTokenQuery",
   get: async () => {
-    const response = await fetch(`${API_BASE_URL}/authorize`);
+    const response = await fetch(`${API_BASE_URL}/spotify/authorize`);
     return await response.json();
   },
 });
@@ -40,7 +40,7 @@ export function useLogin() {
     setStatus("pending");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/spotify/login`, {
         method: "POST",
         body: JSON.stringify({ code, redirect_uri, grant_type }),
         headers: {
@@ -68,7 +68,7 @@ export function useLogin() {
     setStatus("pending");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/refresh?${stringify({
+        `${API_BASE_URL}/spotify/refresh?${stringify({
           refresh_token: userRefreshToken,
         })}`,
       );

@@ -10,7 +10,7 @@ const {
   SPOTIFY_CLIENT_SECRET,
 } = process.env;
 const redirect_uri = `${API_BASE_URL}/spotify/callback`;
-const client_uri = `${CLIENT_BASE_URL}/spotify/login`;
+const client_uri = `${CLIENT_BASE_URL}/login`;
 const clientCredentials = SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET;
 const token = Buffer.from(clientCredentials).toString("base64");
 const scope = [
@@ -79,7 +79,7 @@ module.exports = function (app, _options, next) {
     res.redirect(
       `${SPOTIFY_API_BASE_URL}/authorize?${querystring.stringify({
         response_type: "code",
-        client_id,
+        client_id: SPOTIFY_CLIENT_ID,
         scope,
         redirect_uri,
       })}`,
