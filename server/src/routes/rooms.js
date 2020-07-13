@@ -8,7 +8,7 @@ module.exports = function (app, _options, next) {
     // return all redis hashes
   });
 
-  app.put("/:owner", async function (request, reply) {
+  app.put("/:host", async function (request, reply) {
     // request host to add song
   });
 
