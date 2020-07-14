@@ -3,7 +3,20 @@ version: 0.2
 phases:
   install:
     commands:
+      - curl -fsSLO "https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip"
+      - unzip terraform_0.12.28_linux_amd64.zip -d /usr/local/bin
+  pre_build:
+    commands:
       - yarn install
   build:
     commands:
       - yarn workspace web run build
+      - yarn workspace server run build
+  post_build:
+    commands:
+      - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
+      - terraform apply -target=server -auto-approve -input=false
+      - export REACT_APP_SPOTIFY_CLIENT_ID=$TF_VAR_spotify_client_id
+      - export REACT_APP_SPOTIFY_CLIENT_SECRET=$TF_VAR_spotify_client_secret
+      - export REACT_APP_API_BASE_URL=$(terraform output server.api_endpoint)
+      - terraform apply -target=web -auto-approve -input=false
