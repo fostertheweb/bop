@@ -12,12 +12,8 @@ phases:
   build:
     commands:
       - yarn workspace server run build
-      - terraform apply -target=module.server -auto-approve -input=false \
-        -var "spotify_client_id=$SPOTIFY_CLIENT_ID" \
-        -var "spotify_client_secret=$SPOTIFY_CLIENT_SECRET" \
-        -var "redis_host=$REDIS_HOST" \
-        -var "redis_port=$REDIS_PORT" \
-        -var "redis_password=$REDIS_PASSWORD"
+      - echo $(aws secretsmanager get-secret-value --secret-id crowdq-fm-config) >> ./terraform.tfvars
+      - terraform apply -target=module.server -auto-approve -input=false
       - export REACT_APP_SPOTIFY_CLIENT_ID="$SPOTIFY_CLIENT_ID"
       - export REACT_APP_SPOTIFY_CLIENT_SECRET="$SPOTIFY_CLIENT_SECRET"
       - export REACT_APP_API_BASE_URL=$(terraform output server.api_endpoint)
