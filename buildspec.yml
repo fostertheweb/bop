@@ -9,17 +9,14 @@ phases:
     commands:
       - yarn install
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
-      - yarn workspace server run build
-      - export TF_VAR_spotify_client_id="$SPOTIFY_CLIENT_ID"
-      - export TF_VAR_spotify_client_secret="$SPOTIFY_CLIENT_SECRET"
-      - export TF_VAR_redis_host="$REDIS_HOST"
-      - export TF_VAR_redis_port="$REDIS_PORT"
-      - export TF_VAR_redis_password="$REDIS_PASSWORD"
-      - terraform apply -target=module.server -auto-approve -input=false
   build:
     commands:
+      - yarn workspace server run build
+      - echo "$TF_VARS" >> ./terraform.tfvars
+      - terraform apply -target=module.server -auto-approve -input=false
       - export REACT_APP_SPOTIFY_CLIENT_ID="$SPOTIFY_CLIENT_ID"
       - export REACT_APP_SPOTIFY_CLIENT_SECRET="$SPOTIFY_CLIENT_SECRET"
       - export REACT_APP_API_BASE_URL=$(terraform output server.api_endpoint)
+      - export REACT_APP_SPOTIFY_API_URL="https://api.spotify.com/v1"
       - yarn workspace web run build
       - terraform apply -target=module.web -auto-approve -input=false
