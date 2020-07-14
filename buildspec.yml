@@ -5,18 +5,16 @@ phases:
     commands:
       - curl -fsSLO "https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip"
       - unzip terraform_0.12.28_linux_amd64.zip -d /usr/local/bin
-      - apt install -y jq
   pre_build:
     commands:
       - yarn install
-      - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
   build:
     commands:
       - yarn workspace server run build
-      - aws secretsmanager get-secret-value --secret-id crowdq-fm-config | jq -r ".SecretString" | xargs -0 printf > ./terraform.tfvars
+      - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
       - terraform apply -target=module.server -auto-approve -input=false
-      - export REACT_APP_SPOTIFY_CLIENT_ID="$SPOTIFY_CLIENT_ID"
-      - export REACT_APP_SPOTIFY_CLIENT_SECRET="$SPOTIFY_CLIENT_SECRET"
+      - export REACT_APP_SPOTIFY_CLIENT_ID="$TF_VAR_spotify_client_id"
+      - export REACT_APP_SPOTIFY_CLIENT_SECRET="$TF_VAR_spotify_client_secret"
       - export REACT_APP_API_BASE_URL=$(terraform output server.api_endpoint)
       - export REACT_APP_SPOTIFY_API_URL="https://api.spotify.com/v1"
       - yarn workspace web run build
