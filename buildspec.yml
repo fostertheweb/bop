@@ -15,8 +15,8 @@ phases:
   post_build:
     commands:
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
-      - terraform apply -target=server -auto-approve -input=false
+      - terraform apply -target=module.server -auto-approve -input=false
       - export REACT_APP_SPOTIFY_CLIENT_ID=$TF_VAR_spotify_client_id
       - export REACT_APP_SPOTIFY_CLIENT_SECRET=$TF_VAR_spotify_client_secret
       - export REACT_APP_API_BASE_URL=$(terraform output server.api_endpoint)
-      - terraform apply -target=web -auto-approve -input=false
+      - terraform apply -target=module.web -auto-approve -input=false
