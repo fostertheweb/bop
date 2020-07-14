@@ -1,5 +1,13 @@
 version: 0.2
 
+env:
+  exported-variables:
+    - TF_VAR_spotify_client_id
+    - TF_VAR_spotify_client_secret
+    - TF_VAR_redis_host
+    - TF_VAR_redis_port
+    - TF_VAR_redis_password
+
 phases:
   install:
     commands:
