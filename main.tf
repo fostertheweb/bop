@@ -25,6 +25,7 @@ module "server" {
   source = "./server"
 
   application           = var.application
+  domain_name           = var.domain_name
   spotify_client_id     = var.spotify_client_id
   spotify_client_secret = var.spotify_client_secret
   redis_host            = var.redis_host

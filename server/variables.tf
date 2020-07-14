@@ -2,6 +2,10 @@ variable "application" {
   type = string
 }
 
+variable "domain_name" {
+  type = string
+}
+
 variable "spotify_client_id" {
   type = string
 }

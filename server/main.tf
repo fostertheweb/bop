@@ -79,7 +79,7 @@ resource "aws_lambda_function" "server" {
       REDIS_HOST = var.redis_host
       REDIS_PORT = var.redis_port
       REDIS_PASSWORD = var.redis_password
-      CLIENT_BASE_URL = "https://${var.domain}"
+      CLIENT_BASE_URL = "https://${var.domain_name}"
     }
   }
 
