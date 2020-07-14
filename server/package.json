@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-lambda-fastify": "^1.4.4",
     "fastify": "^3.0.2",
     "fastify-cookie": "^4.0.2",
     "fastify-cors": "^4.0.0",
