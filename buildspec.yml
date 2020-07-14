@@ -13,7 +13,7 @@ phases:
   build:
     commands:
       - yarn workspace server run build
-      - aws secretsmanager get-secret-value --secret-id crowdq-fm-config | jq ".SecretString" | printf > ./terraform.tfvars
+      - aws secretsmanager get-secret-value --secret-id crowdq-fm-config | jq -r ".SecretString" | xargs -0 printf > ./terraform.tfvars
       - terraform apply -target=module.server -auto-approve -input=false
       - export REACT_APP_SPOTIFY_CLIENT_ID="$SPOTIFY_CLIENT_ID"
       - export REACT_APP_SPOTIFY_CLIENT_SECRET="$SPOTIFY_CLIENT_SECRET"
