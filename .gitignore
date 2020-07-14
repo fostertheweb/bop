@@ -25,3 +25,13 @@ yarn-error.log*
 .env
 **/node_modules
 web/src/styles.css
+
+# production
+/build
+**/dist
+**/.build
+.terraform/
+**/*.zip
+*.tfvars
+web/src/styles.css
+web/build
