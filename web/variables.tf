@@ -15,6 +15,7 @@ variable "client_mime_types" {
     json  = "application/json"
     txt   = "text/plain"
     ico   = "image/x-icon"
+    png   = "image/png"
     ttf   = "font/ttf"
     otf   = "font/otf"
     eot   = "font/eot"
