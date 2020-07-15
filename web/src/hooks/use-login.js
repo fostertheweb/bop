@@ -50,6 +50,7 @@ export function useLogin() {
     userRefreshTokenAtom,
   );
   const [status, setStatus] = useState("idle");
+  const redirect_uri = window.location.origin + window.location.pathname;
 
   function redirect() {
     return `https://accounts.spotify.com/authorize?${stringify({
@@ -60,13 +61,17 @@ export function useLogin() {
     })}`;
   }
 
-  async function login(code, redirect_uri, grant_type) {
+  async function login(code) {
     setStatus("pending");
 
     try {
       const response = await fetch(`${API_BASE_URL}/spotify/login`, {
         method: "POST",
-        body: JSON.stringify({ code, redirect_uri, grant_type }),
+        body: JSON.stringify({
+          code,
+          redirect_uri,
+          grant_type: "authorization_code",
+        }),
         headers: {
           "Content-Type": "application/json",
         },

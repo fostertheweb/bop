@@ -9,19 +9,19 @@ import { useLogin } from "hooks/use-login";
 export default function Login() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { code, redirect_uri, grant_type } = parse(location.search);
+  const { code } = parse(location.search);
   const { login, redirect, status } = useLogin();
 
   useEffect(() => {
-    if (code && redirect_uri && grant_type) {
-      login(code, redirect_uri, grant_type);
+    if (code) {
+      login(code);
     }
 
     if (status === "success") {
       navigate("/host/search");
     }
     // eslint-disable-next-line
-  }, [code, redirect_uri, grant_type, status]);
+  }, [code, status]);
 
   return (
     <div className="flex flex-col justify-center h-screen w-full items-center">
