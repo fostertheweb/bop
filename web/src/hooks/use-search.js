@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom, clientAccessTokenState } from "hooks/use-login";
 
-const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export function useSearch(anonymousRequest = false) {
   const clientToken = useRecoilValue(clientAccessTokenState);
@@ -14,7 +14,7 @@ export function useSearch(anonymousRequest = false) {
   return async function search(query) {
     try {
       const response = await fetch(
-        `${SPOTIFY_API_URL}/search?query=${query}&type=track&market=US`,
+        `${SPOTIFY_API_BASE_URL}/search?query=${query}&type=track&market=US`,
         { headers },
       );
       const { tracks } = await response.json();

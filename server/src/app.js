@@ -9,7 +9,7 @@ app.get("/ping", () => "PONG");
 app.register(require("fastify-cors"), {
   origin: true,
   methods: ["GET", "POST", "PUT", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "Host"],
   credentials: true,
   maxAge: 300,
 });

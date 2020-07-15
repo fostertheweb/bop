@@ -1,7 +1,7 @@
 import { selector } from "recoil";
 import { userAccessTokenAtom } from "hooks/use-login";
 
-const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export const currentUserIdState = selector({
   key: "crowdQ.currentUserId",
@@ -22,7 +22,7 @@ export const userDetailsSelector = selector({
     const userAccessToken = get(userAccessTokenAtom);
 
     if (userAccessToken) {
-      const response = await fetch(`${SPOTIFY_API_URL}/me`, {
+      const response = await fetch(`${SPOTIFY_API_BASE_URL}/me`, {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
         },

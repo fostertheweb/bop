@@ -2,7 +2,24 @@ import { useState } from "react";
 import { atom, selector, useRecoilState, useSetRecoilState } from "recoil";
 import { stringify } from "query-string";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+const {
+  REACT_APP_API_BASE_URL: API_BASE_URL,
+  REACT_APP_SPOTIFY_CLIENT_ID: SPOTIFY_CLIENT_ID,
+  REACT_APP_SPOTIFY_AUTH_API_BASE_URL: SPOTIFY_AUTH_API_BASE_URL,
+} = process.env;
+
+const scope = [
+  "user-read-private",
+  "playlist-read-private",
+  "playlist-modify-public",
+  "playlist-read-collaborative",
+  "user-read-currently-playing",
+  "user-modify-playback-state",
+  "user-read-playback-state",
+  "app-remote-control",
+  "streaming",
+].join(" ");
+const redirect_uri = `${API_BASE_URL}/spotify/callback`;
 
 export const clientAccessTokenQuery = selector({
   key: "crowdQ.clientAccessTokenQuery",
@@ -35,6 +52,15 @@ export function useLogin() {
     userRefreshTokenAtom,
   );
   const [status, setStatus] = useState("idle");
+
+  function redirect() {
+    return `${SPOTIFY_AUTH_API_BASE_URL}/authorize?${stringify({
+      response_type: "code",
+      client_id: SPOTIFY_CLIENT_ID,
+      scope,
+      redirect_uri,
+    })}`;
+  }
 
   async function login(code, redirect_uri, grant_type) {
     setStatus("pending");
@@ -89,5 +115,5 @@ export function useLogin() {
     }
   }
 
-  return { login, refresh, status };
+  return { login, redirect, refresh, status };
 }

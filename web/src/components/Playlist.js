@@ -10,7 +10,7 @@ import { useQueue } from "hooks/use-queue";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom } from "hooks/use-login";
 
-const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export default function Playlist() {
   const userAccessToken = useRecoilValue(userAccessTokenAtom);
@@ -23,7 +23,7 @@ export default function Playlist() {
 
   const { status, data: items } = useQuery("playlistTracks", [], async () => {
     const response = await fetch(
-      `${SPOTIFY_API_URL}/playlists/${playlistId}/tracks`,
+      `${SPOTIFY_API_BASE_URL}/playlists/${playlistId}/tracks`,
       {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,

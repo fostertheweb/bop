@@ -7,7 +7,7 @@ import { currentUserIdState } from "atoms/user-details";
 import { useQuery } from "react-query";
 import { userAccessTokenAtom } from "hooks/use-login";
 
-const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export default function Playlists() {
   const userId = useRecoilValue(currentUserIdState);
@@ -15,7 +15,7 @@ export default function Playlists() {
   const navigate = useNavigate();
   const { status, data } = useQuery("playlists", async () => {
     const response = await fetch(
-      `${SPOTIFY_API_URL}/users/${userId}/playlists`,
+      `${SPOTIFY_API_BASE_URL}/users/${userId}/playlists`,
       {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
