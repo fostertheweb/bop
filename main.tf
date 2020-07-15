@@ -24,7 +24,6 @@ data "aws_route53_zone" "selected" {
   name = "${var.domain_name}."
 }
 
-#ACM
 resource "aws_acm_certificate" "cert" {
   domain_name       = var.domain_name
   validation_method = "DNS"

@@ -131,6 +131,8 @@ resource "aws_api_gateway_stage" "prod" {
 resource "aws_api_gateway_domain_name" "api" {
   certificate_arn = var.cert_arn
   domain_name     = "api.${var.domain_name}"
+
+  depends_on = [var.cert_arn]
 }
 
 data "aws_route53_zone" "selected" {
