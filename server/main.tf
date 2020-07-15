@@ -73,13 +73,13 @@ resource "aws_lambda_function" "server" {
 
   environment {
     variables = {
-      SPOTIFY_CLIENT_ID  = var.spotify_client_id
-      SPOTIFY_CLIENT_SECRET     = var.spotify_client_secret
-      SPOTIFY_API_BASE_URL = "https://accounts.spotify.com"
-      REDIS_HOST = var.redis_host
-      REDIS_PORT = var.redis_port
-      REDIS_PASSWORD = var.redis_password
-      CLIENT_BASE_URL = "https://${var.domain_name}"
+      SPOTIFY_CLIENT_ID     = var.spotify_client_id
+      SPOTIFY_CLIENT_SECRET = var.spotify_client_secret
+      SPOTIFY_API_BASE_URL  = "https://accounts.spotify.com"
+      REDIS_HOST            = var.redis_host
+      REDIS_PORT            = var.redis_port
+      REDIS_PASSWORD        = var.redis_password
+      CLIENT_BASE_URL       = "https://${var.domain_name}"
     }
   }
 
@@ -126,4 +126,25 @@ resource "aws_api_gateway_stage" "prod" {
   rest_api_id   = aws_api_gateway_rest_api.server.id
   stage_name    = "prod"
   deployment_id = aws_api_gateway_deployment.server.id
+}
+
+resource "aws_api_gateway_domain_name" "api" {
+  certificate_arn = var.cert_arn
+  domain_name     = "api.${var.domain_name}"
+}
+
+data "aws_route53_zone" "selected" {
+  name = "${var.domain_name}."
+}
+
+resource "aws_route53_record" "api" {
+  name    = aws_api_gateway_domain_name.api.domain_name
+  type    = "A"
+  zone_id = data.aws_route53_zone.selected.zone_id
+
+  alias {
+    evaluate_target_health = true
+    name                   = aws_api_gateway_domain_name.api.cloudfront_domain_name
+    zone_id                = aws_api_gateway_domain_name.api.cloudfront_zone_id
+  }
 }

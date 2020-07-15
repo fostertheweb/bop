@@ -11,11 +11,10 @@ phases:
   build:
     commands:
       - yarn workspace server run build
-      - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
-      - terraform apply -target=module.server -auto-approve -input=false
       - export REACT_APP_SPOTIFY_CLIENT_ID="$TF_VAR_spotify_client_id"
       - export REACT_APP_SPOTIFY_CLIENT_SECRET="$TF_VAR_spotify_client_secret"
-      - export REACT_APP_API_BASE_URL=$(terraform output server.api_endpoint)
+      - export REACT_APP_API_BASE_URL="https://api.crowdq.fm"
       - export REACT_APP_SPOTIFY_API_URL="https://api.spotify.com/v1"
       - yarn workspace web run build
-      - terraform apply -target=module.web -auto-approve -input=false
+      - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
+      - terraform apply -auto-approve -input=false
