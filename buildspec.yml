@@ -17,4 +17,4 @@ phases:
       - export REACT_APP_SPOTIFY_API_URL="https://api.spotify.com/v1"
       - yarn workspace web run build
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
-      - terraform apply -auto-approve -input=false
+      - terraform destroy -auto-approve -input=false
