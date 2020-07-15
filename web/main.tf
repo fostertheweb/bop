@@ -7,6 +7,7 @@ locals {
 # Client
 resource "aws_s3_bucket" "web" {
   bucket = var.domain_name
+  acl    = "public-read"
 
   website {
     index_document = "index.html"
