@@ -113,7 +113,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   tags = local.common_tags
 
-  depends_on = [aws_s3_bucket.web]
+  depends_on = [aws_s3_bucket.web, var.cert_arn]
 }
 
 resource "aws_cloudfront_origin_access_identity" "access_identity" {
