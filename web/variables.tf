@@ -6,6 +6,10 @@ variable "domain_name" {
   type = string
 }
 
+variable "cert_arn" {
+  type = string
+}
+
 variable "client_mime_types" {
   default = {
     html  = "text/html"
