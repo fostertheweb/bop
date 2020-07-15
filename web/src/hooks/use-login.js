@@ -5,7 +5,6 @@ import { stringify } from "query-string";
 const {
   REACT_APP_API_BASE_URL: API_BASE_URL,
   REACT_APP_SPOTIFY_CLIENT_ID: SPOTIFY_CLIENT_ID,
-  REACT_APP_SPOTIFY_AUTH_API_BASE_URL: SPOTIFY_AUTH_API_BASE_URL,
 } = process.env;
 
 const scope = [
@@ -54,7 +53,7 @@ export function useLogin() {
   const [status, setStatus] = useState("idle");
 
   function redirect() {
-    return `${SPOTIFY_AUTH_API_BASE_URL}/authorize?${stringify({
+    return `https://accounts.spotify.com/authorize?${stringify({
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
       scope,
