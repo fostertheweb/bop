@@ -27,7 +27,7 @@ data "aws_route53_zone" "selected" {
 resource "aws_acm_certificate" "cert" {
   domain_name               = var.domain_name
   validation_method         = "DNS"
-  subject_alternative_names = ["api.${var.domain_name}"]
+  subject_alternative_names = ["*.${var.domain_name}"]
 
   lifecycle {
     create_before_destroy = true
@@ -37,19 +37,21 @@ resource "aws_acm_certificate" "cert" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  name    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
-  zone_id = data.aws_route53_zone.selected.id
-  records = [aws_acm_certificate.cert.domain_validation_options.0.resource_record_value]
-  ttl     = 60
+  name            = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
+  type            = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
+  zone_id         = data.aws_route53_zone.selected.id
+  records         = [aws_acm_certificate.cert.domain_validation_options.0.resource_record_value]
+  ttl             = 60
+  allow_overwrite = true
 }
 
 resource "aws_route53_record" "cert_validation_api" {
-  name    = aws_acm_certificate.cert.domain_validation_options.1.resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options.1.resource_record_type
-  zone_id = data.aws_route53_zone.selected.id
-  records = [aws_acm_certificate.cert.domain_validation_options.1.resource_record_value]
-  ttl     = 60
+  name            = aws_acm_certificate.cert.domain_validation_options.1.resource_record_name
+  type            = aws_acm_certificate.cert.domain_validation_options.1.resource_record_type
+  zone_id         = data.aws_route53_zone.selected.id
+  records         = [aws_acm_certificate.cert.domain_validation_options.1.resource_record_value]
+  ttl             = 60
+  allow_overwrite = true
 }
 
 resource "aws_acm_certificate_validation" "cert" {

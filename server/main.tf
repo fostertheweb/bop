@@ -120,6 +120,10 @@ resource "aws_api_gateway_deployment" "server" {
       jsonencode(aws_api_gateway_integration.lambda),
     )))
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_stage" "prod" {
