@@ -73,13 +73,12 @@ resource "aws_lambda_function" "server" {
 
   environment {
     variables = {
-      SPOTIFY_CLIENT_ID     = var.spotify_client_id
-      SPOTIFY_CLIENT_SECRET = var.spotify_client_secret
-      SPOTIFY_API_BASE_URL  = "https://accounts.spotify.com"
-      REDIS_HOST            = var.redis_host
-      REDIS_PORT            = var.redis_port
-      REDIS_PASSWORD        = var.redis_password
-      CLIENT_BASE_URL       = "https://${var.domain_name}"
+      SPOTIFY_CLIENT_ID         = var.spotify_client_id
+      SPOTIFY_CLIENT_SECRET     = var.spotify_client_secret
+      SPOTIFY_AUTH_API_BASE_URL = "https://accounts.spotify.com"
+      REDIS_HOST                = var.redis_host
+      REDIS_PORT                = var.redis_port
+      REDIS_PASSWORD            = var.redis_password
     }
   }
 

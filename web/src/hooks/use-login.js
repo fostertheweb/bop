@@ -18,7 +18,6 @@ const scope = [
   "app-remote-control",
   "streaming",
 ].join(" ");
-const redirect_uri = `${API_BASE_URL}/spotify/callback`;
 
 export const clientAccessTokenQuery = selector({
   key: "crowdQ.clientAccessTokenQuery",
@@ -57,7 +56,7 @@ export function useLogin() {
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
       scope,
-      redirect_uri,
+      redirect_uri: window.location.href,
     })}`;
   }
 
