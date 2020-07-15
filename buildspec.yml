@@ -14,7 +14,8 @@ phases:
       - export REACT_APP_SPOTIFY_CLIENT_ID="$TF_VAR_spotify_client_id"
       - export REACT_APP_SPOTIFY_CLIENT_SECRET="$TF_VAR_spotify_client_secret"
       - export REACT_APP_API_BASE_URL="https://api.crowdq.fm"
-      - export REACT_APP_SPOTIFY_API_URL="https://api.spotify.com/v1"
+      - export REACT_APP_SPOTIFY_API_BASE_URL="https://api.spotify.com/v1"
+      - export REACT_APP_SPOTIFY_AUTH_API_BASE_URL="https://accounts.spotify.com"
       - yarn workspace web run build
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
       - terraform apply -auto-approve -input=false
