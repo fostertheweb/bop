@@ -8,18 +8,15 @@ app.get("/ping", () => "PONG");
 // installed plugins
 app.register(require("fastify-cors"), {
   origin: true,
-  methods: ["OPTIONS", "GET", "POST", "PUT", "PATCH"],
+  methods: ["GET", "POST"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
-    "Origin",
-    "Host",
     "X-Amz-User-Agent",
     "X-Amz-Security-Token",
     "X-Amz-Date",
   ],
   credentials: true,
-  maxAge: 300,
 });
 app.register(require("fastify-sensible"));
 app.register(require("fastify-cookie"), {
