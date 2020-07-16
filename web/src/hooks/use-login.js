@@ -72,6 +72,7 @@ export function useLogin() {
         }),
         headers: {
           "Content-Type": "application/json",
+          Origin: window.location.origin,
         },
       });
 
