@@ -57,7 +57,7 @@ export function useLogin() {
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
       scope,
-      redirect_uri: window.location.href,
+      redirect_uri,
     })}`;
   }
 
@@ -70,7 +70,6 @@ export function useLogin() {
         body: JSON.stringify({
           code,
           redirect_uri,
-          grant_type: "authorization_code",
         }),
         headers: {
           "Content-Type": "application/json",

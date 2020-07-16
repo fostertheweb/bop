@@ -64,7 +64,7 @@ module.exports = function (app, _options, next) {
         method: "POST",
         body: params,
         headers: {
-          Authorization: "Basic " + token,
+          Authorization: `Basic ${token}`,
         },
       });
       return await response.json();
