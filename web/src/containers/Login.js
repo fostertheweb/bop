@@ -11,10 +11,11 @@ export default function Login() {
   const navigate = useNavigate();
   const { code } = parse(location.search);
   const { login, redirect, status } = useLogin();
+  const redirect_uri = window.location.origin + window.location.pathname;
 
   useEffect(() => {
     if (code) {
-      login(code);
+      login(code, redirect_uri);
     }
 
     if (status === "success") {
@@ -26,7 +27,7 @@ export default function Login() {
   return (
     <div className="flex flex-col justify-center h-screen w-full items-center">
       <a
-        href={`${redirect()}`}
+        href={redirect(redirect_uri)}
         className="px-6 py-4 rounded-full bg-green-500 text-white leading hover:bg-green-600">
         {status === "pending" ? (
           <FontAwesomeIcon icon={faSpinnerThird} spin size="lg" />

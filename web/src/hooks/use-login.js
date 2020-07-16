@@ -50,9 +50,8 @@ export function useLogin() {
     userRefreshTokenAtom,
   );
   const [status, setStatus] = useState("idle");
-  const redirect_uri = window.location.origin + window.location.pathname;
 
-  function redirect() {
+  function redirect(redirect_uri) {
     return `https://accounts.spotify.com/authorize?${stringify({
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
@@ -61,7 +60,7 @@ export function useLogin() {
     })}`;
   }
 
-  async function login(code) {
+  async function login(code, redirect_uri) {
     setStatus("pending");
 
     try {
@@ -99,6 +98,7 @@ export function useLogin() {
         `${API_BASE_URL}/spotify/refresh?${stringify({
           refresh_token: userRefreshToken,
         })}`,
+        { method: "POST" },
       );
 
       if (response.error) {
