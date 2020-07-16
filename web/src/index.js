@@ -12,10 +12,10 @@ import "./styles.css";
 import "./index.css";
 
 ReactDOM.render(
-	<Router>
-		<App className="cq-bg-dark h-full" />
-	</Router>,
-	document.getElementById("root"),
+  <Router>
+    <App className="cq-bg-dark h-full" />
+  </Router>,
+  document.getElementById("root"),
 );
 
 // If you want your app to work offline and load faster, you can change
