@@ -12,6 +12,7 @@ export default function Login() {
   const { code } = parse(location.search);
   const { login, redirect, status } = useLogin();
   const redirect_uri = `${window.location.origin}${window.location.pathname}`;
+  const spotify = redirect(redirect_uri);
 
   useEffect(() => {
     if (code && status === "idle") {
@@ -27,7 +28,7 @@ export default function Login() {
   return (
     <div className="flex flex-col justify-center h-screen w-full items-center">
       <a
-        href={redirect(redirect_uri)}
+        href={spotify}
         className="px-6 py-4 rounded-full bg-green-500 text-white leading hover:bg-green-600">
         {status === "pending" ? (
           <FontAwesomeIcon icon={faSpinnerThird} spin size="lg" />
