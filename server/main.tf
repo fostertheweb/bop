@@ -131,6 +131,17 @@ resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.server.id
 }
 
+resource "aws_lambda_permission" "lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvokeLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = "${var.application}-server"
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/*/* part allows invocation from any stage, method and resource path
+  # within API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.server.execution_arn}/*/*/*"
+}
+
 resource "aws_api_gateway_domain_name" "api" {
   certificate_arn = var.cert_arn
   domain_name     = "api.${var.domain_name}"
