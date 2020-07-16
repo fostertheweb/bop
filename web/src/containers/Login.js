@@ -11,7 +11,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { code } = parse(location.search);
   const { login, redirect, status } = useLogin();
-  const redirect_uri = window.location.origin + window.location.pathname;
+  const redirect_uri = `${window.location.origin}${window.location.pathname}`;
 
   useEffect(() => {
     if (code && status === "idle") {
