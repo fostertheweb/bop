@@ -14,7 +14,7 @@ export default function Login() {
   const redirect_uri = window.location.origin + window.location.pathname;
 
   useEffect(() => {
-    if (code) {
+    if (code && status === "idle") {
       login(code, redirect_uri);
     }
 
