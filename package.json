@@ -4,7 +4,8 @@
   "description": "social queue",
   "scripts": {
     "web": "yarn workspace web start",
-    "server": "yarn workspace server run develop"
+    "server": "yarn workspace server run develop",
+    "build": "yarn workspace server run build && yarn workspace web run build"
   },
   "workspaces": [
     "web",
