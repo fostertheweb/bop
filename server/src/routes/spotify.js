@@ -65,6 +65,7 @@ module.exports = function (app, _options, next) {
         body: params,
         headers: {
           Authorization: `Basic ${token}`,
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       });
       return await response.json();
