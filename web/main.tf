@@ -102,7 +102,12 @@ resource "aws_cloudfront_distribution" "cdn" {
         forward = "none"
       }
 
-      headers = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
+      headers = [
+        "Access-Control-Request-Headers",
+        "Access-Control-Request-Method",
+        "Origin",
+        "Access-Control-Allow-Origin"
+      ]
     }
 
     viewer_protocol_policy = "redirect-to-https"
