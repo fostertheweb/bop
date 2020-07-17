@@ -11,13 +11,10 @@ app.register(require("fastify-cors"), {
   methods: ["GET", "POST"],
   allowedHeaders: [
     "Content-Type",
-    "Authorization",
     "X-Amz-Date",
     "X-Amz-User-Agent",
     "X-Amz-Security-Token",
   ],
-  credentials: true,
-  maxAge: 300,
 });
 app.register(require("fastify-sensible"));
 app.register(require("fastify-cookie"), {
