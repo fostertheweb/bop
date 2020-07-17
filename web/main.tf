@@ -91,7 +91,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   aliases = [var.domain_name, "www.${var.domain_name}"]
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "POST", "OPTIONS"]
+    allowed_methods  = ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.domain_name}-bucket"
 
