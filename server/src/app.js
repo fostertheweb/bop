@@ -6,16 +6,17 @@ const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 app.get("/ping", () => "PONG");
 
 // installed plugins
-// app.register(require("fastify-cors"), {
-//   origin: true,
-//   methods: ["GET", "POST"],
-//   allowedHeaders: [
-//     "Content-Type",
-//     "X-Amz-Date",
-//     "X-Amz-User-Agent",
-//     "X-Amz-Security-Token",
-//   ],
-// });
+app.register(require("fastify-cors"), {
+  origin: true,
+  methods: ["GET", "POST"],
+  allowedHeaders: [
+    "Content-Type",
+    "X-Api-Key",
+    "X-Amz-Date",
+    "X-Amz-User-Agent",
+    "X-Amz-Security-Token",
+  ],
+});
 app.register(require("fastify-sensible"));
 app.register(require("fastify-cookie"), {
   secret: "almond-milk", // we'll change this

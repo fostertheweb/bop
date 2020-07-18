@@ -91,7 +91,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   aliases = [var.domain_name, "www.${var.domain_name}"]
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]
+    allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.domain_name}-bucket"
 
@@ -101,12 +101,6 @@ resource "aws_cloudfront_distribution" "cdn" {
       cookies {
         forward = "none"
       }
-
-      headers = [
-        "Access-Control-Request-Headers",
-        "Access-Control-Request-Method",
-        "Origin",
-      ]
     }
 
     viewer_protocol_policy = "redirect-to-https"

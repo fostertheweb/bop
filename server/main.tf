@@ -87,6 +87,10 @@ resource "aws_lambda_function" "server" {
 
 resource "aws_api_gateway_rest_api" "server" {
   name = "${var.application}-api"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 resource "aws_api_gateway_resource" "proxy" {
@@ -147,6 +151,10 @@ resource "aws_api_gateway_domain_name" "api" {
   domain_name     = "api.${var.domain_name}"
 
   depends_on = [var.cert_arn]
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 data "aws_route53_zone" "selected" {
@@ -160,7 +168,7 @@ resource "aws_route53_record" "api" {
 
   alias {
     evaluate_target_health = true
-    name                   = aws_api_gateway_domain_name.api.cloudfront_domain_name
-    zone_id                = aws_api_gateway_domain_name.api.cloudfront_zone_id
+    name                   = aws_api_gateway_domain_name.api.regional_domain_name
+    zone_id                = aws_api_gateway_domain_name.api.region_zone_id
   }
 }
