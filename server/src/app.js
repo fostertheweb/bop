@@ -1,6 +1,6 @@
 const app = require("fastify")({ logger: true });
 
-const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
+// const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 
 // health check
 app.get("/ping", () => "PONG");
@@ -22,11 +22,11 @@ app.register(require("fastify-cookie"), {
   secret: "almond-milk", // we'll change this
   parseOptions: {}, // options for parsing cookies
 });
-app.register(require("fastify-redis"), {
-  host: REDIS_HOST,
-  port: REDIS_PORT,
-  password: REDIS_PASSWORD,
-});
+// app.register(require("fastify-redis"), {
+//   host: REDIS_HOST,
+//   port: REDIS_PORT,
+//   password: REDIS_PASSWORD,
+// });
 app.register(require("fastify-websocket"));
 
 // routes
