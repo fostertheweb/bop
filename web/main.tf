@@ -83,11 +83,8 @@ resource "aws_cloudfront_distribution" "cdn" {
     origin_id   = "${var.domain_name}-bucket"
     domain_name = aws_s3_bucket.web.bucket_regional_domain_name
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "match-viewer"
-      origin_ssl_protocols   = ["TLSv1.2"]
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.access_identity.cloudfront_access_identity_path
     }
   }
 
@@ -109,7 +106,6 @@ resource "aws_cloudfront_distribution" "cdn" {
         "Access-Control-Request-Headers",
         "Access-Control-Request-Method",
         "Origin",
-        "Access-Control-Allow-Origin"
       ]
     }
 
