@@ -75,7 +75,7 @@ resource "aws_s3_bucket_object" "web_build" {
   etag         = filemd5("./web/build/${each.value}")
   content_type = lookup(var.client_mime_types, split(".", each.value)[length(split(".", each.value)) - 1])
 
-  depends_on = [aws_s3_bucket.web]
+  depends_on = [aws_s3_bucket.web, null_resource.build]
 }
 
 data "aws_iam_policy_document" "s3_policy" {
