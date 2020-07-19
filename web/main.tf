@@ -4,10 +4,6 @@ locals {
   }
 }
 
-provider "null" {
-  version = "2.1.2"
-}
-
 data "aws_route53_zone" "selected" {
   name = "${var.domain_name}."
 }
@@ -57,7 +53,7 @@ resource "null_resource" "build" {
   }
 
   provisioner "local-exec" {
-    command = "yarn run build"
+    command = "yarn workspace web run build"
 
     environment = {
       REACT_APP_SPOTIFY_CLIENT_ID     = var.spotify_client_id
