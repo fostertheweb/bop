@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "cloudwatch_lambda" {
 
 resource "null_resource" "build" {
   triggers = {
-    when = timestamp()
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {

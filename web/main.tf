@@ -49,7 +49,7 @@ resource "aws_s3_bucket" "web" {
 
 resource "null_resource" "build" {
   triggers = {
-    when = timestamp()
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
