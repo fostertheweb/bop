@@ -47,25 +47,6 @@ resource "aws_s3_bucket" "web" {
   tags = local.common_tags
 }
 
-resource "null_resource" "build" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = "yarn workspace web run build"
-
-    environment = {
-      REACT_APP_SPOTIFY_CLIENT_ID     = var.spotify_client_id
-      REACT_APP_SPOTIFY_CLIENT_SECRET = var.spotify_client_secret
-      REACT_APP_API_BASE_URL          = var.api_endpoint
-      REACT_APP_SPOTIFY_API_BASE_URL  = "https://api.spotify.com/v1"
-    }
-  }
-
-  depends_on = [var.api_endpoint]
-}
-
 resource "aws_s3_bucket_object" "web_build" {
   for_each = fileset("./web/build", "**")
 
@@ -75,7 +56,7 @@ resource "aws_s3_bucket_object" "web_build" {
   etag         = filemd5("./web/build/${each.value}")
   content_type = lookup(var.client_mime_types, split(".", each.value)[length(split(".", each.value)) - 1])
 
-  depends_on = [aws_s3_bucket.web, null_resource.build]
+  depends_on = [aws_s3_bucket.web]
 }
 
 data "aws_iam_policy_document" "s3_policy" {

@@ -56,24 +56,11 @@ resource "aws_iam_role_policy" "cloudwatch_lambda" {
   policy = data.aws_iam_policy_document.cloudwatch.json
 }
 
-
-resource "null_resource" "build" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = "yarn workspace server run build"
-  }
-}
-
 # zip the api directory for lambda
 data "archive_file" "server" {
   type        = "zip"
   source_dir  = "./server/dist"
   output_path = "./server/lambda.zip"
-
-  depends_on = [null_resource.build]
 }
 
 resource "aws_lambda_function" "server" {

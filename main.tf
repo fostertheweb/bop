@@ -23,7 +23,7 @@ module "web" {
 
   application           = var.application
   domain_name           = var.domain_name
-  api_endpoint          = module.server.api_endpoint
+  api_endpoint          = var.api_endpoint
   spotify_client_id     = var.spotify_client_id
   spotify_client_secret = var.spotify_client_secret
 }
