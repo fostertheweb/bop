@@ -10,10 +10,5 @@ phases:
       - yarn install
   build:
     commands:
-      - export REACT_APP_SPOTIFY_CLIENT_ID="$TF_VAR_spotify_client_id"
-      - export REACT_APP_SPOTIFY_CLIENT_SECRET="$TF_VAR_spotify_client_secret"
-      - export REACT_APP_API_BASE_URL="https://3lb5ntdvnd.execute-api.us-east-1.amazonaws.com/prod"
-      - export REACT_APP_SPOTIFY_API_BASE_URL="https://api.spotify.com/v1"
-      - yarn run build
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
       - terraform apply -auto-approve -input=false

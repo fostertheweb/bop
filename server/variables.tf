@@ -6,10 +6,6 @@ variable "domain_name" {
   type = string
 }
 
-variable "cert_arn" {
-  type = string
-}
-
 variable "spotify_client_id" {
   type = string
 }

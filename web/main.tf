@@ -4,6 +4,40 @@ locals {
   }
 }
 
+provider "null" {
+  version = "2.1.2"
+}
+
+data "aws_route53_zone" "selected" {
+  name = "${var.domain_name}."
+}
+
+resource "aws_acm_certificate" "cert" {
+  domain_name               = var.domain_name
+  validation_method         = "DNS"
+  subject_alternative_names = ["*.${var.domain_name}"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = local.common_tags
+}
+
+resource "aws_route53_record" "cert_validation" {
+  name            = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
+  type            = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
+  zone_id         = data.aws_route53_zone.selected.id
+  records         = [aws_acm_certificate.cert.domain_validation_options.0.resource_record_value]
+  ttl             = 60
+  allow_overwrite = true
+}
+
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
+}
+
 # Client
 resource "aws_s3_bucket" "web" {
   bucket = var.domain_name
@@ -15,6 +49,25 @@ resource "aws_s3_bucket" "web" {
   }
 
   tags = local.common_tags
+}
+
+resource "null_resource" "build" {
+  triggers = {
+    when = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "yarn run build"
+
+    environment = {
+      REACT_APP_SPOTIFY_CLIENT_ID     = var.spotify_client_id
+      REACT_APP_SPOTIFY_CLIENT_SECRET = var.spotify_client_secret
+      REACT_APP_API_BASE_URL          = var.api_endpoint
+      REACT_APP_SPOTIFY_API_BASE_URL  = "https://api.spotify.com/v1"
+    }
+  }
+
+  depends_on = [var.api_endpoint]
 }
 
 resource "aws_s3_bucket_object" "web_build" {
@@ -113,22 +166,18 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = var.cert_arn
+    acm_certificate_arn      = aws_acm_certificate.cert.arn
     minimum_protocol_version = "TLSv1.1_2016"
     ssl_support_method       = "sni-only"
   }
 
   tags = local.common_tags
 
-  depends_on = [aws_s3_bucket.web, var.cert_arn]
+  depends_on = [aws_s3_bucket.web]
 }
 
 resource "aws_cloudfront_origin_access_identity" "access_identity" {
   comment = "${var.application}-access-identity"
-}
-
-data "aws_route53_zone" "selected" {
-  name = "${var.domain_name}."
 }
 
 resource "aws_route53_record" "web" {

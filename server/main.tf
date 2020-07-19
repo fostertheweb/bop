@@ -145,30 +145,3 @@ resource "aws_lambda_permission" "lambda_permission" {
   # within API Gateway REST API.
   source_arn = "${aws_api_gateway_rest_api.server.execution_arn}/*/*/*"
 }
-
-resource "aws_api_gateway_domain_name" "api" {
-  regional_certificate_arn = var.cert_arn
-  domain_name              = "api.${var.domain_name}"
-
-  depends_on = [var.cert_arn]
-
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
-}
-
-data "aws_route53_zone" "selected" {
-  name = "${var.domain_name}."
-}
-
-resource "aws_route53_record" "api" {
-  name    = aws_api_gateway_domain_name.api.domain_name
-  type    = "A"
-  zone_id = data.aws_route53_zone.selected.zone_id
-
-  alias {
-    evaluate_target_health = true
-    name                   = aws_api_gateway_domain_name.api.regional_domain_name
-    zone_id                = aws_api_gateway_domain_name.api.regional_zone_id
-  }
-}
