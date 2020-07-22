@@ -145,3 +145,23 @@ resource "aws_lambda_permission" "lambda_permission" {
   # within API Gateway REST API.
   source_arn = "${aws_api_gateway_rest_api.server.execution_arn}/*/*/*"
 }
+
+resource "aws_apigatewayv2_api" "websocket_server" {
+  name                       = "${var.application}-websocket-api"
+  protocol_type              = "WEBSOCKET"
+  route_selection_expression = "$request.body.action"
+  target                     = aws_lambda_function.server.arn
+
+  tags = local.common_tags
+}
+
+resource "aws_apigatewayv2_stage" "prod" {
+  api_id      = aws_apigatewayv2_api.websocket_server.id
+  name        = "prod"
+  auto_deploy = true
+}
+
+resource "aws_apigatewayv2_integration" "lambda" {
+  api_id           = aws_apigatewayv2_api.websocket_server.id
+  integration_type = "AWS_PROXY"
+}
