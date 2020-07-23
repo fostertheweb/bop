@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
+import { useQueue, playQueueAtom } from "hooks/use-queue";
+import { currentRoomState } from "containers/Listener";
+import { useWebSocket } from "hooks/use-websocket";
 import { useRecoilValue } from "recoil";
-import { playQueueAtom } from "hooks/use-queue";
 
 export default function Queue() {
+  const room = useRecoilValue(currentRoomState);
+  const socket = useWebSocket(room);
+  const { addToQueue } = useQueue();
   const queue = useRecoilValue(playQueueAtom);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("SONG_ADDED", (data) => {
+        addToQueue(data);
+      });
+    }
+  }, [socket]);
 
   return (
     <>

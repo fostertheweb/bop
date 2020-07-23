@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "components/host/devices";
-import { currentPlaybackAtom, isPlayingAtom } from "hooks/use-player";
+import {
+  currentPlaybackAtom,
+  isPlayingAtom,
+  usePlayer,
+} from "hooks/use-player";
 import { useRecoilValue } from "recoil";
 
 export default function Player() {
@@ -12,6 +16,7 @@ export default function Player() {
   const [progress, setProgress] = useState(0);
   const currentPlayback = useRecoilValue(currentPlaybackAtom);
   const timer = useRef(null);
+  const { playNextTrack } = usePlayer();
 
   useEffect(() => {
     if (currentPlayback) {
@@ -41,6 +46,7 @@ export default function Player() {
     if (currentPlayback) {
       if (((progress * 100) / currentPlayback.duration_ms).toFixed(2) >= 100) {
         clearInterval(timer.current);
+        playNextTrack();
       }
     }
     // eslint-disable-next-line

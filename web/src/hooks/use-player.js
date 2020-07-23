@@ -3,7 +3,7 @@ import { stringify } from "query-string";
 import { currentDeviceAtom } from "hooks/use-devices";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAccessTokenAtom } from "hooks/use-login";
-import { useQueue } from "hooks/use-queue";
+import { useQueue, playQueueAtom } from "hooks/use-queue";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
@@ -22,7 +22,8 @@ export const usePlayer = () => {
   const setIsPlaying = useSetRecoilState(isPlayingAtom);
   const setCurrentPlayback = useSetRecoilState(currentPlaybackAtom);
   const userAccessToken = useRecoilValue(userAccessTokenAtom);
-  const { queue, nextTrackInQueue } = useQueue();
+  const { nextTrackInQueue } = useQueue();
+  const queue = useRecoilValue(playQueueAtom);
 
   useEffect(() => {
     async function getCurrentPlayback() {

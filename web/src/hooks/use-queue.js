@@ -9,6 +9,8 @@ export function useQueue() {
   const [queue, setQueue] = useRecoilState(playQueueAtom);
 
   function addToQueue(item) {
+    console.log({ queue });
+    console.log({ adding: item });
     setQueue([...queue, item]);
   }
 
@@ -20,5 +22,5 @@ export function useQueue() {
     setQueue(queue.slice(1));
   }
 
-  return { queue, addToQueue, removeFromQueue, nextTrackInQueue };
+  return { addToQueue, removeFromQueue, nextTrackInQueue };
 }

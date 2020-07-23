@@ -1,8 +1,13 @@
 import React, { useEffect } from "react";
 import Search from "components/listener/search";
-import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
-// import { displayNameState } from "atoms/display-name";
-import { Routes, Route } from "react-router-dom";
+import {
+  atom,
+  useRecoilValueLoadable,
+  useSetRecoilState,
+  useRecoilValue,
+} from "recoil";
+import { displayNameState } from "atoms/display-name";
+import { Routes, Route, useParams } from "react-router-dom";
 import ListenerLayout from "components/listener/layout";
 import {
   clientAccessTokenQuery,
@@ -14,12 +19,22 @@ import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 
 // const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
+export const currentRoomState = atom({
+  key: "crowdQ.currentRoom",
+  default: "",
+});
+
 export default function Listener() {
-  // const displayName = useRecoilValue(displayNameState);
-  // const { room } = useParams();
+  const setCurrentRoom = useSetRecoilState(currentRoomState);
+  const displayName = useRecoilValue(displayNameState);
+  const { room } = useParams();
   const { state, contents } = useRecoilValueLoadable(clientAccessTokenQuery);
   const setClientAccessToken = useSetRecoilState(clientAccessTokenState);
   // const setQueue = useSetRecoilState(playQueueAtom);
+
+  useEffect(() => {
+    setCurrentRoom(room);
+  }, [room]);
 
   useEffect(() => {
     if (state === "hasValue" && contents) {
