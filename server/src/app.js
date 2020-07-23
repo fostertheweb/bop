@@ -43,7 +43,9 @@ io.on("connection", (socket) => {
 
   socket.on("ADD_TO_QUEUE", function ({ data, room }) {
     // in the future would check if host allows adding without approval
-    redis.lpush(`room:${room}`, data);
+    // redis.lpush(`room:${room}`, data);
+
+    console.log({ data, room });
 
     socket.to(room).emit("SONG_ADDED", data);
   });
