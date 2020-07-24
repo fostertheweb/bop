@@ -1,6 +1,6 @@
 const app = require("fastify")({ logger: true });
-const io = require("socket.io")(app.server);
 const Redis = require("ioredis");
+const { inspect } = require("util");
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 
@@ -34,24 +34,7 @@ const redis = new Redis({
 app.register(require("fastify-redis"), {
   client: redis,
 });
-
-io.on("connection", (socket) => {
-  socket.join(socket.handshake.query.room, () => {
-    // redis add to room:listeners list
-    // send message to room saying who joined
-  });
-
-  socket.on("ADD_TO_QUEUE", function ({ data, room }) {
-    // in the future would check if host allows adding without approval
-    // redis.lpush(`room:${room}`, data);
-
-    console.log({ data, room });
-
-    socket.to(room).emit("SONG_ADDED", data);
-  });
-
-  socket.on("disconnect", function () {});
-});
+app.register(require("fastify-websocket"));
 
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });

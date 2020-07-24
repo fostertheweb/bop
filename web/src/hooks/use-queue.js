@@ -9,8 +9,6 @@ export function useQueue() {
   const [queue, setQueue] = useRecoilState(playQueueAtom);
 
   function addToQueue(item) {
-    console.log({ queue });
-    console.log({ adding: item });
     setQueue([...queue, item]);
   }
 

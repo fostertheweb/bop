@@ -1,15 +1,26 @@
 module.exports = function (app, _options, next) {
-  app.post("/", async function (request, reply) {
-    // redis set list for user key
-    // redis set session hash for user key
-  });
+  app.get("/:room", { websocket: true }, (connection, _req, { room }) => {
+    connection.socket.on("message", (message) => {
+      const { action, data, from } = JSON.parse(message);
 
-  app.get("/", async function (request, reply) {
-    // return all redis hashes
-  });
+      console.log({ action, room });
 
-  app.put("/:host", async function (request, reply) {
-    // request host to add song
+      switch (action) {
+        case "ADD_TO_QUEUE":
+          connection.socket.send(
+            JSON.stringify({
+              action: "SONG_ADDED",
+              data,
+            }),
+          );
+          break;
+        default:
+          console.log({ action });
+          console.log({ data });
+          console.log({ from });
+          break;
+      }
+    });
   });
 
   next();
