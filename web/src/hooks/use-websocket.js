@@ -7,7 +7,9 @@ export function useWebSocket(room) {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io(`${WEBSOCKET_API_URL}?room=${room}`);
+    socketRef.current = io(`${WEBSOCKET_API_URL}?room=${room}`, {
+      transports: ["websocket"],
+    });
   }, []);
 
   return socketRef.current;
