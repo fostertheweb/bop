@@ -1,4 +1,9 @@
 module.exports = function (app, _options, next) {
+  app.get("/", () => {
+    // app.redis.hget("")
+    console.log("sessions");
+  });
+
   app.get("/:room", { websocket: true }, (connection, _req, { room }) => {
     connection.socket.on("message", (message) => {
       const { action, data, from } = JSON.parse(message);

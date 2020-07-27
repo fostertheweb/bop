@@ -9,6 +9,7 @@ export function useWebSocket(room, handler) {
     const webSocket = new WebSocket(`${WEBSOCKET_API_URL}/rooms/${room}`);
     webSocket.onmessage = handler;
     webSocketRef.current = webSocket;
+    //eslint-disable-next-line
   }, []);
 
   return webSocketRef.current;

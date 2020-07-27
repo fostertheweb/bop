@@ -25,41 +25,39 @@ export default function Player() {
   }, [currentPlayback, setProgress]);
 
   useEffect(() => {
-    if (currentPlayback?.id && isPlaying) {
+    if (currentPlayback && progress >= parseInt(currentPlayback.duration_ms)) {
       clearInterval(timer.current);
-      const incrementProgress = () => {
-        setProgress(progress + 1500);
-      };
-      timer.current = setInterval(() => incrementProgress(), 1500);
+      playNextTrack();
+    }
+    //eslint-disable-next-line
+  }, [progress]);
 
-      return () => clearInterval(timer.current);
+  useEffect(() => {
+    function tick() {
+      setProgress(progress + 1500);
+    }
+
+    if (currentPlayback && isPlaying) {
+      clearInterval(timer.current);
+      timer.current = setInterval(() => tick(), 1500);
     }
 
     if (isPlaying === false) {
       clearInterval(timer.current);
     }
 
+    return () => clearInterval(timer.current);
     // eslint-disable-next-line
   }, [currentPlayback, isPlaying, progress]);
-
-  useEffect(() => {
-    if (currentPlayback) {
-      if (((progress * 100) / currentPlayback.duration_ms).toFixed(2) >= 100) {
-        clearInterval(timer.current);
-        playNextTrack();
-      }
-    }
-    // eslint-disable-next-line
-  }, [progress, currentPlayback]);
 
   return (
     <div className="cq-bg-dark w-full relative">
       <div
         style={{ height: "2px" }}
-        className="cq-bg-blue-darker w-full absolute top-0 shadow"></div>
+        className="cq-bg-blue w-full absolute top-0 shadow"></div>
       <motion.div
         style={{ height: "2px" }}
-        className="cq-bg-blue absolute top-0 max-w-full"
+        className="cq-bg-green absolute top-0 max-w-full"
         animate={{
           width: `${((progress * 100) / currentPlayback?.duration_ms).toFixed(
             2,

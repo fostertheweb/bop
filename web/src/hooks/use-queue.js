@@ -1,4 +1,4 @@
-import { atom, useRecoilState } from "recoil";
+import { atom, useSetRecoilState } from "recoil";
 
 export const playQueueAtom = atom({
   key: "crowdQ.playQueue",
@@ -6,18 +6,18 @@ export const playQueueAtom = atom({
 });
 
 export function useQueue() {
-  const [queue, setQueue] = useRecoilState(playQueueAtom);
+  const setQueue = useSetRecoilState(playQueueAtom);
 
   function addToQueue(item) {
-    setQueue([...queue, item]);
+    setQueue((queue) => [...queue, item]);
   }
 
   function removeFromQueue(index) {
-    setQueue([...queue.slice(0, index), ...queue.slice(index + 1)]);
+    setQueue((queue) => [...queue.slice(0, index), ...queue.slice(index + 1)]);
   }
 
   function nextTrackInQueue() {
-    setQueue(queue.slice(1));
+    setQueue((queue) => queue.slice(1));
   }
 
   return { addToQueue, removeFromQueue, nextTrackInQueue };
