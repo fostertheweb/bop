@@ -171,7 +171,7 @@ resource "aws_apigatewayv2_integration" "lambda" {
 resource "aws_lambda_permission" "lambda_ws_permission" {
   statement_id  = "AllowAPIGatewayV2InvokeLambda"
   action        = "lambda:InvokeFunction"
-  function_name = "${var.application}-websocket-api"
+  function_name = "${var.application}-server"
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.websocket_server.execution_arn}/*/*/*"
 }
