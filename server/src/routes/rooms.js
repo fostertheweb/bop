@@ -1,7 +1,6 @@
 module.exports = function (app, _options, next) {
   app.get("/", () => {
     // app.redis.hget("")
-    console.log("sessions");
   });
 
   app.get("/:room", { websocket: true }, (connection, _req, { room }) => {
@@ -26,6 +25,14 @@ module.exports = function (app, _options, next) {
           break;
       }
     });
+  });
+
+  app.get("/:room/listeners", () => {
+    // app.redis.lget(`${room}:listeners`)
+  });
+
+  app.get("/:room/queue", () => {
+    // app.redis.lget(`${room}:queue`)
   });
 
   next();
