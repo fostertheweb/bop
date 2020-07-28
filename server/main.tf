@@ -167,11 +167,3 @@ resource "aws_apigatewayv2_integration" "lambda" {
   integration_uri    = aws_lambda_function.server.invoke_arn
   integration_method = "POST"
 }
-
-resource "aws_lambda_permission" "lambda_ws_permission" {
-  statement_id  = "AllowAPIGatewayV2InvokeLambda"
-  action        = "lambda:InvokeFunction"
-  function_name = "${var.application}-server"
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.websocket_server.execution_arn}/*/*/*"
-}
