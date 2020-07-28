@@ -166,3 +166,20 @@ resource "aws_apigatewayv2_integration" "lambda" {
   integration_uri    = aws_lambda_function.server.invoke_arn
   integration_method = "POST"
 }
+
+resource "aws_apigatewayv2_route" "default" {
+  api_id    = aws_apigatewayv2_api.websocket_server.id
+  route_key = "$default"
+  target    = aws_lambda_function.server.arn
+}
+
+resource "aws_lambda_permission" "lambda_permission" {
+  statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = "${var.application}-server"
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/*/* part allows invocation from any stage, method and resource path
+  # within API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.websocket_server.execution_arn}/*/*/*"
+}
