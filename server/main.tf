@@ -147,10 +147,9 @@ resource "aws_lambda_permission" "lambda_permission" {
 }
 
 resource "aws_apigatewayv2_api" "websocket_server" {
-  name                       = "${var.application}-websocket-api"
-  protocol_type              = "WEBSOCKET"
-  route_selection_expression = "$request.body.action"
-  target                     = aws_lambda_function.server.arn
+  name          = "${var.application}-websocket-api"
+  protocol_type = "WEBSOCKET"
+  target        = aws_lambda_function.server.arn
 
   tags = local.common_tags
 }
