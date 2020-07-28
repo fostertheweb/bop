@@ -135,7 +135,7 @@ resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.server.id
 }
 
-resource "aws_lambda_permission" "lambda_permission" {
+resource "aws_lambda_permission" "rest" {
   statement_id  = "AllowAPIGatewayInvokeLambda"
   action        = "lambda:InvokeFunction"
   function_name = "${var.application}-server"
@@ -173,7 +173,7 @@ resource "aws_apigatewayv2_route" "default" {
   target    = aws_lambda_function.server.arn
 }
 
-resource "aws_lambda_permission" "lambda_permission" {
+resource "aws_lambda_permission" "websocket" {
   statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
   action        = "lambda:InvokeFunction"
   function_name = "${var.application}-server"
@@ -181,5 +181,5 @@ resource "aws_lambda_permission" "lambda_permission" {
 
   # The /*/*/* part allows invocation from any stage, method and resource path
   # within API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.websocket_server.execution_arn}/*/*/*"
+  source_arn = "${aws_apigatewayv2_api.websocket_server.execution_arn}/*/*/*"
 }
