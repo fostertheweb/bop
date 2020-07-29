@@ -170,7 +170,6 @@ resource "aws_apigatewayv2_integration" "lambda" {
 resource "aws_apigatewayv2_route" "default" {
   api_id    = aws_apigatewayv2_api.websocket_server.id
   route_key = "$default"
-  target    = aws_apigatewayv2_integration.lambda.id
 }
 
 resource "aws_lambda_permission" "websocket" {
