@@ -56,6 +56,10 @@ app.get("/", { websocket: true }, (connection) => {
         break;
     }
   });
+
+  return {
+    statusCode: 200,
+  };
 });
 
 // routes
