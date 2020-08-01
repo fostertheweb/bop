@@ -27,7 +27,36 @@ app.register(require("fastify-redis"), {
   port: REDIS_PORT,
   password: REDIS_PASSWORD,
 });
-app.register(require("fastify-websocket"));
+app.register(require("fastify-websocket"), {
+  clientTracking: true,
+});
+
+app.get("/", { websocket: true }, (connection) => {
+  // app.websocketServer.clients
+
+  connection.socket.on("message", (message) => {
+    const { action, room, data, username } = JSON.parse(message);
+
+    switch (action) {
+      case "JOIN":
+        console.log(`${username} joined ${room}`);
+        break;
+      case "ADD_TO_QUEUE":
+        connection.socket.send(
+          JSON.stringify({
+            action: "SONG_ADDED",
+            data,
+          }),
+        );
+        break;
+      default:
+        console.log({ action });
+        console.log({ data });
+        console.log({ username });
+        break;
+    }
+  });
+});
 
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });

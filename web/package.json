@@ -29,6 +29,7 @@
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "3.4.1",
     "react-table": "^7.2.2",
+    "react-use-websocket": "^2.1.1",
     "recoil": "^0.0.8",
     "tailwindcss": "^1.4.0",
     "typeface-cabin": "^0.0.72",

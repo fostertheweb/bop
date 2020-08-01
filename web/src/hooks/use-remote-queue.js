@@ -1,39 +1,53 @@
 import { useRecoilValue } from "recoil";
 import { useParams } from "react-router-dom";
 import { displayNameState } from "atoms/display-name";
-import { useWebSocket } from "hooks/use-websocket";
+import useWebSocket from "react-use-websocket";
 import { useQueue } from "hooks/use-queue";
+import { useEffect } from "react";
+
+const { REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL } = process.env;
 
 export function useRemoteQueue() {
   const displayName = useRecoilValue(displayNameState);
   const { room } = useParams();
   const { addToQueue: updateQueue } = useQueue();
-  const socket = useWebSocket(room, onMessage);
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
 
-  function onMessage(event) {
-    const { action, data, from } = JSON.parse(event.data);
+  useEffect(() => {
+    if (lastJsonMessage) {
+      const { action, data, username } = lastJsonMessage;
 
-    switch (action) {
-      case "SONG_ADDED":
-        updateQueue(data);
-        break;
-      default:
-        console.log({ action });
-        console.log({ data });
-        console.log({ from });
-        break;
+      switch (action) {
+        case "SONG_ADDED":
+          updateQueue(data);
+          break;
+        default:
+          console.log({ action });
+          console.log({ room });
+          console.log({ data });
+          console.log({ username });
+          break;
+      }
     }
+    //eslint-disable-next-line
+  }, [lastJsonMessage]);
+
+  function join() {
+    sendJsonMessage({
+      action: "JOIN",
+      room,
+      username: displayName,
+    });
   }
 
   function addToQueue(item) {
-    socket.send(
-      JSON.stringify({
-        action: "ADD_TO_QUEUE",
-        data: item,
-        from: displayName || "Anonymous",
-      }),
-    );
+    sendJsonMessage({
+      action: "ADD_TO_QUEUE",
+      room,
+      data: item,
+      username: displayName || "Anonymous",
+    });
   }
 
-  return { addToQueue };
+  return { addToQueue, join };
 }
