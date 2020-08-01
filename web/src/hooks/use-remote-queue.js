@@ -11,9 +11,7 @@ export function useRemoteQueue() {
   const displayName = useRecoilValue(displayNameState);
   const { room } = useParams();
   const { addToQueue: updateQueue } = useQueue();
-  const { sendJsonMessage, lastJsonMessage, lastMessage } = useWebSocket(
-    WEBSOCKET_API_URL,
-  );
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
 
   useEffect(() => {
     if (lastJsonMessage) {
@@ -29,7 +27,7 @@ export function useRemoteQueue() {
       }
     }
     //eslint-disable-next-line
-  }, [lastMessage]);
+  }, [lastJsonMessage]);
 
   function join() {
     sendJsonMessage({
