@@ -31,35 +31,37 @@ app.register(require("fastify-websocket"), {
   clientTracking: true,
 });
 
-app.get("/", { websocket: true }, (connection) => {
-  // app.websocketServer.clients
+app.route({
+  method: "GET",
+  url: "/",
+  handler(_request, reply) {
+    return reply.send("OK");
+  },
+  wsHandler(connection) {
+    // app.websocketServer.clients
+    connection.socket.on("message", (message) => {
+      const { action, room, data, username } = JSON.parse(message);
 
-  connection.socket.on("message", (message) => {
-    const { action, room, data, username } = JSON.parse(message);
-
-    switch (action) {
-      case "JOIN":
-        console.log(`${username} joined ${room}`);
-        break;
-      case "ADD_TO_QUEUE":
-        connection.socket.send(
-          JSON.stringify({
-            action: "SONG_ADDED",
-            data,
-          }),
-        );
-        break;
-      default:
-        console.log({ action });
-        console.log({ data });
-        console.log({ username });
-        break;
-    }
-  });
-
-  return {
-    statusCode: 200,
-  };
+      switch (action) {
+        case "JOIN":
+          console.log(`${username} joined ${room}`);
+          break;
+        case "ADD_TO_QUEUE":
+          connection.socket.send(
+            JSON.stringify({
+              action: "SONG_ADDED",
+              data,
+            }),
+          );
+          break;
+        default:
+          console.log({ action });
+          console.log({ data });
+          console.log({ username });
+          break;
+      }
+    });
+  },
 });
 
 // routes
