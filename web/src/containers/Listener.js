@@ -9,6 +9,7 @@ import {
 } from "hooks/use-login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+import { useRemoteQueue } from "hooks/use-remote-queue";
 
 export const currentRoomState = atom({
   key: "crowdQ.currentRoom",
@@ -20,10 +21,16 @@ export default function Listener() {
   const { room } = useParams();
   const { state, contents } = useRecoilValueLoadable(clientAccessTokenQuery);
   const setClientAccessToken = useSetRecoilState(clientAccessTokenState);
+  const { join } = useRemoteQueue();
 
   useEffect(() => {
     setCurrentRoom(room);
   }, [room, setCurrentRoom]);
+
+  useEffect(() => {
+    join();
+    //eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (state === "hasValue" && contents) {

@@ -4,15 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { playQueueAtom } from "hooks/use-queue";
 import { useRecoilValue } from "recoil";
-import { useRemoteQueue } from "hooks/use-remote-queue";
 
 export default function Queue() {
   const queue = useRecoilValue(playQueueAtom);
-  const { join } = useRemoteQueue();
-
-  useEffect(() => {
-    join();
-  }, [join]);
 
   return (
     <>
