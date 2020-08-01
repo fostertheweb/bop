@@ -11,26 +11,25 @@ export function useRemoteQueue() {
   const displayName = useRecoilValue(displayNameState);
   const { room } = useParams();
   const { addToQueue: updateQueue } = useQueue();
-  const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
+  const { sendJsonMessage, lastJsonMessage, lastMessage } = useWebSocket(
+    WEBSOCKET_API_URL,
+  );
 
   useEffect(() => {
     if (lastJsonMessage) {
-      const { action, data, username } = lastJsonMessage;
+      const { action, data } = lastJsonMessage;
 
       switch (action) {
         case "SONG_ADDED":
           updateQueue(data);
           break;
         default:
-          console.log({ action });
-          console.log({ room });
-          console.log({ data });
-          console.log({ username });
+          console.log(lastJsonMessage);
           break;
       }
     }
     //eslint-disable-next-line
-  }, [lastJsonMessage]);
+  }, [lastMessage]);
 
   function join() {
     sendJsonMessage({
