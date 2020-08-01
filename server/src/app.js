@@ -61,6 +61,11 @@ app.route({
           break;
       }
     });
+
+    return {
+      statusCode: 200,
+      body: "",
+    };
   },
 });
 
