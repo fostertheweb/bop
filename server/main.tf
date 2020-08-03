@@ -6,7 +6,7 @@ locals {
 
 data "aws_iam_policy_document" "lambda" {
   statement {
-    sid = "1"
+    sid = "AssumeRole"
     actions = [
       "sts:AssumeRole"
     ]
@@ -15,11 +15,9 @@ data "aws_iam_policy_document" "lambda" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
-}
 
-data "aws_iam_policy_document" "cloudwatch" {
   statement {
-    sid = "1"
+    sid = "AllowCloudWatchLogs"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
@@ -29,18 +27,14 @@ data "aws_iam_policy_document" "cloudwatch" {
       "arn:aws:logs:*:*:*"
     ]
   }
-}
 
-data "aws_iam_policy_document" "ec2" {
   statement {
-    sid = "1"
+    sid = "AllowManageConnections"
     actions = [
-      "ec2:CreateNetworkInterface",
-      "ec2:DescribeNetworkInterfaces",
-      "ec2:DeleteNetworkInterface"
+      "execute-api:ManageConnections"
     ]
     resources = [
-      "*"
+      "arn:aws:execute-api:*:*:*/@connections/*"
     ]
   }
 }
@@ -50,13 +44,6 @@ resource "aws_iam_role" "lambda" {
   assume_role_policy = data.aws_iam_policy_document.lambda.json
 }
 
-resource "aws_iam_role_policy" "cloudwatch_lambda" {
-  name   = "${var.application}-cloudwatch-lambda"
-  role   = aws_iam_role.lambda.id
-  policy = data.aws_iam_policy_document.cloudwatch.json
-}
-
-# zip the api directory for lambda
 data "archive_file" "server" {
   type        = "zip"
   source_dir  = "./server/dist"
@@ -192,13 +179,13 @@ resource "aws_apigatewayv2_route" "default" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
-resource "aws_lambda_permission" "websocket" {
-  statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
-  action        = "lambda:InvokeFunction"
-  function_name = "${var.application}-messages"
-  principal     = "apigateway.amazonaws.com"
+# resource "aws_lambda_permission" "websocket" {
+#   statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
+#   action        = "lambda:InvokeFunction"
+#   function_name = "${var.application}-messages"
+#   principal     = "apigateway.amazonaws.com"
 
-  # The /*/*/* part allows invocation from any stage, method and resource path
-  # within API Gateway REST API.
-  source_arn = "${aws_apigatewayv2_api.websocket_server.execution_arn}/*/*/*"
-}
+#   # The /*/*/* part allows invocation from any stage, method and resource path
+#   # within API Gateway REST API.
+#   source_arn = "${aws_apigatewayv2_api.websocket_server.execution_arn}/*/*/*"
+# }
