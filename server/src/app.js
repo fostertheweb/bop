@@ -5,9 +5,6 @@ const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 // health check
 app.get("/ping", () => "PONG");
 
-// yo
-app.post("/", (_, reply) => reply.send("OK"));
-
 // installed plugins
 app.register(require("fastify-cors"), {
   origin: true,

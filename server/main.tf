@@ -85,6 +85,25 @@ resource "aws_lambda_function" "server" {
   tags = local.common_tags
 }
 
+resource "aws_lambda_function" "messages" {
+  filename         = "./server/lambda.zip"
+  function_name    = "${var.application}-messages"
+  role             = aws_iam_role.lambda.arn
+  handler          = "handler.messages"
+  source_code_hash = data.archive_file.server.output_base64sha256
+  runtime          = "nodejs12.x"
+
+  environment {
+    variables = {
+      REDIS_HOST     = var.redis_host
+      REDIS_PORT     = var.redis_port
+      REDIS_PASSWORD = var.redis_password
+    }
+  }
+
+  tags = local.common_tags
+}
+
 resource "aws_api_gateway_rest_api" "server" {
   name = "${var.application}-api"
 
@@ -176,7 +195,7 @@ resource "aws_apigatewayv2_route" "default" {
 resource "aws_lambda_permission" "websocket" {
   statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
   action        = "lambda:InvokeFunction"
-  function_name = "${var.application}-server"
+  function_name = "${var.application}-messages"
   principal     = "apigateway.amazonaws.com"
 
   # The /*/*/* part allows invocation from any stage, method and resource path
