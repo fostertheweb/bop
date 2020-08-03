@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "lambda" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_inline" {
+data "aws_iam_policy_document" "lambda_logs" {
   statement {
     sid = "AllowCloudWatchLogs"
     actions = [
@@ -25,31 +25,49 @@ data "aws_iam_policy_document" "lambda_inline" {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
+    effect = "Allow"
     resources = [
       "arn:aws:logs:*:*:*"
     ]
   }
+}
 
+resource "aws_iam_policy" "lambda_logs" {
+  name   = "${var.application}-lambda-logs"
+  policy = data.aws_iam_policy_document.lambda_logs.json
+}
+
+data "aws_iam_policy_document" "manage_connections" {
   statement {
     sid = "AllowManageConnections"
     actions = [
       "execute-api:ManageConnections"
     ]
+    effect = "Allow"
     resources = [
       "arn:aws:execute-api:*:*:*/@connections/*"
     ]
   }
 }
 
-resource "aws_iam_role_policy" "manage_connections" {
+resource "aws_iam_policy" "manage_connections" {
   name   = "${var.application}-manage-connections"
-  role   = aws_iam_role.lambda.id
-  policy = data.aws_iam_policy_document.lambda_inline.json
+  policy = data.aws_iam_policy_document.manage_connections.json
 }
 
 resource "aws_iam_role" "lambda" {
   name               = "${var.application}-lambda-role"
   assume_role_policy = data.aws_iam_policy_document.lambda.json
+}
+
+resource "aws_iam_role_policy_attachment" "manage_connections" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.manage_connections.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_logs.arn
 }
 
 data "archive_file" "server" {
@@ -187,13 +205,9 @@ resource "aws_apigatewayv2_route" "default" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
-# resource "aws_lambda_permission" "websocket" {
-#   statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
-#   action        = "lambda:InvokeFunction"
-#   function_name = "${var.application}-messages"
-#   principal     = "apigateway.amazonaws.com"
-
-#   # The /*/*/* part allows invocation from any stage, method and resource path
-#   # within API Gateway REST API.
-#   source_arn = "${aws_apigatewayv2_api.websocket_server.execution_arn}/*/*/*"
-# }
+resource "aws_lambda_permission" "websocket" {
+  statement_id  = "AllowAPIGatewayWebSocketInvokeLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = "${var.application}-messages"
+  principal     = "apigateway.amazonaws.com"
+}
