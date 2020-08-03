@@ -4950,6 +4950,15 @@ fastify-sensible@^3.0.1:
     type-is "^1.6.18"
     vary "^1.1.2"
 
+fastify-websocket@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/fastify-websocket/-/fastify-websocket-2.0.7.tgz#3e51415dfa1245cee630c633a21f78d55ed80b91"
+  integrity sha512-N8fP9Fbwpv1L1Zv0Hk+r7/ep6mD49BZeyFIC1ffErD5oHogEpEkwDBJxcloGGb6c+zhMu1ZS0ymYdrguI4+MrA==
+  dependencies:
+    fastify-plugin "^2.0.0"
+    find-my-way "^3.0.0"
+    ws "^7.2.3"
+
 fastify@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/fastify/-/fastify-3.0.2.tgz#07c0e69d26622461b8f28fe12f4e99bb881e156f"
@@ -6052,7 +6061,7 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-ioredis@^4.10.0:
+ioredis@^4.10.0, ioredis@^4.17.3:
   version "4.17.3"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.17.3.tgz#9938c60e4ca685f75326337177bdc2e73ae9c9dc"
   integrity sha512-iRvq4BOYzNFkDnSyhx7cmJNOi1x/HWYe+A4VXHBu4qpwJaGT1Mp+D2bVGJntH9K/Z/GeOM/Nprb8gB3bmitz1Q==
@@ -12244,6 +12253,11 @@ ws@^6.1.2, ws@^6.2.1:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+ws@^7.2.3:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.1.tgz#d0547bf67f7ce4f12a72dfe31262c68d7dc551c8"
+  integrity sha512-D3RuNkynyHmEJIpD2qrgVkc9DQ23OrN/moAwZX4L8DfvszsJxpjQuUq3LMx6HoYji9fbIOBY18XWBsAux1ZZUA==
 
 xdg-basedir@^4.0.0:
   version "4.0.0"

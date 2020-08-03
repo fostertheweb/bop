@@ -15,7 +15,9 @@ data "aws_iam_policy_document" "lambda" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
+}
 
+data "aws_iam_policy_document" "lambda_inline" {
   statement {
     sid = "AllowCloudWatchLogs"
     actions = [
@@ -37,6 +39,12 @@ data "aws_iam_policy_document" "lambda" {
       "arn:aws:execute-api:*:*:*/@connections/*"
     ]
   }
+}
+
+resource "aws_iam_role_policy" "manage_connections" {
+  name   = "${var.application}-manage-connections"
+  role   = aws_iam_role.lambda.id
+  policy = data.aws_iam_policy_document.lambda_inline.json
 }
 
 resource "aws_iam_role" "lambda" {
