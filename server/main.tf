@@ -179,9 +179,10 @@ resource "aws_lambda_permission" "rest" {
 }
 
 resource "aws_apigatewayv2_api" "websocket_server" {
-  name          = "${var.application}-websocket-api"
-  protocol_type = "WEBSOCKET"
-  target        = aws_lambda_function.messages.arn
+  name                       = "${var.application}-websocket-api"
+  protocol_type              = "WEBSOCKET"
+  route_selection_expression = "$request.body.action"
+  target                     = aws_lambda_function.messages.arn
 
   tags = local.common_tags
 }
@@ -200,9 +201,10 @@ resource "aws_apigatewayv2_integration" "lambda" {
 }
 
 resource "aws_apigatewayv2_route" "default" {
-  api_id    = aws_apigatewayv2_api.websocket_server.id
-  route_key = "$default"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  api_id             = aws_apigatewayv2_api.websocket_server.id
+  route_key          = "$default"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "NONE"
 }
 
 resource "aws_lambda_permission" "websocket" {
