@@ -168,7 +168,7 @@ resource "aws_lambda_permission" "rest" {
 resource "aws_apigatewayv2_api" "websocket_server" {
   name          = "${var.application}-websocket-api"
   protocol_type = "WEBSOCKET"
-  target        = aws_lambda_function.server.arn
+  target        = aws_lambda_function.messages.arn
 
   tags = local.common_tags
 }
@@ -182,7 +182,7 @@ resource "aws_apigatewayv2_stage" "prod" {
 resource "aws_apigatewayv2_integration" "lambda" {
   api_id             = aws_apigatewayv2_api.websocket_server.id
   integration_type   = "AWS_PROXY"
-  integration_uri    = aws_lambda_function.server.invoke_arn
+  integration_uri    = aws_lambda_function.messages.invoke_arn
   integration_method = "POST"
 }
 
