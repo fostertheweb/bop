@@ -38,26 +38,29 @@ module.exports = async (event, context) => {
     await Promise.all(messages);
   }
 
-  switch (action) {
-    case "JOIN":
-      await redis.lpush(`${room}:listeners`, connectionId);
-      break;
-    case "ADD_TO_QUEUE":
-      await redis.lpush(`${room}:queue`, JSON.stringify(data));
-      await broadcast(room, {
-        action: "SONG_ADDED",
-        username,
-        data,
-      });
-      break;
-    default:
-      console.log({ action });
-      console.log({ room });
-      console.log({ data });
-      console.log({ username });
-      break;
+  try {
+    switch (action) {
+      case "CREATE_ROOM":
+        await redis.lpush("rooms", room);
+        break;
+      case "JOIN":
+        await redis.lpush(`${room}:listeners`, connectionId);
+        break;
+      case "ADD_TO_QUEUE":
+        await redis.lpush(`${room}:queue`, JSON.stringify(data));
+        await broadcast(room, {
+          action: "SONG_ADDED",
+          username,
+          data,
+        });
+        break;
+      default:
+        console.log({ action, room, username, data });
+        break;
+    }
+  } catch (err) {
+    console.error(err);
   }
-
   return {
     statusCode: 200,
   };
