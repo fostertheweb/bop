@@ -29,7 +29,8 @@ module.exports = async (event, context) => {
   }
 
   async function broadcast(room, payload) {
-    const listeners = await redis.lget(`${room}:listeners`);
+    const length = await redis.llen(`${room}:listeners`);
+    const listeners = await redis.lrange(`${room}:listeners`, 0, length);
     const messages = listeners.map((connectionId) =>
       send(connectionId, payload),
     );
