@@ -1,6 +1,12 @@
 const app = require("./app");
 
-// app.register(require("fastify-websocket"))
+app.register(require("fastify-websocket"));
+
+app.get("/", { websocket: true }, (connection) => {
+  connection.socket.on("message", (message) => {
+    console.log(message);
+  });
+});
 
 app.listen(4000, function (err, address) {
   if (err) {

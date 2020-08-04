@@ -6,8 +6,12 @@ module.exports = function (app, _options, next) {
     return rooms;
   });
 
+  app.post("/", async ({ body }) => {
+    return await app.redis.lpush("rooms", body.room);
+  });
+
   app.get("/:room", async ({ params: { room } }) => {
-    const room = await app.redis.hget(room);
+    return await app.redis.hget(room);
   });
 
   app.get("/:room/listeners", async ({ params: { room } }) => {

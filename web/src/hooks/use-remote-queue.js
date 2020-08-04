@@ -46,5 +46,13 @@ export function useRemoteQueue() {
     });
   }
 
-  return { addToQueue, join };
+  function createRoom() {
+    sendJsonMessage({
+      action: "CREATE_ROOM",
+      room,
+      username: room,
+    });
+  }
+
+  return { addToQueue, join, createRoom };
 }

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-// import { useQueue } from "hooks/use-queue";
 import { useRecoilValueLoadable } from "recoil";
 import Search from "components/host/search";
 import Playlists from "components/Playlists";
@@ -9,18 +8,17 @@ import Playlist from "components/Playlist";
 import { userDetailsSelector } from "atoms/user-details";
 import ListenersList from "components/host/listeners";
 import Layout from "components/host/layout";
-
-// const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+import { useRemoteQueue } from "hooks/use-remote-queue";
 
 export default function Host() {
-  // const { queue } = useQueue();
   const { state, contents } = useRecoilValueLoadable(userDetailsSelector);
+  const { createRoom } = useRemoteQueue();
 
   useEffect(() => {
     if (state === "hasValue" && contents) {
-      // POST /api/queue
+      createRoom();
     }
-  }, [state, contents]);
+  }, [state, contents, createRoom]);
 
   return (
     <Routes>

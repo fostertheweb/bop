@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { useQueue } from "hooks/use-queue";
+import { useRemoteQueue } from "hooks/use-remote-queue";
 import { useSearch } from "hooks/use-search";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
 
 export default function Search() {
-  const { addToQueue } = useQueue();
+  const { addToQueue } = useRemoteQueue();
   const search = useSearch();
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState("");

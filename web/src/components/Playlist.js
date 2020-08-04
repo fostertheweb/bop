@@ -6,7 +6,7 @@ import {
   faChevronLeft,
 } from "@fortawesome/pro-solid-svg-icons";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useQueue } from "hooks/use-queue";
+import { useRemoteQueue } from "hooks/use-remote-queue";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenAtom } from "hooks/use-login";
 
@@ -14,7 +14,7 @@ const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export default function Playlist() {
   const userAccessToken = useRecoilValue(userAccessTokenAtom);
-  const { addToQueue } = useQueue();
+  const { addToQueue } = useRemoteQueue();
   const { playlistId } = useParams();
   const navigate = useNavigate();
   const {
