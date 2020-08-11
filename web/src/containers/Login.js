@@ -20,7 +20,7 @@ export default function Login() {
     }
 
     if (status === "success") {
-      navigate("/host/search");
+      navigate("/host");
     }
     // eslint-disable-next-line
   }, [code, status]);

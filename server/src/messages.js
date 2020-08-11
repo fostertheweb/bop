@@ -20,7 +20,7 @@ module.exports = async (event, context) => {
   });
 
   async function send(connectionId, payload) {
-    await apigwMgmtApi
+    return await apigwMgmtApi
       .postToConnection({
         ConnectionId: connectionId,
         Data: JSON.stringify(payload),
@@ -40,9 +40,6 @@ module.exports = async (event, context) => {
 
   try {
     switch (action) {
-      case "CREATE_ROOM":
-        await redis.lpush("rooms", room);
-        break;
       case "JOIN":
         await redis.lpush(`${room}:listeners`, connectionId);
         break;

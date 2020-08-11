@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 
-export const displayNameState = atom({
-  key: "crowdQ.displayName",
+export const usernameState = atom({
+  key: "crowdQ.username",
   default: "",
   persistence_UNSTABLE: true,
 });

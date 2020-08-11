@@ -22,7 +22,7 @@ export default function Start() {
           className="theme-logo mr-2"
         />
         <h1 className="cq-text-white text-2xl font-medium tracking-wider cabin">
-          crowdQ
+          CrowdQ.fm
         </h1>
       </div>
       <div>

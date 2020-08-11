@@ -1,34 +1,53 @@
 import React, { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValueLoadable } from "recoil";
-import Search from "components/host/search";
-import Playlists from "components/Playlists";
-import Settings from "components/host/settings";
-import Playlist from "components/Playlist";
 import { userDetailsSelector } from "atoms/user-details";
-import ListenersList from "components/host/listeners";
-import Layout from "components/host/layout";
-import { useRemoteQueue } from "hooks/use-remote-queue";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+import { useQuery } from "react-query";
+
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Host() {
-  const { state, contents } = useRecoilValueLoadable(userDetailsSelector);
-  const { createRoom } = useRemoteQueue();
+  const { contents = null } = useRecoilValueLoadable(userDetailsSelector);
+  const { status, data } = useQuery(
+    ["createRoom", contents.id],
+    async (_, username) => {
+      const response = await fetch(`${API_BASE_URL}/rooms`, {
+        method: "POST",
+        body: JSON.stringify({ username }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    },
+    { enabled: contents.id },
+  );
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (state === "hasValue" && contents) {
-      createRoom();
+    if (data?.id) {
+      navigate(`/rooms/${data.id}/search`);
     }
-  }, [state, contents, createRoom]);
+    // eslint-disable-next-line
+  }, [status]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route path="search" element={<Search />} />
-        <Route path="playlists" element={<Playlists />} />
-        <Route path="playlists/:playlistId" element={<Playlist />} />
-        <Route path="listeners" element={<ListenersList />} />
-        <Route path="settings" element={<Settings />} />
-      </Route>
-    </Routes>
+    <div className="h-screen flex items-center">
+      <div className="w-full h-full flex flex-col items-center justify-center cq-text-white p-4">
+        <FontAwesomeIcon
+          icon={faSpinnerThird}
+          className="fill-current"
+          size="lg"
+          spin
+        />
+        <div>
+          {status === "loading"
+            ? "Creating a room for you and your listeners."
+            : ""}
+        </div>
+      </div>
+    </div>
   );
 }

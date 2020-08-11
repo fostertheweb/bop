@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { displayNameState } from "atoms/display-name";
+import { usernameState } from "atoms/username";
 import { useSetRecoilState } from "recoil";
 import { useQuery } from "react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,7 @@ import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Join() {
-  const setDisplayName = useSetRecoilState(displayNameState);
+  const setUsername = useSetRecoilState(usernameState);
   const { status, data } = useQuery("rooms", async () => {
     const response = await fetch(`${API_BASE_URL}/rooms`);
     return await response.json();
@@ -24,7 +24,7 @@ export default function Join() {
             id="displayName"
             placeholder="Your display name"
             autoComplete="false"
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
 
@@ -32,22 +32,20 @@ export default function Join() {
         {status === "loading" ? (
           <FontAwesomeIcon icon={faSpinnerThird} />
         ) : (
-          data.map((room) => <Room name={room} />)
+          data.map(([id, host]) => (
+            <div className="w-full px-6 py-3 text-white bg-gray-700 border border-gray-600 flex items-center justify-between rounded shadow">
+              <div>
+                {id} by {host}
+              </div>
+              <Link
+                to={`/rooms/${id}/search`}
+                className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600">
+                Join
+              </Link>
+            </div>
+          ))
         )}
       </div>
-    </div>
-  );
-}
-
-function Room({ name }) {
-  return (
-    <div className="w-full px-6 py-3 text-white bg-gray-700 border border-gray-600 flex items-center justify-between rounded shadow">
-      <div>{name}</div>
-      <Link
-        to={`/listen/${name}`}
-        className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600">
-        Join
-      </Link>
     </div>
   );
 }

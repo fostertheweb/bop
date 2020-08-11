@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil";
 import { useParams } from "react-router-dom";
-import { displayNameState } from "atoms/display-name";
+import { usernameState } from "atoms/username";
 import useWebSocket from "react-use-websocket";
 import { useQueue } from "hooks/use-queue";
 import { useEffect } from "react";
@@ -8,7 +8,7 @@ import { useEffect } from "react";
 const { REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL } = process.env;
 
 export function useRemoteQueue() {
-  const displayName = useRecoilValue(displayNameState);
+  const username = useRecoilValue(usernameState);
   const { room } = useParams();
   const { addToQueue: updateQueue } = useQueue();
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
@@ -33,7 +33,7 @@ export function useRemoteQueue() {
     sendJsonMessage({
       action: "JOIN",
       room,
-      username: displayName,
+      username: username,
     });
   }
 
@@ -42,17 +42,9 @@ export function useRemoteQueue() {
       action: "ADD_TO_QUEUE",
       room,
       data: item,
-      username: displayName || "Anonymous",
+      username: username || "Anonymous",
     });
   }
 
-  function createRoom() {
-    sendJsonMessage({
-      action: "CREATE_ROOM",
-      room,
-      username: room,
-    });
-  }
-
-  return { addToQueue, join, createRoom };
+  return { addToQueue, join };
 }
