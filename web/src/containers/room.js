@@ -14,8 +14,8 @@ export function Room() {
         <Route path="search" element={<Search />} />
         <Route path="playlists" element={<Playlists />} />
         <Route path="playlists/:playlistId" element={<Playlist />} />
-        <Route path="requests" element={<div>Requests</div>} />
         <Route path="listeners" element={<ListenersList />} />
+        <Route path="requests" element={<div>Requests</div>} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>

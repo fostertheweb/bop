@@ -9,7 +9,7 @@ const { REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL } = process.env;
 
 export function useRemoteQueue() {
   const username = useRecoilValue(usernameState);
-  const { room } = useParams();
+  const { id: room } = useParams();
   const { addToQueue: updateQueue } = useQueue();
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
 
