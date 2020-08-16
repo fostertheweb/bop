@@ -5,28 +5,20 @@ import { useRemoteQueue } from "hooks/use-remote-queue";
 import { useSearch } from "hooks/use-search";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
+import { useQuery } from "react-query";
 
 export default function Search() {
   const { addToQueue } = useRemoteQueue();
   const search = useSearch();
-  const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
   const debounced = useDebounce(query, 500);
-
-  useEffect(() => {
-    if (debounced) {
-      setSearching(true);
-      search(debounced).then(({ items = [] }) => {
-        setResults(items);
-        setSearching(false);
-      });
-    } else {
-      setResults([]);
-    }
-
-    // eslint-disable-next-line
-  }, [debounced]);
+  const { isFetching: isLoading, data: tracks } = useQuery(
+    ["search", debounced],
+    search,
+    {
+      enabled: debounced,
+    },
+  );
 
   return (
     <div className="p-2">
@@ -34,10 +26,10 @@ export default function Search() {
         <div className="p-2 flex items-center">
           <div className="cq-bg-darker flex items-center border-2 border-gray-700 text-base rounded focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-200">
             <FontAwesomeIcon
-              icon={searching ? faSpinnerThird : faSpotify}
+              icon={isLoading ? faSpinnerThird : faSpotify}
               size="lg"
               className="text-gray-500 fill-current ml-2"
-              spin={searching}
+              spin={isLoading}
             />
             <input
               className="appearance-none bg-transparent text-base rounded px-4 py-2 pl-2 focus:outline-none w-full text-gray-200"
@@ -50,7 +42,7 @@ export default function Search() {
         </div>
       </div>
       <div>
-        {results?.map((item) => (
+        {tracks?.items?.map((item) => (
           <button
             onClick={() => addToQueue(item)}
             key={item.id}

@@ -4,14 +4,18 @@ import { useRecoilValue } from "recoil";
 import { playQueueAtom } from "hooks/use-queue";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSheep,
-  faUsersCrown,
-  faListMusic,
-} from "@fortawesome/pro-duotone-svg-icons";
+import { faUsersCrown, faListMusic } from "@fortawesome/pro-duotone-svg-icons";
+import { useQuery } from "react-query";
+import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Start() {
   const playQueue = useRecoilValue(playQueueAtom);
+  const { status, data } = useQuery("rooms", async () => {
+    const response = await fetch(`${API_BASE_URL}/rooms`);
+    return await response.json();
+  });
 
   return (
     <div className="flex flex-col justify-center items-center p-4">
@@ -28,9 +32,30 @@ export default function Start() {
       <div>
         {playQueue.length > 0 ? <ResumeSession /> : null}
 
-        <div className="flex items-center">
-          <JoinSession />
+        <div className="">
           <HostNewSession />
+          <div>
+            <h1 className="text-xl cq-text-white py-4">Active Sessions</h1>
+            {status === "loading" ? (
+              <FontAwesomeIcon icon={faSpinnerThird} />
+            ) : (
+              data.map(([id, host]) => (
+                <div
+                  key={id}
+                  className="mt-2 w-full px-6 py-3 text-white bg-gray-700 border border-gray-600 flex items-center justify-between rounded shadow">
+                  <div>
+                    {id} by {host}
+                  </div>
+                  <div className="w-6"></div>
+                  <Link
+                    to={`/join/${id}`}
+                    className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600">
+                    Join
+                  </Link>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -43,27 +68,6 @@ function ResumeSession() {
       <div></div>
       <Link to="host" className="">
         Resume Session
-      </Link>
-    </div>
-  );
-}
-
-function JoinSession() {
-  return (
-    <div className="flex flex-col p-8 items-center">
-      <div className="mt-4 p-8 text-center">
-        <FontAwesomeIcon icon={faSheep} size="4x" className="theme-sheep" />
-      </div>
-      <Link
-        to="join"
-        className={classNames(
-          baseButton,
-          hover,
-          "cq-bg-blue",
-          "text-white",
-          "mt-4",
-        )}>
-        Join Session
       </Link>
     </div>
   );

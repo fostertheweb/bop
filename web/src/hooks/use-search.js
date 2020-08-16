@@ -11,7 +11,7 @@ export function useSearch(anonymousRequest = false) {
   const headers = {
     Authorization: `Bearer ${token}`,
   };
-  return async function search(query) {
+  return async function search(_, query) {
     try {
       const response = await fetch(
         `${SPOTIFY_API_BASE_URL}/search?query=${query}&type=track&market=US`,

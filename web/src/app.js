@@ -16,7 +16,7 @@ function App() {
         <Route path="/" element={<Start />} />
         <Route path="login" element={<Login />} />
         <Route path="host" element={<Host />} />
-        <Route path="join" element={<Join />} />
+        <Route path="join/:id" element={<Join />} />
         <Route path="rooms/:id/*" element={<Room />} />
       </Routes>
     </RecoilRoot>

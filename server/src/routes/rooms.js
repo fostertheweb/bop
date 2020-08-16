@@ -35,19 +35,31 @@ module.exports = function (app, _options, next) {
     return await app.redis.hmget(`rooms:${id}`, "id", "host");
   });
 
-  app.get("/:room/listeners", async ({ params: { room } }) => {
-    const key = `rooms:${room}:listeners`;
+  app.get("/:id/listeners", async ({ params: { id } }) => {
+    const key = `rooms:${id}:listeners`;
     const length = await app.redis.llen(key);
     const ids = await app.redis.lrange(key, 0, length);
     return ids;
   });
 
-  app.get("/:room/queue", async ({ params: { room } }) => {
-    const key = `rooms:${room}:queue`;
+  app.get("/:id/queue", async ({ params: { id } }) => {
+    const key = `rooms:${id}:queue`;
     const length = await app.redis.llen(key);
     const queue = await app.redis.lrange(key, 0, length);
     return queue.map((i) => JSON.parse(i));
   });
+
+  app.post(
+    "/:id/check-username",
+    async ({ params: { id }, body: { username } }, reply) => {
+      const key = `rooms:${id}:listeners`;
+      const length = await app.redis.llen(key);
+      const usernames = await app.redis.lrange(key, 0, length);
+      console.log(usernames);
+      const isTaken = usernames.includes(username);
+      return isTaken ? reply.badRequest() : reply.send("OK");
+    },
+  );
 
   app.delete("/", async () => {
     await app.redis.ltrim("rooms", 20, 0);
