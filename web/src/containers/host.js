@@ -1,18 +1,21 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValueLoadable } from "recoil";
+import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 import { userDetailsSelector } from "atoms/user-details";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useQuery } from "react-query";
+import { usernameState } from "atoms/username";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Host() {
   const { contents = null } = useRecoilValueLoadable(userDetailsSelector);
+  const setUsername = useSetRecoilState(usernameState);
   const { status, data } = useQuery(
     ["createRoom", contents.id],
     async (_, username) => {
+      setUsername(username);
       const response = await fetch(`${API_BASE_URL}/rooms`, {
         method: "POST",
         body: JSON.stringify({ username }),

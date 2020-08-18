@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { usernameState } from "atoms/username";
 import { useSetRecoilState } from "recoil";
 import { useQuery } from "react-query";
@@ -17,7 +17,7 @@ export default function Join() {
   const [username, setUsername] = useState();
   const { id: room } = useParams();
   const debounced = useDebounce(username, 500);
-  const { status, isFetching, error } = useQuery(
+  const { status, error } = useQuery(
     [debounced && "check", debounced],
     async (_, uid) => {
       const response = await fetch(
@@ -30,14 +30,17 @@ export default function Join() {
           body: JSON.stringify({ username: uid }),
         },
       );
-      return await response.json();
+
+      if (response.ok) {
+        return await response.json();
+      }
+
+      throw await response.json();
     },
-    { enabled: debounced },
+    { enabled: debounced, retry: false },
   );
   const saveUsername = useSetRecoilState(usernameState);
-
-  console.log({ status });
-  console.log({ isFetching });
+  const navigate = useNavigate();
 
   return (
     <div className="p-4 flex items-center">
@@ -49,17 +52,49 @@ export default function Join() {
           autoComplete="false"
           onChange={(e) => setUsername(e.target.value)}
         />
-
-        <FontAwesomeIcon
-          icon={isFetching ? faSpinnerThird : error ? faTimes : faCheck}
-          className="text-gray-500 fill-current m-2"
-          spin={isFetching}
-        />
+        {username && username !== "" ? (
+          <InputLookupStatus status={status} />
+        ) : null}
       </div>
       <div className="w-4"></div>
-      <button className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600">
+      <button
+        className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600"
+        disabled={!debounced && !error}
+        onClick={() => {
+          saveUsername(debounced);
+          navigate(`/rooms/${room}/search`);
+        }}>
         Join
       </button>
     </div>
   );
+}
+
+function InputLookupStatus({ status }) {
+  switch (status) {
+    case "loading":
+      return (
+        <FontAwesomeIcon
+          icon={faSpinnerThird}
+          className="text-gray-500 fill-current m-2"
+          spin
+        />
+      );
+    case "error":
+      return (
+        <FontAwesomeIcon
+          icon={faTimes}
+          className="text-red-500 fill-current m-2"
+        />
+      );
+    case "success":
+      return (
+        <FontAwesomeIcon
+          icon={faCheck}
+          className="text-green-500 fill-current m-2"
+        />
+      );
+    default:
+      return null;
+  }
 }

@@ -1,15 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
+import PlayerControls from "components/room/player-controls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash } from "@fortawesome/pro-solid-svg-icons";
-import { currentPlaybackAtom, isPlayingAtom } from "hooks/use-player";
+import Devices from "components/room/devices";
+import {
+  currentPlaybackAtom,
+  isPlayingAtom,
+  usePlayer,
+} from "hooks/use-player";
 import { useRecoilValue } from "recoil";
 
-export default function ListenerPlayer() {
+export default function Player() {
   const isPlaying = useRecoilValue(isPlayingAtom);
   const [progress, setProgress] = useState(0);
   const currentPlayback = useRecoilValue(currentPlaybackAtom);
   const timer = useRef(null);
+  const { playNextTrack } = usePlayer();
 
   useEffect(() => {
     if (currentPlayback) {
@@ -18,40 +25,39 @@ export default function ListenerPlayer() {
   }, [currentPlayback, setProgress]);
 
   useEffect(() => {
-    if (currentPlayback?.id && isPlaying) {
+    if (currentPlayback && progress >= parseInt(currentPlayback.duration_ms)) {
       clearInterval(timer.current);
-      const incrementProgress = () => {
-        setProgress(progress + 1500);
-      };
-      timer.current = setInterval(() => incrementProgress(), 1500);
+      playNextTrack();
+    }
+    //eslint-disable-next-line
+  }, [progress]);
 
-      return () => clearInterval(timer.current);
+  useEffect(() => {
+    function tick() {
+      setProgress(progress + 1500);
+    }
+
+    if (currentPlayback && isPlaying) {
+      clearInterval(timer.current);
+      timer.current = setInterval(() => tick(), 1500);
     }
 
     if (isPlaying === false) {
       clearInterval(timer.current);
     }
 
+    return () => clearInterval(timer.current);
     // eslint-disable-next-line
   }, [currentPlayback, isPlaying, progress]);
-
-  useEffect(() => {
-    if (currentPlayback) {
-      if (((progress * 100) / currentPlayback.duration_ms).toFixed(2) >= 100) {
-        clearInterval(timer.current);
-      }
-    }
-    // eslint-disable-next-line
-  }, [progress, currentPlayback]);
 
   return (
     <div className="cq-bg-dark w-full relative">
       <div
         style={{ height: "2px" }}
-        className="cq-bg-blue-darker w-full absolute top-0 shadow"></div>
+        className="cq-bg-blue w-full absolute top-0 shadow"></div>
       <motion.div
         style={{ height: "2px" }}
-        className="cq-bg-blue absolute top-0 max-w-full"
+        className="cq-bg-green absolute top-0 max-w-full"
         animate={{
           width: `${((progress * 100) / currentPlayback?.duration_ms).toFixed(
             2,
@@ -95,15 +101,16 @@ export default function ListenerPlayer() {
                 size="lg"
                 className="fill-current mr-2"
               />
-              No music!
-              <span role="img" aria-label="clap clap clap" className="ml-2">
-                👏👏👏
-              </span>
+              Add songs to the Play Queue
             </div>
           )}
         </div>
-        <div className="w-1/3">&nbsp;</div>
-        <div className="w-1/3 flex items-center justify-end">&nbsp;</div>
+        <div className="w-1/3">
+          <PlayerControls />
+        </div>
+        <div className="w-1/3 flex items-center justify-end">
+          <Devices />
+        </div>
       </div>
     </div>
   );

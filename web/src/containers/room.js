@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import Search from "components/host/search";
-import Playlists from "components/Playlists";
-import Settings from "components/host/settings";
-import Playlist from "components/Playlist";
-import ListenersList from "components/host/listeners";
-import Layout from "components/host/layout";
+import Search from "components/room/search";
+import Playlists from "components/playlists";
+import Settings from "components/room/settings";
+import Playlist from "components/playlist";
+import ListenersList from "components/room/listeners";
+import Layout from "components/room/layout";
+
+import { useRemoteQueue } from "hooks/use-remote-queue";
 
 export function Room() {
+  const { join } = useRemoteQueue();
+
+  useEffect(() => {
+    join();
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>

@@ -55,9 +55,8 @@ module.exports = function (app, _options, next) {
       const key = `rooms:${id}:listeners`;
       const length = await app.redis.llen(key);
       const usernames = await app.redis.lrange(key, 0, length);
-      console.log(usernames);
       const isTaken = usernames.includes(username);
-      return isTaken ? reply.badRequest() : reply.send("OK");
+      return isTaken ? reply.badRequest() : reply.send([]);
     },
   );
 

@@ -20,6 +20,7 @@ export default function Playlist() {
   const {
     state: { playlist },
   } = useLocation();
+  const { id: room } = useParams();
 
   const { status, data: items } = useQuery("playlistTracks", [], async () => {
     const response = await fetch(
@@ -39,7 +40,7 @@ export default function Playlist() {
       <div className="flex items-center justify-between p-4 text-gray-500">
         <button
           className="appearance-none cursor-pointer hover:text-gray-300 font-medium"
-          onClick={() => navigate("/host/playlists")}>
+          onClick={() => navigate(`/rooms/${room}/playlists`)}>
           <FontAwesomeIcon
             icon={faChevronLeft}
             size="lg"
