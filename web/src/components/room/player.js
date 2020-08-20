@@ -105,13 +105,21 @@ export default function Player() {
             </div>
           )}
         </div>
-        <div className="w-1/3">
-          <PlayerControls />
-        </div>
-        <div className="w-1/3 flex items-center justify-end">
-          <Devices />
-        </div>
+        <HostControls />
       </div>
     </div>
+  );
+}
+
+function HostControls() {
+  return (
+    <>
+      <div className="w-1/3">
+        <PlayerControls />
+      </div>
+      <div className="w-1/3 flex items-center justify-end">
+        <Devices />
+      </div>
+    </>
   );
 }

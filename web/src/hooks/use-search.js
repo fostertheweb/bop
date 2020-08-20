@@ -1,26 +1,32 @@
-import { useRecoilValue } from "recoil";
-import { userAccessTokenAtom, clientAccessTokenState } from "hooks/use-login";
+import { useQuery } from "react-query";
 
-const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
+const {
+  REACT_APP_API_BASE_URL: API_BASE_URL,
+  REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL,
+} = process.env;
 
-export function useSearch(anonymousRequest = false) {
-  const clientToken = useRecoilValue(clientAccessTokenState);
-  const userToken = useRecoilValue(userAccessTokenAtom);
-  const token = anonymousRequest && clientToken ? clientToken : userToken;
+export function useSearch(query) {
+  const { data: credentials } = useQuery("clientAccessToken", async () => {
+    const response = await fetch(`${API_BASE_URL}/spotify/authorize`);
+    return await response.json();
+  });
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
-  return async function search(_, query) {
-    try {
+  const { isFetching, data } = useQuery(
+    [credentials && "search", query],
+    async (_, search) => {
       const response = await fetch(
-        `${SPOTIFY_API_BASE_URL}/search?query=${query}&type=track&market=US`,
-        { headers },
+        `${SPOTIFY_API_BASE_URL}/search?query=${search}&type=track&market=US`,
+        {
+          headers: {
+            Authorization: `Bearer ${credentials.access_token}`,
+          },
+        },
       );
       const { tracks } = await response.json();
       return tracks;
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    },
+    { enabled: credentials && query },
+  );
+
+  return { isFetching, results: data };
 }

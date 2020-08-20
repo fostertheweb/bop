@@ -63,9 +63,7 @@ export const usePlayer = () => {
   }
 
   async function playNextTrack() {
-    console.log({ playNextTrack: queue });
     const nextTrack = queue[0];
-    console.log({ nextTrack });
 
     if (nextTrack) {
       const response = await fetch(

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { atom, selector, useRecoilState, useSetRecoilState } from "recoil";
+import { atom, useRecoilState, useSetRecoilState } from "recoil";
 import { stringify } from "query-string";
 
 const {
@@ -18,19 +18,6 @@ const scope = [
   "app-remote-control",
   "streaming",
 ].join(" ");
-
-export const clientAccessTokenQuery = selector({
-  key: "crowdQ.clientAccessTokenQuery",
-  get: async () => {
-    const response = await fetch(`${API_BASE_URL}/spotify/authorize`);
-    return await response.json();
-  },
-});
-
-export const clientAccessTokenState = atom({
-  key: "crowdQ.clientAccessToken",
-  default: null,
-});
 
 export const userAccessTokenAtom = atom({
   key: "crowdQ.storage.userAccessToken",

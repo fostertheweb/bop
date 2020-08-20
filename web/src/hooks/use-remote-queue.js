@@ -4,14 +4,22 @@ import { usernameState } from "atoms/username";
 import useWebSocket from "react-use-websocket";
 import { useQueue } from "hooks/use-queue";
 import { useEffect } from "react";
+import { useQuery } from "react-query";
 
-const { REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL } = process.env;
+const {
+  REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
+  REACT_APP_API_BASE_URL: API_BASE_URL,
+} = process.env;
 
 export function useRemoteQueue() {
   const username = useRecoilValue(usernameState);
   const { id: room } = useParams();
   const { addToQueue: updateQueue } = useQueue();
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
+  const { data } = useQuery(["room", room], async (_, id) => {
+    const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
+    return await response.json();
+  });
 
   useEffect(() => {
     if (lastJsonMessage) {
@@ -29,6 +37,17 @@ export function useRemoteQueue() {
     //eslint-disable-next-line
   }, [lastJsonMessage]);
 
+  function addToQueue(item) {
+    if (data) {
+      const [_, host] = data;
+      if (username === host) {
+        add(item);
+      } else {
+        songRequest(item);
+      }
+    }
+  }
+
   function join() {
     sendJsonMessage({
       action: "JOIN",
@@ -37,9 +56,18 @@ export function useRemoteQueue() {
     });
   }
 
-  function addToQueue(item) {
+  function add(item) {
     sendJsonMessage({
       action: "ADD_TO_QUEUE",
+      room,
+      data: item,
+      username: username || "Anonymous",
+    });
+  }
+
+  function songRequest(item) {
+    sendJsonMessage({
+      action: "SONG_REQUEST",
       room,
       data: item,
       username: username || "Anonymous",

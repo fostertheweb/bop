@@ -1,24 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useRemoteQueue } from "hooks/use-remote-queue";
 import { useSearch } from "hooks/use-search";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
-import { useQuery } from "react-query";
 
 export default function Search() {
   const { addToQueue } = useRemoteQueue();
-  const search = useSearch();
   const [query, setQuery] = useState("");
   const debounced = useDebounce(query, 500);
-  const { isFetching: isLoading, data: tracks } = useQuery(
-    ["search", debounced],
-    search,
-    {
-      enabled: debounced,
-    },
-  );
+  const { isFetching: isLoading, results: tracks } = useSearch(debounced);
 
   return (
     <div className="p-2">

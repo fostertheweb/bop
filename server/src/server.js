@@ -36,7 +36,7 @@ app.get("/", { websocket: true }, (connection) => {
         } else {
           clients[roomId] = [connection.socket];
         }
-        // TODO:
+        // TODO: yo
         await redis.lpush(`rooms:${roomId}:listeners`, username);
         console.log(`${username} joined ${roomId}`);
       } catch (err) {
@@ -58,10 +58,19 @@ app.get("/", { websocket: true }, (connection) => {
       }
     }
 
+    async function getHostConnection() {
+      try {
+      } catch (err) {}
+    }
+
     switch (action) {
       case "JOIN":
         await joinRoom(room);
         break;
+      // case "SONG_REQUEST":
+      //   const host = await getHostConnection();
+      //   await send(host, { room, action: "SONG_REQUEST", username, data });
+      //   break;
       case "ADD_TO_QUEUE":
         await addToQueue();
         await broadcast(room, {
