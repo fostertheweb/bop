@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Search from "components/room/search";
 import Playlists from "components/playlists";
 import Settings from "components/room/settings";
+import Requests from "components/room/requests";
 import Playlist from "components/playlist";
 import ListenersList from "components/room/listeners";
 import Layout from "components/room/layout";
@@ -23,7 +24,7 @@ export function Room() {
         <Route path="playlists" element={<Playlists />} />
         <Route path="playlists/:playlistId" element={<Playlist />} />
         <Route path="listeners" element={<ListenersList />} />
-        <Route path="requests" element={<div>Requests</div>} />
+        <Route path="requests" element={<Requests />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>

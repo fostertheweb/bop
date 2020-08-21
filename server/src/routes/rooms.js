@@ -17,14 +17,14 @@ module.exports = function (app, _options, next) {
         return reply.badRequest();
       }
 
-      const uid = new ShortUniqueId();
-      const roomId = uid();
+      const generateId = new ShortUniqueId();
+      const id = generateId();
       const room = {
-        id: roomId,
+        id,
         host: username,
       };
-      await app.redis.lpush("rooms", roomId);
-      await app.redis.hmset(`rooms:${roomId}`, room);
+      await app.redis.lpush("rooms", id);
+      await app.redis.hmset(`rooms:${id}`, room);
       return room;
     } catch (err) {
       console.error(err);

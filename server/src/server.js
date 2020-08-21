@@ -47,30 +47,38 @@ app.get("/", { websocket: true }, (connection) => {
     async function addToQueue() {
       try {
         await redis.lpush(`rooms:${room}:queue`, JSON.stringify(data));
-        // TODO: just track id
-        await redis.lpush(
-          `listeners:${username}:requests`,
-          JSON.stringify(data),
-        );
         console.log(`${username} added ${data.id} to ${room} queue`);
       } catch (err) {
         console.error(err);
       }
     }
 
-    async function getHostConnection() {
+    async function addSongRequest() {
       try {
-      } catch (err) {}
+        await redis.lpush(`rooms:${room}:requests`, JSON.stringify(data));
+        // TODO: just track id
+        await redis.lpush(
+          `listeners:${username}:requests`,
+          JSON.stringify(data),
+        );
+        console.log(`${username} requested ${data.id} in ${room}`);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     switch (action) {
       case "JOIN":
         await joinRoom(room);
         break;
-      // case "SONG_REQUEST":
-      //   const host = await getHostConnection();
-      //   await send(host, { room, action: "SONG_REQUEST", username, data });
-      //   break;
+      case "SONG_REQUEST":
+        await addSongRequest();
+        await broadcast(room, {
+          action: "SONG_REQUEST",
+          username,
+          data,
+        });
+        break;
       case "ADD_TO_QUEUE":
         await addToQueue();
         await broadcast(room, {

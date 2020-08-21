@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { usernameState } from "atoms/username";
 import useWebSocket from "react-use-websocket";
 import { useQueue } from "hooks/use-queue";
+import { useSongRequests } from "hooks/use-song-requests";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
 
@@ -14,6 +15,7 @@ const {
 export function useRemoteQueue() {
   const username = useRecoilValue(usernameState);
   const { id: room } = useParams();
+  const { addSongRequest } = useSongRequests();
   const { addToQueue: updateQueue } = useQueue();
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
   const { data } = useQuery(["room", room], async (_, id) => {
@@ -28,6 +30,9 @@ export function useRemoteQueue() {
       switch (action) {
         case "SONG_ADDED":
           updateQueue(data);
+          break;
+        case "SONG_REQUEST":
+          addSongRequest(data);
           break;
         default:
           console.log(lastJsonMessage);
