@@ -1,13 +1,8 @@
-import { selectorFamily, useSetRecoilState } from "recoil";
+import { atom, useSetRecoilState } from "recoil";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
-
-export const songRequestsState = selectorFamily({
+export const songRequestsState = atom({
   key: "crowdQ.songRequests",
-  get: (room) => async () => {
-    const response = await fetch(`${API_BASE_URL}/rooms/${room}/requests`);
-    return await response.json();
-  },
+  default: [],
 });
 
 export function useSongRequests() {
@@ -18,9 +13,9 @@ export function useSongRequests() {
   }
 
   function removeSongRequest(index) {
-    setSongRequests((request) => [
-      ...request.slice(0, index),
-      ...request.slice(index + 1),
+    setSongRequests((requests) => [
+      ...requests.slice(0, index),
+      ...requests.slice(index + 1),
     ]);
   }
 

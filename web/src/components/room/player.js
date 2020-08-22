@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import PlayerControls from "components/room/player-controls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash } from "@fortawesome/pro-solid-svg-icons";
+import { faMusicSlash, faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "components/room/devices";
 import {
   currentPlaybackAtom,
@@ -10,6 +10,11 @@ import {
   usePlayer,
 } from "hooks/use-player";
 import { useRecoilValue } from "recoil";
+import { useQuery } from "react-query";
+import { useParams } from "react-router";
+import { usernameState } from "atoms/username";
+
+const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Player() {
   const isPlaying = useRecoilValue(isPlayingAtom);
@@ -17,6 +22,12 @@ export default function Player() {
   const currentPlayback = useRecoilValue(currentPlaybackAtom);
   const timer = useRef(null);
   const { playNextTrack } = usePlayer();
+  const { id: room } = useParams();
+  const { isFetching, data } = useQuery(["room", room], async (_, id) => {
+    const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
+    return await response.json();
+  });
+  const username = useRecoilValue(usernameState);
 
   useEffect(() => {
     if (currentPlayback) {
@@ -105,7 +116,11 @@ export default function Player() {
             </div>
           )}
         </div>
-        <HostControls />
+        {isFetching ? (
+          <FontAwesomeIcon icon={faSpinnerThird} spin />
+        ) : (
+          "jfost784" === username && <HostControls />
+        )}
       </div>
     </div>
   );

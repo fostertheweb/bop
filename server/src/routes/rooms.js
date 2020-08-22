@@ -49,6 +49,13 @@ module.exports = function (app, _options, next) {
     return queue.map((i) => JSON.parse(i));
   });
 
+  app.get("/:id/requests", async ({ params: { id } }) => {
+    const key = `rooms:${id}:requests`;
+    const length = await app.redis.llen(key);
+    const requests = await app.redis.lrange(key, 0, length);
+    return requests.map((i) => JSON.parse(i));
+  });
+
   app.post(
     "/:id/check-username",
     async ({ params: { id }, body: { username } }, reply) => {
@@ -62,6 +69,11 @@ module.exports = function (app, _options, next) {
 
   app.delete("/", async () => {
     await app.redis.ltrim("rooms", 20, 0);
+    return [];
+  });
+
+  app.delete("/:id/requests", async ({ params: { id } }) => {
+    await app.redis.ltrim(`rooms:${id}:requests`, 20, 0);
     return [];
   });
 
