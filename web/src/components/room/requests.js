@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSpinnerThird,
-  faListMusic,
+  faPlusCircle,
   faTimesCircle,
 } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router";
@@ -36,7 +36,7 @@ export default function Requests() {
   }, [status]);
 
   if (isFetching) {
-    return <FontAwesomeIcon icon={faSpinnerThird} size="lg" />;
+    return <FontAwesomeIcon icon={faSpinnerThird} spin size="lg" />;
   }
 
   return (
@@ -75,21 +75,21 @@ export default function Requests() {
             <div className="flex">
               <button
                 onClick={() => addToQueue(item)}
-                className="flex items-center text-green-700 py-2 px-4 hover:text-green-500">
+                className="flex flex-col items-center text-green-700 py-2 px-4 hover:text-green-500">
                 <FontAwesomeIcon
-                  icon={faListMusic}
+                  icon={faPlusCircle}
                   className="fill-current mr-1"
+                  size="lg"
                 />
-                Add
               </button>
               <button
                 onClick={() => removeSongRequest(index)}
-                className="flex items-center text-red-800 py-2 px-4 hover:text-red-600">
+                className="flex flex-col items-center text-red-800 py-2 px-4 hover:text-red-600">
                 <FontAwesomeIcon
                   icon={faTimesCircle}
                   className="fill-current mr-1"
+                  size="lg"
                 />
-                Remove Request
               </button>
             </div>
           </motion.div>
