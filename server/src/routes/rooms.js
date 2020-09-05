@@ -59,12 +59,12 @@ module.exports = function (app, _options, next) {
   );
 
   app.delete("/", async () => {
-    await app.redis.ltrim("rooms", 0, -1);
+    await app.redis.del("rooms");
     return [];
   });
 
   app.delete("/:id/requests", async ({ params: { id } }) => {
-    await app.redis.ltrim(`rooms:${id}:requests`, 0, -1);
+    await app.redis.del(`rooms:${id}:requests`);
     return [];
   });
 
