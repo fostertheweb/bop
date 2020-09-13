@@ -12,7 +12,7 @@ import {
 import { useRecoilValue } from "recoil";
 import { useQuery } from "react-query";
 import { useParams } from "react-router";
-import { usernameState } from "atoms/username";
+import { useUsername } from "hooks/use-username";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
@@ -27,7 +27,7 @@ export default function Player() {
     const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
     return await response.json();
   });
-  const username = useRecoilValue(usernameState);
+  const username = useUsername();
 
   useEffect(() => {
     if (currentPlayback) {

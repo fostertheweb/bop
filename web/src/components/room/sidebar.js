@@ -5,31 +5,12 @@ import {
   faUsers,
   faCog,
   faCommentMusic,
-  faSpinnerThird,
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import { useRecoilValue } from "recoil";
-import { usernameState } from "atoms/username";
-
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+import { useIsHost } from "hooks/use-is-host";
 
 export default function Sidebar() {
-  const { id: room } = useParams();
-  const { isFetching, data } = useQuery(
-    ["room", room],
-    async (_, id) => {
-      const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
-      return await response.json();
-    },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    },
-  );
-
   return (
     <div className="cq-bg-darker flex flex-col" style={{ width: "80px" }}>
       <SidebarLink path="search" icon={faSearch}>
@@ -38,21 +19,13 @@ export default function Sidebar() {
       <SidebarLink path="playlists" icon={faListMusic}>
         Playlists
       </SidebarLink>
-      <HostOnlyLink
-        path="requests"
-        icon={faCommentMusic}
-        data={data}
-        isFetching={isFetching}>
+      <HostOnlyLink path="requests" icon={faCommentMusic}>
         Requests
       </HostOnlyLink>
       <SidebarLink path="listeners" icon={faUsers}>
         Listeners
       </SidebarLink>
-      <HostOnlyLink
-        path="settings"
-        icon={faCog}
-        data={data}
-        isFetching={isFetching}>
+      <HostOnlyLink path="settings" icon={faCog}>
         Settings
       </HostOnlyLink>
     </div>
@@ -72,22 +45,9 @@ export function SidebarLink({ path, icon, children }) {
 }
 
 function HostOnlyLink(props) {
-  const username = useRecoilValue(usernameState);
+  const isHost = useIsHost();
 
-  if (props.isFetching) {
-    return (
-      <div className="block mt-2 p-2 text-center">
-        <FontAwesomeIcon
-          icon={faSpinnerThird}
-          spin
-          size="lg"
-          className="cq-text-white"
-        />
-      </div>
-    );
-  }
-
-  if (props.data[1] && username === props.data[1]) {
+  if (isHost) {
     return (
       <SidebarLink path={props.path} icon={props.icon}>
         {props.children}

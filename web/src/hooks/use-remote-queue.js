@@ -1,11 +1,10 @@
-import { useRecoilValue } from "recoil";
 import { useParams } from "react-router-dom";
-import { usernameState } from "atoms/username";
 import useWebSocket from "react-use-websocket";
 import { useQueue } from "hooks/use-queue";
 import { useSongRequests } from "hooks/use-song-requests";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
+import { useUsername } from "./use-username";
 
 const {
   REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
@@ -13,7 +12,7 @@ const {
 } = process.env;
 
 export function useRemoteQueue() {
-  const username = useRecoilValue(usernameState);
+  const username = useUsername();
   const { id: room } = useParams();
   const { addSongRequest } = useSongRequests();
   const { addToQueue: updateQueue } = useQueue();

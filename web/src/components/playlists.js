@@ -1,56 +1,23 @@
 import React from "react";
-import { selector, useRecoilValue, useRecoilValueLoadable } from "recoil";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
-import { useNavigate } from "react-router";
-import { currentUserIdState, userDetailsSelector } from "atoms/user-details";
-import { useQuery } from "react-query";
-import { userAccessTokenAtom } from "hooks/use-login";
-
-const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
-
-const playlistsQuery = selector({
-  key: "crowdQ.playlists",
-  get: async ({ get }) => {
-    const userAccessToken = get(userAccessTokenAtom);
-    const { id } = get(userDetailsSelector);
-
-    if (userAccessToken) {
-      const response = await fetch(
-        `${SPOTIFY_API_BASE_URL}/users/${id}/playlists`,
-        {
-          headers: {
-            Authorization: `Bearer ${userAccessToken}`,
-          },
-        },
-      );
-      const json = await response.json();
-
-      if (response.ok) {
-        return json;
-      }
-
-      throw json;
-    }
-
-    return null;
-  },
-});
+import { useUserDetails } from "hooks/use-user-details";
+import { usePlaylists } from "hooks/use-playlists";
 
 export default function Playlists() {
-  const { state, contents } = useRecoilValueLoadable(playlistsQuery);
-  const navigate = useNavigate();
+  const { userDetails } = useUserDetails();
+  const { loading, playlists } = usePlaylists(userDetails);
 
   return (
     <>
-      <h1 className="p-4 text-gray-500 font-medium text-lg tracking-wide">
+      <h1 className="p-4 cq-text-white font-medium text-lg tracking-wide">
         Playlists
       </h1>
       <div>
-        {state === "loading" ? (
-          <FontAwesomeIcon icon={faSpinnerThird} />
+        {loading ? (
+          <FontAwesomeIcon icon={faSpinnerThird} spin />
         ) : (
-          contents?.items?.map((playlist) => (
+          playlists?.items?.map((playlist) => (
             <PlaylistListItem playlist={playlist} />
           ))
         )}

@@ -14,16 +14,20 @@ export function useSearch(query) {
   const { isFetching, data } = useQuery(
     [credentials && "search", query],
     async (_, search) => {
-      const response = await fetch(
-        `${SPOTIFY_API_BASE_URL}/search?query=${search}&type=track&market=US`,
-        {
-          headers: {
-            Authorization: `Bearer ${credentials.access_token}`,
+      if (query !== "") {
+        const response = await fetch(
+          `${SPOTIFY_API_BASE_URL}/search?query=${search}&type=track&market=US`,
+          {
+            headers: {
+              Authorization: `Bearer ${credentials.access_token}`,
+            },
           },
-        },
-      );
-      const { tracks } = await response.json();
-      return tracks;
+        );
+        const { tracks } = await response.json();
+        return tracks;
+      }
+
+      return [];
     },
     { enabled: credentials && query },
   );

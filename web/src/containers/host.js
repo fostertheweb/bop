@@ -1,36 +1,38 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
-import { userDetailsSelector } from "atoms/user-details";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useQuery } from "react-query";
-import { usernameState } from "atoms/username";
+import { useSetIsHost } from "hooks/use-is-host";
+import { useUserDetails } from "hooks/use-user-details";
+import { useSetUsername } from "hooks/use-username";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Host() {
-  const { contents = null } = useRecoilValueLoadable(userDetailsSelector);
-  const setUsername = useSetRecoilState(usernameState);
+  const { userDetails } = useUserDetails();
+  const setUsername = useSetUsername();
   const { status, data } = useQuery(
-    ["createRoom", contents.id],
-    async (_, username) => {
-      setUsername(username);
+    ["createRoom", userDetails],
+    async (_, details) => {
+      setUsername(details.id);
       const response = await fetch(`${API_BASE_URL}/rooms`, {
         method: "POST",
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ username: details.id }),
         headers: {
           "Content-Type": "application/json",
         },
       });
       return await response.json();
     },
-    { enabled: contents.id },
+    { enabled: userDetails?.id },
   );
   const navigate = useNavigate();
+  const setIsHost = useSetIsHost();
 
   useEffect(() => {
     if (data?.id) {
+      setIsHost(true);
       navigate(`/rooms/${data.id}/search`);
     }
     // eslint-disable-next-line
