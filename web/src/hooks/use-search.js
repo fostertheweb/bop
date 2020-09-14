@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useQuery } from "react-query";
 
 const {
@@ -7,30 +8,17 @@ const {
 
 export function useSearch(query) {
   const { data: credentials } = useQuery("clientAccessToken", async () => {
-    const response = await fetch(`${API_BASE_URL}/spotify/authorize`);
-    return await response.json();
+    return await axios.get(`${API_BASE_URL}/spotify/authorize`);
   });
 
-  const { isFetching, data } = useQuery(
-    [credentials && "search", query],
-    async (_, search) => {
-      if (query !== "") {
-        const response = await fetch(
-          `${SPOTIFY_API_BASE_URL}/search?query=${search}&type=track&market=US`,
-          {
-            headers: {
-              Authorization: `Bearer ${credentials.access_token}`,
-            },
-          },
-        );
-        const { tracks } = await response.json();
-        return tracks;
-      }
+  return useQuery(credentials && ["search", query], async () => {
+    if (query !== "") {
+      const { tracks } = await axios.get(
+        `${SPOTIFY_API_BASE_URL}/search?query=${query}&type=track&market=US`,
+      );
+      return tracks;
+    }
 
-      return [];
-    },
-    { enabled: credentials && query },
-  );
-
-  return { isFetching, results: data };
+    return [];
+  });
 }

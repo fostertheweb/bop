@@ -5,17 +5,10 @@ import { playQueueAtom } from "hooks/use-queue";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersCrown, faListMusic } from "@fortawesome/pro-solid-svg-icons";
-import { useQuery } from "react-query";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
-
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
 export default function Start() {
   const playQueue = useRecoilValue(playQueueAtom);
-  const { status, data } = useQuery("rooms", async () => {
-    const response = await fetch(`${API_BASE_URL}/rooms`);
-    return await response.json();
-  });
 
   return (
     <div className="flex flex-col justify-center items-center p-4">
@@ -39,22 +32,22 @@ export default function Start() {
             {status === "loading" ? (
               <FontAwesomeIcon icon={faSpinnerThird} />
             ) : (
-                data.map(([id, host]) => (
-                  <div
-                    key={id}
-                    className="mt-2 w-full px-6 py-3 text-white bg-gray-700 border border-gray-600 flex items-center justify-between rounded shadow">
-                    <div>
-                      {id} by {host}
-                    </div>
-                    <div className="w-6"></div>
-                    <Link
-                      to={`/join/${id}`}
-                      className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600">
-                      Join
-                  </Link>
+              data.map(([id, host]) => (
+                <div
+                  key={id}
+                  className="mt-2 w-full px-6 py-3 text-white bg-gray-700 border border-gray-600 flex items-center justify-between rounded shadow">
+                  <div>
+                    {id} by {host}
                   </div>
-                ))
-              )}
+                  <div className="w-6"></div>
+                  <Link
+                    to={`/join/${id}`}
+                    className="px-6 py-3 rounded bg-green-500 text-white font-medium hover:bg-green-600">
+                    Join
+                  </Link>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
