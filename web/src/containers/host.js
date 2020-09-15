@@ -7,7 +7,7 @@ import { useCreateRoom } from "hooks/use-create-room";
 
 export default function Host() {
   const { userDetails } = useUserDetails();
-  const { status, data } = useCreateRoom();
+  const [createRoom, { status, data }] = useCreateRoom();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,19 +19,23 @@ export default function Host() {
 
   return (
     <div className="h-screen flex items-center">
-      <div className="w-full h-full flex flex-col items-center justify-center cq-text-white p-4">
-        <FontAwesomeIcon
-          icon={faSpinnerThird}
-          className="fill-current"
-          size="lg"
-          spin
-        />
-        <div>
-          {status === "loading"
-            ? "Creating a room for you and your listeners."
-            : ""}
-        </div>
-      </div>
+      <form onSubmit={(e) => console.log(e)}>
+        <input type="checkbox" />
+      </form>
+    </div>
+  );
+}
+
+function CreateRoomLoader() {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center cq-text-white p-4">
+      <FontAwesomeIcon
+        icon={faSpinnerThird}
+        className="fill-current"
+        size="lg"
+        spin
+      />
+      <div>Creating a room for you and your listeners.</div>
     </div>
   );
 }

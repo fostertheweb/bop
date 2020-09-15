@@ -6,9 +6,11 @@ import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersCrown, faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+import { useRooms } from "hooks/use-rooms";
 
 export default function Start() {
   const playQueue = useRecoilValue(playQueueAtom);
+  const { data: rooms, status } = useRooms();
 
   return (
     <div className="flex flex-col justify-center items-center p-4">
@@ -32,7 +34,7 @@ export default function Start() {
             {status === "loading" ? (
               <FontAwesomeIcon icon={faSpinnerThird} />
             ) : (
-              data.map(([id, host]) => (
+              rooms.map(({ id, host }) => (
                 <div
                   key={id}
                   className="mt-2 w-full px-6 py-3 text-white bg-gray-700 border border-gray-600 flex items-center justify-between rounded shadow">

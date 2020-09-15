@@ -1,5 +1,4 @@
 import { useQuery } from "react-query";
-import { useQuery } from "react-query";
 import { useRecoileValue } from "recoil";
 import { userAccessTokenAtom } from "hooks/use-login";
 import axios from "axios";
@@ -13,7 +12,7 @@ export function usePlaylists(userDetails) {
       Authorization: `Bearer ${userAccessToken}`,
     };
     return await axios.get(
-      `${SPOTIFY_API_BASE_URL}/users/${details.id}/playlists`,
+      `${SPOTIFY_API_BASE_URL}/users/${userDetails.id}/playlists`,
       { headers },
     );
   });

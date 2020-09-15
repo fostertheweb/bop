@@ -1,18 +1,28 @@
 const { default: ShortUniqueId } = require("short-unique-id");
+const { Command } = require("ioredis");
+
+function setJSON(key, value) {
+  return new Command("JSON.SET", [key, ".", JSON.stringify(value)]);
+}
+
+function getJSON(key) {
+  return new Command("JSON.GET", [key]);
+}
 
 module.exports = function (app, _options, next) {
   app.get("/", async () => {
     const ids = await app.redis.lrange("rooms", 0, -1);
-    const hashes = ids.map((id) =>
-      app.redis.hmget(`rooms:${id}`, "id", "host"),
+    const commands = ids.map((id) =>
+      app.redis.sendCommand(getJSON(`rooms:${id}`)),
     );
-    const rooms = await Promise.all(hashes);
+    const buffers = await Promise.all(commands);
+    const rooms = buffers.map((b) => JSON.parse(b.toString()));
     return rooms;
   });
 
-  app.post("/", async ({ body: { username } }, reply) => {
+  app.post("/", async ({ body: { host } }, reply) => {
     try {
-      if (!username) {
+      if (!host) {
         return reply.badRequest();
       }
 
@@ -20,18 +30,18 @@ module.exports = function (app, _options, next) {
       const id = generateId();
       const room = {
         id,
-        host: username,
+        host,
       };
       await app.redis.lpush("rooms", id);
-      await app.redis.hmset(`rooms:${id}`, room);
-      return room;
+      await app.redis.sendCommand(setJSON(`rooms:${id}`, room));
+      return reply.send(room);
     } catch (err) {
       console.error(err);
     }
   });
 
   app.get("/:id", async ({ params: { id } }) => {
-    return await app.redis.hmget(`rooms:${id}`, "id", "host");
+    return await app.redis.sendCommand(getJSON(`rooms:${id}`));
   });
 
   app.get("/:id/listeners", async ({ params: { id } }) => {
@@ -49,12 +59,11 @@ module.exports = function (app, _options, next) {
     return requests.map((i) => JSON.parse(i));
   });
 
-  app.post(
-    "/:id/check-username",
-    async ({ params: { id }, body: { username } }, reply) => {
+  app.get(
+    "/:id/join",
+    async ({ params: { id }, query: { username } }, reply) => {
       const usernames = await app.redis.lrange(`rooms:${id}:listeners`, 0, -1);
-      const isTaken = usernames.includes(username);
-      return isTaken ? reply.badRequest() : reply.send([]);
+      return usernames.includes(username) ? reply.badRequest() : reply.send([]);
     },
   );
 
