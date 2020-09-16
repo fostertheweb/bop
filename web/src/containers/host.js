@@ -23,6 +23,7 @@ export default function Host() {
     const name = target.name;
 
     setRoomDetails({
+      ...roomDetails,
       [name]: value,
     });
   }

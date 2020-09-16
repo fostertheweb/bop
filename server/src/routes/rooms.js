@@ -22,6 +22,7 @@ module.exports = function (app, _options, next) {
 
   app.post("/", async ({ body }, reply) => {
     try {
+      console.log(body);
       const generateId = new ShortUniqueId();
       const id = generateId();
       const room = { id, ...body };
