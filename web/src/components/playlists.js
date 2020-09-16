@@ -5,8 +5,8 @@ import { useUserDetails } from "hooks/use-user-details";
 import { usePlaylists } from "hooks/use-playlists";
 
 export default function Playlists() {
-  const { userDetails } = useUserDetails();
-  const { loading, playlists } = usePlaylists(userDetails);
+  const { data: userDetails } = useUserDetails();
+  const { isFetching: loading, data: playlists } = usePlaylists(userDetails);
 
   return (
     <>
