@@ -20,18 +20,11 @@ module.exports = function (app, _options, next) {
     return rooms;
   });
 
-  app.post("/", async ({ body: { host } }, reply) => {
+  app.post("/", async ({ body }, reply) => {
     try {
-      if (!host) {
-        return reply.badRequest();
-      }
-
       const generateId = new ShortUniqueId();
       const id = generateId();
-      const room = {
-        id,
-        host,
-      };
+      const room = { id, ...body };
       await app.redis.lpush("rooms", id);
       await app.redis.sendCommand(setJSON(`rooms:${id}`, room));
       return reply.send(room);

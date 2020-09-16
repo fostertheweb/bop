@@ -1,6 +1,7 @@
-import { useState } from "react";
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
 import { stringify } from "query-string";
+import { useMutation } from "react-query";
+import axios from "axios";
 
 const {
   REACT_APP_API_BASE_URL: API_BASE_URL,
@@ -31,78 +32,56 @@ export const userRefreshTokenAtom = atom({
   persistence_UNSTABLE: true,
 });
 
+export function useLoginUrl(redirect_uri) {
+  return `https://accounts.spotify.com/authorize?${stringify({
+    response_type: "code",
+    client_id: SPOTIFY_CLIENT_ID,
+    scope,
+    redirect_uri,
+  })}`;
+}
+
 export function useLogin() {
+  const setUserAccessToken = useSetRecoilState(userAccessTokenAtom);
+  const setUserRefreshToken = useSetRecoilState(userRefreshTokenAtom);
+
+  return useMutation(
+    async (payload) => {
+      const { data } = await axios.post(
+        `${API_BASE_URL}/spotify/login`,
+        payload,
+      );
+      return data;
+    },
+    {
+      onSuccess({ access_token, refresh_token }) {
+        setUserAccessToken(access_token);
+        setUserRefreshToken(refresh_token);
+      },
+    },
+  );
+}
+
+export function useRefreshSession() {
   const setUserAccessToken = useSetRecoilState(userAccessTokenAtom);
   const [userRefreshToken, setUserRefreshToken] = useRecoilState(
     userRefreshTokenAtom,
   );
-  const [status, setStatus] = useState("idle");
 
-  function redirect(redirect_uri) {
-    return `https://accounts.spotify.com/authorize?${stringify({
-      response_type: "code",
-      client_id: SPOTIFY_CLIENT_ID,
-      scope,
-      redirect_uri,
-    })}`;
-  }
-
-  async function login(code, redirect_uri) {
-    setStatus("pending");
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/spotify/login`, {
-        method: "POST",
-        body: JSON.stringify({
-          code,
-          redirect_uri,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.error) {
-        throw response.error;
-      }
-
-      const { access_token, refresh_token } = await response.json();
-
-      if (response.ok && access_token && refresh_token) {
-        setUserAccessToken(access_token);
-        setUserRefreshToken(refresh_token);
-        setStatus("success");
-      }
-    } catch (err) {
-      setStatus("failure");
-    }
-  }
-
-  async function refresh() {
-    setStatus("pending");
-    try {
-      const response = await fetch(
+  return useMutation(
+    async () => {
+      const { data } = await axios.post(
         `${API_BASE_URL}/spotify/refresh?${stringify({
           refresh_token: userRefreshToken,
         })}`,
-        { method: "POST" },
       );
-
-      if (response.error) {
-        throw response.error;
-      }
-
-      const { access_token, refresh_token } = await response.json();
-
-      if (response.ok && access_token && refresh_token) {
+      return data;
+    },
+    {
+      onSuccess({ access_token, refresh_token }) {
         setUserAccessToken(access_token);
         setUserRefreshToken(refresh_token);
-        setStatus("success");
-      }
-    } catch (err) {
-      setStatus("failure");
-    }
-  }
-
-  return { login, redirect, refresh, status };
+      },
+    },
+  );
 }
