@@ -29,12 +29,11 @@ module.exports = function (app, _options, next) {
     }
   });
 
-  app.get("/refresh", async function (req, res) {
-    // your application requests refresh and access tokens
-    // after checking the state parameter
-    const refresh_token = req.query.refresh_token || null;
+  app.post("/refresh", async function (req, res) {
+    const refresh_token = req.body.refresh_token || null;
     const params = new URLSearchParams();
     const code = req.cookies["code"];
+    console.log({ code });
     params.append("refresh_token", refresh_token);
     params.append("grant_type", "refresh_token");
     params.append("code", code);

@@ -10,7 +10,7 @@ export default function Search() {
   const { addToQueue } = useRemoteQueue();
   const [query, setQuery] = useState("");
   const debounced = useDebounce(query, 500);
-  const { isFetching: isLoading, results: tracks } = useSearch(debounced);
+  const { isFetching: isLoading, data: tracks } = useSearch(debounced);
 
   return (
     <div className="p-2">
@@ -34,7 +34,7 @@ export default function Search() {
         </div>
       </div>
       <div>
-        {tracks?.items?.map((item) => (
+        {tracks?.map((item) => (
           <button
             onClick={() => addToQueue(item)}
             key={item.id}

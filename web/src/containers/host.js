@@ -5,9 +5,10 @@ import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useUserDetails } from "hooks/use-user-details";
 import { useCreateRoom } from "hooks/use-create-room";
 import { useSetIsHost } from "hooks/use-is-host";
+import { useSetUsername } from "hooks/use-username";
 
 export default function Host() {
-  const { userDetails } = useUserDetails();
+  const { status: userStatus, data: userDetails } = useUserDetails();
   const [createRoom, { status, data: room }] = useCreateRoom();
   const navigate = useNavigate();
   const [roomDetails, setRoomDetails] = useState({
@@ -17,6 +18,9 @@ export default function Host() {
     remote: false,
   });
   const setIsHost = useSetIsHost();
+  const setUsername = useSetUsername();
+
+  console.log(userDetails);
 
   function handleInputChange({ target }) {
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -43,8 +47,10 @@ export default function Host() {
 
   return (
     <div className="h-screen flex items-center">
-      {status === "loading" ? (
-        <CreateRoomLoader />
+      {userStatus === "loading" ? (
+        <CenteredLoader message="butt" />
+      ) : status === "loading" ? (
+        <CenteredLoader message="Creating a room for you and your listeners." />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center cq-text-white p-4">
           <form onSubmit={onSubmit} className="cq-text-white">
@@ -54,13 +60,13 @@ export default function Host() {
               name="name"
               label="Room Name"
               onChange={handleInputChange}
-              placeholder={`${roomDetails.id}'s Room`}
+              placeholder={`${userDetails?.id}'s Room`}
             />
             <Input
-              name="host"
+              name="username"
               label="Your username"
-              placeholder={roomDetails.host}
-              onChange={handleInputChange}
+              placeholder={userDetails?.id}
+              onChange={({ target }) => setUsername(target.value)}
             />
             <Option
               name="remote"
@@ -84,12 +90,12 @@ export default function Host() {
   );
 }
 
-function Input({ label, name, onChange }) {
+function Input({ label, ...props }) {
   return (
     <div>
       <label>
         <div>{label}</div>
-        <input type="text" name={name} onChange={onChange} />
+        <input type="text" {...props} />
       </label>
     </div>
   );
@@ -105,7 +111,7 @@ function Option({ label, name, onChange }) {
   );
 }
 
-function CreateRoomLoader() {
+function CenteredLoader({ message }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center cq-text-white p-4">
       <FontAwesomeIcon
@@ -114,7 +120,7 @@ function CreateRoomLoader() {
         size="lg"
         spin
       />
-      <div>Creating a room for you and your listeners.</div>
+      <div>{message}</div>
     </div>
   );
 }

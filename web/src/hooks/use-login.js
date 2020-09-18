@@ -70,11 +70,9 @@ export function useRefreshSession() {
 
   return useMutation(
     async () => {
-      const { data } = await axios.post(
-        `${API_BASE_URL}/spotify/refresh?${stringify({
-          refresh_token: userRefreshToken,
-        })}`,
-      );
+      const { data } = await axios.post(`${API_BASE_URL}/spotify/refresh`, {
+        refresh_token: userRefreshToken,
+      });
       return data;
     },
     {

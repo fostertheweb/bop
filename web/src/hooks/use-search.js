@@ -8,15 +8,25 @@ const {
 
 export function useSearch(query) {
   const { data: credentials } = useQuery("clientAccessToken", async () => {
-    return await axios.get(`${API_BASE_URL}/spotify/authorize`);
+    const { data } = await axios.get(`${API_BASE_URL}/spotify/authorize`);
+    return data;
   });
 
   return useQuery(credentials && ["search", query], async () => {
     if (query !== "") {
-      const { tracks } = await axios.get(
+      const {
+        data: {
+          tracks: { items },
+        },
+      } = await axios.get(
         `${SPOTIFY_API_BASE_URL}/search?query=${query}&type=track&market=US`,
+        {
+          headers: {
+            Authorization: `Bearer ${credentials.access_token}`,
+          },
+        },
       );
-      return tracks;
+      return items;
     }
 
     return [];

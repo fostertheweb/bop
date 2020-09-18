@@ -13,6 +13,7 @@ import { useRecoilValue } from "recoil";
 import { useQuery } from "react-query";
 import { useParams } from "react-router";
 import { useUsername } from "hooks/use-username";
+import { useIsHost } from "hooks/use-is-host";
 
 const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 
@@ -28,6 +29,7 @@ export default function Player() {
     return await response.json();
   });
   const username = useUsername();
+  const isHost = useIsHost();
 
   useEffect(() => {
     if (currentPlayback) {
@@ -119,7 +121,7 @@ export default function Player() {
         {isFetching ? (
           <FontAwesomeIcon icon={faSpinnerThird} spin />
         ) : (
-          "jfost784" === username && <HostControls />
+          isHost && <HostControls />
         )}
       </div>
     </div>

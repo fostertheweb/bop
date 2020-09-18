@@ -17,8 +17,8 @@ export function useRemoteQueue() {
   const { addSongRequest } = useSongRequests();
   const { addToQueue: updateQueue } = useQueue();
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
-  const { data } = useQuery(["room", room], async (_, id) => {
-    const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
+  const { data } = useQuery(room && ["room"], async () => {
+    const response = await fetch(`${API_BASE_URL}/rooms/${room}`);
     return await response.json();
   });
 
@@ -43,7 +43,9 @@ export function useRemoteQueue() {
 
   function addToQueue(item) {
     if (data) {
-      const [_, host] = data;
+      console.log({ username });
+      console.log(data);
+      const { host } = data;
       if (username === host) {
         add(item);
       } else {

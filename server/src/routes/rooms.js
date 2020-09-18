@@ -11,13 +11,23 @@ function getJSON(key) {
 
 module.exports = function (app, _options, next) {
   app.get("/", async (_, reply) => {
-    const ids = await app.redis.lrange("rooms", 0, -1);
-    const commands = ids.map((id) =>
-      app.redis.sendCommand(getJSON(`rooms:${id}`)),
-    );
-    const buffers = await Promise.all(commands);
-    const rooms = buffers.map((b) => JSON.parse(b.toString()));
-    return reply.send(rooms || []);
+    try {
+      const ids = await app.redis.lrange("rooms", 0, -1);
+
+      if (ids.length === 0) {
+        return reply.send([]);
+      }
+
+      const commands = ids.map((id) =>
+        app.redis.sendCommand(getJSON(`rooms:${id}`)),
+      );
+      const buffers = await Promise.all(commands);
+      const rooms = buffers.map((b) => JSON.parse(b.toString()));
+
+      return reply.send(rooms);
+    } catch (err) {
+      console.error(err);
+    }
   });
 
   app.post("/", async ({ body }, reply) => {
