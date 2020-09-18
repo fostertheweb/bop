@@ -1,10 +1,14 @@
-import { atom, useSetRecoilState } from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
 // selector fetch queue
 export const playQueueAtom = atom({
   key: "crowdQ.playQueue",
   default: [],
 });
+
+export function usePlayQueue() {
+  return useRecoilValue(playQueueAtom);
+}
 
 export function useQueue() {
   const setQueue = useSetRecoilState(playQueueAtom);

@@ -8,12 +8,12 @@ import {
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useRemoteQueue } from "hooks/use-remote-queue";
 import { useRecoilValue } from "recoil";
-import { userAccessTokenAtom } from "hooks/use-login";
+import { userAccessTokenState } from "hooks/use-login";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export default function Playlist() {
-  const userAccessToken = useRecoilValue(userAccessTokenAtom);
+  const userAccessToken = useRecoilValue(userAccessTokenState);
   const { addToQueue } = useRemoteQueue();
   const { playlistId } = useParams();
   const navigate = useNavigate();

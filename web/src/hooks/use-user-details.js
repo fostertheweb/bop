@@ -1,12 +1,14 @@
-import { useQuery } from "react-query";
+import { queryCache, useQuery } from "react-query";
 import { useRecoilValue } from "recoil";
-import { userAccessTokenAtom } from "hooks/use-login";
+import { userAccessTokenState, useRefreshSession } from "hooks/use-login";
 import Axios from "axios";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export function useUserDetails() {
-  const userAccessToken = useRecoilValue(userAccessTokenAtom);
+  const userAccessToken = useRecoilValue(userAccessTokenState);
+  const [refresh] = useRefreshSession();
+
   return useQuery(
     userAccessToken && ["userDetails", userAccessToken],
     async () => {
@@ -16,6 +18,14 @@ export function useUserDetails() {
         },
       });
       return data;
+    },
+    {
+      onError(err) {
+        if (err.response.status === 401) {
+          refresh();
+          queryCache.refetchQueries("userDetails");
+        }
+      },
     },
   );
 }

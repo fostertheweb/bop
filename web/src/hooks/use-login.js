@@ -20,13 +20,13 @@ const scope = [
   "streaming",
 ].join(" ");
 
-export const userAccessTokenAtom = atom({
+export const userAccessTokenState = atom({
   key: "crowdQ.storage.userAccessToken",
   default: null,
   persistence_UNSTABLE: true,
 });
 
-export const userRefreshTokenAtom = atom({
+export const userRefreshTokenState = atom({
   key: "crowdQ.storage.userRefreshToken",
   default: null,
   persistence_UNSTABLE: true,
@@ -42,8 +42,8 @@ export function useLoginUrl(redirect_uri) {
 }
 
 export function useLogin() {
-  const setUserAccessToken = useSetRecoilState(userAccessTokenAtom);
-  const setUserRefreshToken = useSetRecoilState(userRefreshTokenAtom);
+  const setUserAccessToken = useSetRecoilState(userAccessTokenState);
+  const setUserRefreshToken = useSetRecoilState(userRefreshTokenState);
 
   return useMutation(
     async (payload) => {
@@ -63,9 +63,9 @@ export function useLogin() {
 }
 
 export function useRefreshSession() {
-  const setUserAccessToken = useSetRecoilState(userAccessTokenAtom);
+  const setUserAccessToken = useSetRecoilState(userAccessTokenState);
   const [userRefreshToken, setUserRefreshToken] = useRecoilState(
-    userRefreshTokenAtom,
+    userRefreshTokenState,
   );
 
   return useMutation(

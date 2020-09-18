@@ -1,12 +1,12 @@
 import { useQuery } from "react-query";
 import { useRecoilValue } from "recoil";
-import { userAccessTokenAtom } from "hooks/use-login";
+import { userAccessTokenState } from "hooks/use-login";
 import axios from "axios";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export function usePlaylists(userDetails) {
-  const userAccessToken = useRecoilValue(userAccessTokenAtom);
+  const userAccessToken = useRecoilValue(userAccessTokenState);
   return useQuery(userDetails && ["playlists", userDetails.id], async () => {
     console.log(userDetails);
     console.log(userAccessToken);

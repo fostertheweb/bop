@@ -1,132 +1,111 @@
-import { useEffect } from "react";
-import { stringify } from "query-string";
-import { currentDeviceAtom } from "hooks/use-devices";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
-import { userAccessTokenAtom } from "hooks/use-login";
-import { useQueue, playQueueAtom } from "hooks/use-queue";
+import { userAccessTokenState } from "hooks/use-login";
+import { usePlayQueue, useQueue } from "hooks/use-queue";
+import { queryCache, useMutation } from "react-query";
+import Axios from "axios";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
-export const isPlayingAtom = atom({
+export const isPlayingState = atom({
   key: "crowdQ.isPlaying",
   default: false,
 });
 
-export const currentPlaybackAtom = atom({
-  key: "crowdQ.currentPlayback",
-  default: null,
-});
+export function useIsPlaying() {
+  return useRecoilValue(isPlayingState);
+}
 
-export const usePlayer = () => {
-  const currentDevice = useRecoilValue(currentDeviceAtom);
-  const setIsPlaying = useSetRecoilState(isPlayingAtom);
-  const setCurrentPlayback = useSetRecoilState(currentPlaybackAtom);
-  const userAccessToken = useRecoilValue(userAccessTokenAtom);
-  const { nextTrackInQueue } = useQueue();
-  const queue = useRecoilValue(playQueueAtom);
+export function useSetIsPlaying() {
+  return useSetRecoilState(isPlayingState);
+}
 
-  useEffect(() => {
-    async function getCurrentPlayback() {
-      try {
-        const response = await fetch(`${SPOTIFY_API_BASE_URL}/me/player`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${userAccessToken}`,
-          },
-        });
-        const { is_playing, item, progress_ms } = await response.json();
+export function useRestartCurrentTrack() {
+  const userAccessToken = useRecoilValue(userAccessTokenState);
 
-        if (response.ok) {
-          setIsPlaying(is_playing);
-          setCurrentPlayback({ ...item, progress_ms });
-        }
-      } catch (err) {
-        console.log("error", err);
-      }
-    }
-
-    getCurrentPlayback();
-    //eslint-disable-next-line
-  }, [userAccessToken]);
-
-  async function restartCurrentTrack() {
-    await fetch(
-      `${SPOTIFY_API_BASE_URL}/me/player/seek?${stringify({
-        position_ms: 0,
-        device_id: currentDevice.id,
-      })}`,
-      {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${userAccessToken}` },
-      },
-    );
-  }
-
-  async function playNextTrack() {
-    const nextTrack = queue[0];
-
-    if (nextTrack) {
-      const response = await fetch(
-        `${SPOTIFY_API_BASE_URL}/me/player/play?${stringify({
-          device_id: currentDevice.id,
-        })}`,
+  return useMutation(
+    async () => {
+      return Axios.put(
+        `${SPOTIFY_API_BASE_URL}/me/player/seek?position_ms=0`,
+        null,
         {
-          method: "PUT",
           headers: {
             Authorization: `Bearer ${userAccessToken}`,
           },
-          body: JSON.stringify({ uris: [nextTrack.uri] }),
         },
       );
+    },
+    {
+      onSuccess() {
+        queryCache.refetchQueries("currentPlayback");
+      },
+    },
+  );
+}
 
-      if (response.ok) {
-        nextTrackInQueue();
-        setCurrentPlayback({ ...nextTrack, progress_ms: 0 });
+export function usePause() {
+  const userAccessToken = useRecoilValue(userAccessTokenState);
+  const setIsPlaying = useSetIsPlaying();
+
+  return useMutation(
+    async () => {
+      return Axios.put(`${SPOTIFY_API_BASE_URL}/me/player/pause`, null, {
+        headers: {
+          Authorization: `Bearer ${userAccessToken}`,
+        },
+      });
+    },
+    {
+      onSuccess() {
+        setIsPlaying(false);
+      },
+    },
+  );
+}
+
+export function usePlay() {
+  const userAccessToken = useRecoilValue(userAccessTokenState);
+  const setIsPlaying = useSetIsPlaying();
+
+  return useMutation(
+    async () => {
+      return Axios.put(`${SPOTIFY_API_BASE_URL}/me/player/play`, null, {
+        headers: {
+          Authorization: `Bearer ${userAccessToken}`,
+        },
+      });
+    },
+    {
+      onSuccess() {
         setIsPlaying(true);
-      }
-    }
-  }
-
-  async function play() {
-    const response = await fetch(
-      `${SPOTIFY_API_BASE_URL}/me/player/play?${stringify({
-        device_id: currentDevice.id,
-      })}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${userAccessToken}`,
-        },
       },
-    );
+    },
+  );
+}
 
-    if (response.ok) {
-      setIsPlaying(true);
-    }
-  }
+export function usePlayNextTrack() {
+  const userAccessToken = useRecoilValue(userAccessTokenState);
+  const { nextTrackInQueue } = useQueue();
+  const playQueue = usePlayQueue();
 
-  async function pause() {
-    const response = await fetch(
-      `${SPOTIFY_API_BASE_URL}/me/player/pause?${stringify({
-        device_id: currentDevice.id,
-      })}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${userAccessToken}`,
+  return useMutation(
+    async () => {
+      return await Axios.put(
+        `${SPOTIFY_API_BASE_URL}/me/player/play`,
+        {
+          uris: [playQueue[0]?.uri],
         },
+        {
+          headers: {
+            Authorization: `Bearer ${userAccessToken}`,
+          },
+        },
+      );
+    },
+    {
+      onSuccess() {
+        queryCache.refetchQueries("currentPlayback");
+        nextTrackInQueue();
       },
-    );
-
-    if (response.ok) {
-      setIsPlaying(false);
-    }
-  }
-
-  return {
-    pause,
-    play,
-    playNextTrack,
-    restartCurrentTrack,
-  };
-};
+    },
+  );
+}

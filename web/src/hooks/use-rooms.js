@@ -9,3 +9,10 @@ export function useRooms() {
     return data;
   });
 }
+
+export function useRoom(id) {
+  return useQuery(id && ["room", id], async () => {
+    const { data } = await axios.get(`${API_BASE_URL}/rooms/${id}`);
+    return data;
+  });
+}

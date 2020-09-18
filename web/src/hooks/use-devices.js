@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { userAccessTokenAtom } from "hooks/use-login";
+import { userAccessTokenState } from "hooks/use-login";
 import { atom, selector, useRecoilValue } from "recoil";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
@@ -14,7 +14,7 @@ export const currentDeviceAtom = atom({
 export const devicesQuery = selector({
   key: "crowdQ.devices",
   get: async ({ get }) => {
-    const token = get(userAccessTokenAtom);
+    const token = get(userAccessTokenState);
     const response = await fetch(`${SPOTIFY_API_BASE_URL}/me/player/devices`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -25,7 +25,7 @@ export const devicesQuery = selector({
 });
 
 export function useDevices() {
-  const token = useRecoilValue(userAccessTokenAtom);
+  const token = useRecoilValue(userAccessTokenState);
   const { status, data, refetch } = useQuery(
     "devices",
     [token],

@@ -4,7 +4,8 @@ import { useQueue } from "hooks/use-queue";
 import { useSongRequests } from "hooks/use-song-requests";
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { useUsername } from "./use-username";
+import { useUserDetails } from "./use-user-details";
+import { useUsername } from "hooks/use-username";
 
 const {
   REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
@@ -12,15 +13,16 @@ const {
 } = process.env;
 
 export function useRemoteQueue() {
-  const username = useUsername();
-  const { id: room } = useParams();
+  const { data: userDetails } = useUserDetails();
+  const { id } = useParams();
   const { addSongRequest } = useSongRequests();
   const { addToQueue: updateQueue } = useQueue();
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(WEBSOCKET_API_URL);
-  const { data } = useQuery(room && ["room"], async () => {
-    const response = await fetch(`${API_BASE_URL}/rooms/${room}`);
+  const { data: room } = useQuery(id && ["room", id], async () => {
+    const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
     return await response.json();
   });
+  const username = useUsername();
 
   useEffect(() => {
     if (lastJsonMessage) {
@@ -42,11 +44,8 @@ export function useRemoteQueue() {
   }, [lastJsonMessage]);
 
   function addToQueue(item) {
-    if (data) {
-      console.log({ username });
-      console.log(data);
-      const { host } = data;
-      if (username === host) {
+    if (room) {
+      if (userDetails && userDetails.id === room.host) {
         add(item);
       } else {
         songRequest(item);
@@ -57,7 +56,7 @@ export function useRemoteQueue() {
   function join() {
     sendJsonMessage({
       action: "JOIN",
-      room,
+      room: id,
       username: username,
     });
   }
@@ -65,7 +64,7 @@ export function useRemoteQueue() {
   function add(item) {
     sendJsonMessage({
       action: "ADD_TO_QUEUE",
-      room,
+      room: id,
       data: item,
       username: username || "Anonymous",
     });
@@ -74,7 +73,7 @@ export function useRemoteQueue() {
   function songRequest(item) {
     sendJsonMessage({
       action: "SONG_REQUEST",
-      room,
+      room: id,
       data: item,
       username: username || "Anonymous",
     });

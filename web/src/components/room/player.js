@@ -2,43 +2,48 @@ import React, { useEffect, useState, useRef } from "react";
 import PlayerControls from "components/room/player-controls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash, faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+import { faMusicSlash } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "components/room/devices";
-import {
-  currentPlaybackAtom,
-  isPlayingAtom,
-  usePlayer,
-} from "hooks/use-player";
-import { useRecoilValue } from "recoil";
-import { useQuery } from "react-query";
-import { useParams } from "react-router";
-import { useUsername } from "hooks/use-username";
+import { useIsPlaying, usePlayNextTrack } from "hooks/use-player";
 import { useIsHost } from "hooks/use-is-host";
-
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+import { useCurrentPlayback } from "hooks/use-current-playback";
+import styled from "styled-components";
+import * as Vibrant from "node-vibrant";
 
 export default function Player() {
-  const isPlaying = useRecoilValue(isPlayingAtom);
-  const [progress, setProgress] = useState(0);
-  const currentPlayback = useRecoilValue(currentPlaybackAtom);
-  const timer = useRef(null);
-  const { playNextTrack } = usePlayer();
-  const { id: room } = useParams();
-  const { isFetching, data } = useQuery(["room", room], async (_, id) => {
-    const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
-    return await response.json();
-  });
-  const username = useUsername();
   const isHost = useIsHost();
+  const { data: currentPlayback } = useCurrentPlayback();
+  const [playNextTrack] = usePlayNextTrack();
+  const isPlaying = useIsPlaying();
+  const [progress, setProgress] = useState(0);
+  const timer = useRef(null);
+  const [backgroundGradient, setBackgroundGradient] = useState();
+  const [accentColor, setAccentColor] = useState("white");
 
   useEffect(() => {
     if (currentPlayback) {
+      Vibrant.from(currentPlayback.item.album.images[1].url)
+        .getPalette()
+        .then((palette) => {
+          const colors = Object.keys(palette).reduce((theme, key) => {
+            return { ...theme, [key]: palette[key].hex };
+          }, {});
+          console.log(colors);
+
+          setBackgroundGradient(
+            `linear-gradient(0.3turn, ${[
+              colors.DarkVibrant,
+              colors.DarkMuted,
+            ].join(",")})`,
+          );
+        });
+
       setProgress(parseInt(currentPlayback.progress_ms));
     }
   }, [currentPlayback, setProgress]);
 
   useEffect(() => {
-    if (currentPlayback && progress >= parseInt(currentPlayback.duration_ms)) {
+    if (progress >= parseInt(currentPlayback?.item?.duration_ms)) {
       clearInterval(timer.current);
       playNextTrack();
     }
@@ -64,47 +69,26 @@ export default function Player() {
   }, [currentPlayback, isPlaying, progress]);
 
   return (
-    <div className="cq-bg-dark w-full relative">
+    <PlayerBackground colors={backgroundGradient}>
       <div
-        style={{ height: "2px" }}
-        className="cq-bg-blue w-full absolute top-0 shadow"></div>
+        style={{ height: "2px", backgroundColor: "rgba(255,255,255,0.3)" }}
+        className="w-full absolute top-0 shadow"></div>
       <motion.div
         style={{ height: "2px" }}
-        className="cq-bg-green absolute top-0 max-w-full"
+        className="bg-white absolute top-0 max-w-full"
         animate={{
-          width: `${((progress * 100) / currentPlayback?.duration_ms).toFixed(
-            2,
-          )}%`,
+          width: `${(
+            (progress * 100) /
+            currentPlayback?.item?.duration_ms
+          ).toFixed(2)}%`,
         }}
         transition={{ ease: "linear", duration: 1.6 }}></motion.div>
       <div
         className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between shadow"
         style={{ height: "80px" }}>
         <div className="w-1/3">
-          {currentPlayback ? (
-            <>
-              <div
-                key={currentPlayback.id}
-                className="text-left flex items-center w-full">
-                <div className="pl-4">
-                  <img
-                    src={currentPlayback?.album?.images[1].url}
-                    width="48"
-                    height="48"
-                    alt="album art"
-                    className="shadow"
-                  />
-                </div>
-                <div className="pl-4">
-                  <div className="text-gray-400">{currentPlayback.name}</div>
-                  <div className="text-gray-500">
-                    {currentPlayback.artists
-                      ?.map((artist) => artist.name)
-                      .join(", ")}
-                  </div>
-                </div>
-              </div>
-            </>
+          {currentPlayback?.item ? (
+            <CurrentPlayback item={currentPlayback.item} />
           ) : (
             <div
               className="pl-4 text-gray-600 flex items-center"
@@ -118,21 +102,41 @@ export default function Player() {
             </div>
           )}
         </div>
-        {isFetching ? (
-          <FontAwesomeIcon icon={faSpinnerThird} spin />
-        ) : (
-          isHost && <HostControls />
-        )}
+        {isHost && <HostControls color={accentColor} />}
+      </div>
+    </PlayerBackground>
+  );
+}
+
+function CurrentPlayback({ item }) {
+  return (
+    <div>
+      <div key={item.id} className="text-left flex items-center w-full">
+        <div className="pl-4">
+          <img
+            src={item.album.images[1].url}
+            width="48"
+            height="48"
+            alt="album art"
+            className="shadow"
+          />
+        </div>
+        <div className="pl-4">
+          <div style={{ color: "rgba(255,255,255,0.8)" }}>{item.name}</div>
+          <div style={{ color: "rgba(255,255,255,0.6)" }}>
+            {item.artists.map((artist) => artist.name).join(", ")}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function HostControls() {
+function HostControls(props) {
   return (
     <>
       <div className="w-1/3">
-        <PlayerControls />
+        <PlayerControls color={props.color} />
       </div>
       <div className="w-1/3 flex items-center justify-end">
         <Devices />
@@ -140,3 +144,9 @@ function HostControls() {
     </>
   );
 }
+
+const PlayerBackground = styled.div`
+  width: 100vw;
+  position: relative;
+  background: ${(props) => props.colors};
+`;

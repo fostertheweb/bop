@@ -5,7 +5,7 @@ import {
   faUsers,
   faCog,
   faCommentMusic,
-} from "@fortawesome/pro-solid-svg-icons";
+} from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "react-router-dom";
 import { useIsHost } from "hooks/use-is-host";
