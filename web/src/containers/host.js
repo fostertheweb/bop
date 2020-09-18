@@ -20,8 +20,6 @@ export default function Host() {
   const setIsHost = useSetIsHost();
   const setUsername = useSetUsername();
 
-  console.log(userDetails);
-
   function handleInputChange({ target }) {
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
@@ -44,6 +42,13 @@ export default function Host() {
     }
     // eslint-disable-next-line
   }, [status]);
+
+  useEffect(() => {
+    if (userDetails) {
+      setRoomDetails({ ...roomDetails, host: userDetails.id });
+    }
+    // eslint-disable-next-line
+  }, [userStatus]);
 
   return (
     <div className="h-screen flex items-center">
