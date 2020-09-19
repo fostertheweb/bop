@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import PlayerControls from "components/room/player-controls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash } from "@fortawesome/pro-solid-svg-icons";
+import { faMusicSlash, faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "components/room/devices";
 import { useIsPlaying, usePlayNextTrack } from "hooks/use-player";
 import { useIsHost } from "hooks/use-is-host";
@@ -12,7 +12,10 @@ import * as Vibrant from "node-vibrant";
 
 export default function Player() {
   const isHost = useIsHost();
-  const { data: currentPlayback } = useCurrentPlayback();
+  const {
+    status: currentPlaybackStatus,
+    data: currentPlayback,
+  } = useCurrentPlayback();
   const [playNextTrack] = usePlayNextTrack();
   const isPlaying = useIsPlaying();
   const [progress, setProgress] = useState(0);
@@ -22,21 +25,26 @@ export default function Player() {
 
   useEffect(() => {
     if (currentPlayback) {
-      Vibrant.from(currentPlayback.item.album.images[1].url)
-        .getPalette()
-        .then((palette) => {
-          const colors = Object.keys(palette).reduce((theme, key) => {
-            return { ...theme, [key]: palette[key].hex };
-          }, {});
-          console.log(colors);
+      if (currentPlayback.item) {
+        Vibrant.from(currentPlayback.item.album.images[1].url)
+          .getPalette()
+          .then((palette) => {
+            const colors = Object.keys(palette).reduce((theme, key) => {
+              return { ...theme, [key]: palette[key].hex };
+            }, {});
+            console.log(colors);
 
-          setBackgroundGradient(
-            `linear-gradient(0.3turn, ${[
-              colors.DarkVibrant,
-              colors.DarkMuted,
-            ].join(",")})`,
-          );
-        });
+            setBackgroundGradient(
+              `linear-gradient(0.3turn, ${[
+                colors.DarkVibrant,
+                colors.DarkMuted,
+              ].join(",")})`,
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
 
       setProgress(parseInt(currentPlayback.progress_ms));
     }
@@ -87,7 +95,19 @@ export default function Player() {
         className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between shadow"
         style={{ height: "80px" }}>
         <div className="w-1/3">
-          {currentPlayback?.item ? (
+          {currentPlaybackStatus === "loading" ? (
+            <div
+              className="pl-4 text-gray-600 flex items-center"
+              style={{ height: "80px" }}>
+              <FontAwesomeIcon
+                icon={faSpinnerThird}
+                size="lg"
+                className="fill-current mr-2"
+                spin
+              />
+              {/* TODO: add skeleton lines */}
+            </div>
+          ) : currentPlayback?.item ? (
             <CurrentPlayback item={currentPlayback.item} />
           ) : (
             <div
