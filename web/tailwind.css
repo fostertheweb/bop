@@ -1,55 +1,6 @@
 @tailwind base;
 @tailwind components;
 
-/* vars then custom classes */
-
-:root {
-  --cq-color-white: #d9d9d9;
-  --cq-color-blue: #537bec;
-  --cq-color-green: #38b2ac;
-  --cq-color-red: #ff5986;
-  --cq-color-gray: #1f2c3a;
-  --cq-color-black: #0e1b2a;
-}
-
-/* Theme */
-
-.cq-bg {
-  background-color: #202020;
-}
-
-.cq-bg-darker {
-  background-color: #141414;
-}
-
-.cq-bg-blue {
-  background-color: var(--cq-color-blue);
-}
-
-.cq-bg-blue-darker {
-  background-color: #1246d5;
-}
-
-.cq-bg-green {
-  background-color: var(--cq-color-green);
-}
-
-.cq-text-white {
-  color: var(--cq-color-white);
-}
-
-.cq-text-blue {
-  color: var(--cq-color-blue);
-}
-
-.cq-text-green {
-  color: var(--cq-color-green);
-}
-
-.cq-text-red {
-  color: var(--cq-color-red);
-}
-
 /* Layout */
 
 .h-content {
@@ -65,29 +16,6 @@
 
 .text-shadow {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-/* Duo Tone Icons */
-
-.theme-sheep {
-  --fa-primary-color: #a0aec0;
-  --fa-secondary-color: #fff;
-  --fa-primary-opacity: 1;
-  --fa-secondary-opacity: 1;
-}
-
-.theme-host {
-  --fa-primary-color: #d69f7e;
-  --fa-secondary-color: #feebc8;
-  --fa-primary-opacity: 1;
-  --fa-secondary-opacity: 1;
-}
-
-.theme-logo {
-  --fa-primary-color: #537bec;
-  --fa-secondary-color: #38b2ac;
-  --fa-primary-opacity: 1;
-  --fa-secondary-opacity: 1;
 }
 
 /* ff */

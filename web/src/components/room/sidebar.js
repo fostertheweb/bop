@@ -12,7 +12,9 @@ import { useIsHost } from "hooks/use-is-host";
 
 export default function Sidebar() {
   return (
-    <div className="cq-bg-darker flex flex-col" style={{ width: "80px" }}>
+    <div
+      className="flex flex-col"
+      style={{ width: "80px", backgroundColor: "#efefef" }}>
       <SidebarLink path="search" icon={faSearch}>
         Search
       </SidebarLink>
@@ -36,7 +38,7 @@ export function SidebarLink({ path, icon, children }) {
   return (
     <NavLink
       to={path}
-      className="text-gray-500 block mt-2 text-center p-2 rounded cursor-pointer hover:text-gray-200 transition ease-in-out duration-150"
+      className="text-gray-600 block mt-2 text-center p-2 rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
       activeClassName="text-teal-300 font-medium">
       <FontAwesomeIcon icon={icon} size="lg" className="fill-current" />
       <div className="mt-1 text-sm">{children}</div>

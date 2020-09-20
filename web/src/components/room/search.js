@@ -16,11 +16,11 @@ export default function Search() {
     <div className="p-2">
       <div className="sticky top-0">
         <div className="p-2 flex items-center">
-          <div className="cq-bg-darker flex items-center border-2 border-gray-700 text-base rounded focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-200">
+          <div className="flex items-center border-2 border-gray-400 text-base rounded focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-200">
             <FontAwesomeIcon
               icon={isLoading ? faSpinnerThird : faSpotify}
               size="lg"
-              className="text-gray-500 fill-current ml-2"
+              className="text-gray-400 fill-current ml-2"
               spin={isLoading}
             />
             <input

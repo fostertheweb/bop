@@ -6,52 +6,51 @@ import { faMusicSlash, faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import Devices from "components/room/devices";
 import { useIsPlaying, usePlayNextTrack } from "hooks/use-player";
 import { useIsHost } from "hooks/use-is-host";
-import { useCurrentPlayback } from "hooks/use-current-playback";
+import {
+  useCurrentPlayback,
+  useGetCurrentPlayback,
+} from "hooks/use-current-playback";
+import { useSetAccentColor } from "hooks/use-accent-color";
 import styled from "styled-components";
 import * as Vibrant from "node-vibrant";
 
 export default function Player() {
   const isHost = useIsHost();
-  const {
-    status: currentPlaybackStatus,
-    data: currentPlayback,
-  } = useCurrentPlayback();
+  const { status: currentPlaybackStatus } = useGetCurrentPlayback();
   const [playNextTrack] = usePlayNextTrack();
   const isPlaying = useIsPlaying();
   const [progress, setProgress] = useState(0);
   const timer = useRef(null);
   const [backgroundGradient, setBackgroundGradient] = useState();
-  const [accentColor, setAccentColor] = useState("white");
+  const setAccentColor = useSetAccentColor();
+  const currentPlayback = useCurrentPlayback();
 
   useEffect(() => {
     if (currentPlayback) {
-      if (currentPlayback.item) {
-        Vibrant.from(currentPlayback.item.album.images[1].url)
-          .getPalette()
-          .then((palette) => {
-            const colors = Object.keys(palette).reduce((theme, key) => {
-              return { ...theme, [key]: palette[key].hex };
-            }, {});
-            console.log(colors);
-
-            setBackgroundGradient(
-              `linear-gradient(0.3turn, ${[
-                colors.DarkVibrant,
-                colors.DarkMuted,
-              ].join(",")})`,
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      Vibrant.from(currentPlayback.album.images[1].url)
+        .getPalette()
+        .then((palette) => {
+          const colors = Object.keys(palette).reduce((theme, key) => {
+            return { ...theme, [key]: palette[key].hex };
+          }, {});
+          setAccentColor(colors.DarkVibrant);
+          setBackgroundGradient(
+            `linear-gradient(0.3turn, ${[
+              colors.DarkVibrant,
+              colors.DarkMuted,
+            ].join(",")})`,
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
       setProgress(parseInt(currentPlayback.progress_ms));
     }
   }, [currentPlayback, setProgress]);
 
   useEffect(() => {
-    if (progress >= parseInt(currentPlayback?.item?.duration_ms)) {
+    if (progress >= parseInt(currentPlayback?.duration_ms)) {
       clearInterval(timer.current);
       playNextTrack();
     }
@@ -85,10 +84,9 @@ export default function Player() {
         style={{ height: "2px" }}
         className="bg-white absolute top-0 max-w-full"
         animate={{
-          width: `${(
-            (progress * 100) /
-            currentPlayback?.item?.duration_ms
-          ).toFixed(2)}%`,
+          width: `${((progress * 100) / currentPlayback?.duration_ms).toFixed(
+            2,
+          )}%`,
         }}
         transition={{ ease: "linear", duration: 1.6 }}></motion.div>
       <div
@@ -107,8 +105,8 @@ export default function Player() {
               />
               {/* TODO: add skeleton lines */}
             </div>
-          ) : currentPlayback?.item ? (
-            <CurrentPlayback item={currentPlayback.item} />
+          ) : currentPlayback ? (
+            <CurrentPlayback item={currentPlayback} />
           ) : (
             <div
               className="pl-4 text-gray-600 flex items-center"
@@ -122,7 +120,7 @@ export default function Player() {
             </div>
           )}
         </div>
-        {isHost && <HostControls color={accentColor} />}
+        {isHost && <HostControls />}
       </div>
     </PlayerBackground>
   );
@@ -152,11 +150,11 @@ function CurrentPlayback({ item }) {
   );
 }
 
-function HostControls(props) {
+function HostControls() {
   return (
     <>
       <div className="w-1/3">
-        <PlayerControls color={props.color} />
+        <PlayerControls />
       </div>
       <div className="w-1/3 flex items-center justify-end">
         <Devices />

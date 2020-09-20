@@ -15,7 +15,7 @@ import {
   useRestartCurrentTrack,
 } from "hooks/use-player";
 
-export default function PlayerControls({ color }) {
+export default function PlayerControls() {
   const [play] = usePlay();
   const [pause] = usePause();
   const [playNextTrack] = usePlayNextTrack();
@@ -32,13 +32,13 @@ export default function PlayerControls({ color }) {
           <FontAwesomeIcon icon={faStepBackward} size="lg" />
         </motion.button>
         <motion.button
-          className="px-4"
+          className="px-4 text-white"
           whileTap={{ scale: 0.8 }}
           onClick={() => (isPlaying ? pause() : play())}>
           <FontAwesomeIcon
             icon={isPlaying ? faPauseCircle : faPlayCircle}
             size="3x"
-            color={color}
+            className="fill-current"
           />
         </motion.button>
 

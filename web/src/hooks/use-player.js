@@ -2,6 +2,7 @@ import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAccessTokenState } from "hooks/use-login";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { useMutation, useQueryCache } from "react-query";
+import { useSetCurrentPlayback } from "hooks/use-current-playback";
 import Axios from "axios";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
@@ -85,16 +86,16 @@ export function usePlay() {
 
 export function usePlayNextTrack() {
   const userAccessToken = useRecoilValue(userAccessTokenState);
-  const queryCache = useQueryCache();
   const { nextTrackInQueue } = useQueue();
-  const playQueue = usePlayQueue();
+  const [item] = usePlayQueue();
+  const setCurrentPlayback = useSetCurrentPlayback();
 
   return useMutation(
     async () => {
       return await Axios.put(
         `${SPOTIFY_API_BASE_URL}/me/player/play`,
         {
-          uris: [playQueue[0]?.uri],
+          uris: [item?.uri],
         },
         {
           headers: {
@@ -104,9 +105,10 @@ export function usePlayNextTrack() {
       );
     },
     {
-      onSuccess() {
+      onSuccess(data) {
+        console.log({ playNextData: data });
         nextTrackInQueue();
-        queryCache.refetchQueries("currentPlayback");
+        setCurrentPlayback({ ...item, progress_ms: 0 });
       },
     },
   );
