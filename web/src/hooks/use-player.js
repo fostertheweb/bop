@@ -1,7 +1,7 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAccessTokenState } from "hooks/use-login";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
-import { queryCache, useMutation } from "react-query";
+import { useMutation, useQueryCache } from "react-query";
 import Axios from "axios";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
@@ -21,6 +21,7 @@ export function useSetIsPlaying() {
 
 export function useRestartCurrentTrack() {
   const userAccessToken = useRecoilValue(userAccessTokenState);
+  const queryCache = useQueryCache();
 
   return useMutation(
     async () => {
@@ -84,6 +85,7 @@ export function usePlay() {
 
 export function usePlayNextTrack() {
   const userAccessToken = useRecoilValue(userAccessTokenState);
+  const queryCache = useQueryCache();
   const { nextTrackInQueue } = useQueue();
   const playQueue = usePlayQueue();
 
@@ -103,8 +105,8 @@ export function usePlayNextTrack() {
     },
     {
       onSuccess() {
-        queryCache.refetchQueries("currentPlayback");
         nextTrackInQueue();
+        queryCache.refetchQueries("currentPlayback");
       },
     },
   );

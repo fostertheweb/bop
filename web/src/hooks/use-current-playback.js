@@ -11,7 +11,7 @@ export function useCurrentPlayback() {
   const setIsPlaying = useSetIsPlaying();
 
   return useQuery(
-    ["currentPlayback"],
+    "currentPlayback",
     async () => {
       const { data } = await axios.get(`${SPOTIFY_API_BASE_URL}/me/player`, {
         headers: {
