@@ -24,15 +24,15 @@ export default function PlayerControls() {
 
   return (
     <div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center text-white">
         <motion.button
-          className="cq-text-white hover:text-gray-400"
+          className="hover:text-gray-400"
           whileTap={{ scale: 0.8 }}
           onClick={() => restartCurrentTrack()}>
           <FontAwesomeIcon icon={faStepBackward} size="lg" />
         </motion.button>
         <motion.button
-          className="px-4 text-white"
+          className="px-4 text-white hover:text-gray-400"
           whileTap={{ scale: 0.8 }}
           onClick={() => (isPlaying ? pause() : play())}>
           <FontAwesomeIcon
@@ -43,7 +43,7 @@ export default function PlayerControls() {
         </motion.button>
 
         <motion.button
-          className="cq-text-white hover:text-gray-400"
+          className="hover:text-gray-400"
           whileTap={{ scale: 0.8 }}
           onClick={() => playNextTrack()}>
           <FontAwesomeIcon icon={faStepForward} size="lg" />

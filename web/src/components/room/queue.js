@@ -11,7 +11,7 @@ export default function Queue() {
 
   return (
     <>
-      <div className="pt-6 pb-4 pl-4 text-base text-gray-600">
+      <div className="pt-4 pb-4 pl-4 mb-1 text-base text-gray-600">
         <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
         <span className="border-b-2 border-transparent">Play Queue</span>
       </div>
@@ -20,7 +20,7 @@ export default function Queue() {
           <motion.div
             key={item.id}
             onClick={() => removeFromQueue(index)}
-            className="text-left p-2 flex items-center w-full opacity-0 cursor-pointer hover:bg-gray-800"
+            className="text-left p-2 flex items-center w-full opacity-0 cursor-pointer hover:bg-gray-300 border-b border-gray-300"
             variants={variants}
             initial="enter"
             animate="center"
@@ -37,8 +37,8 @@ export default function Queue() {
               />
             </div>
             <div className="ml-1">
-              <div className="text-gray-400">{item.name}</div>
-              <div className="text-gray-500">
+              <div className="text-gray-700">{item.name}</div>
+              <div className="text-gray-600">
                 {item.artists.map((artist) => artist.name).join(", ")}
               </div>
             </div>

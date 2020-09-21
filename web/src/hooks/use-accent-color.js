@@ -1,14 +1,27 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
-const accentColorState = atom({
-  key: "crowdQ.accentColor",
-  default: "blue",
+const lightAccentColorState = atom({
+  key: "crowdQ.lightAccentColor",
+  default: null,
 });
 
-export function useAccentColor() {
-  return useRecoilValue(accentColorState);
+const darkAccentColorState = atom({
+  key: "crowdQ.darkAccentColor",
+  default: null,
+});
+
+export function useLightAccentColor() {
+  return useRecoilValue(lightAccentColorState);
 }
 
-export function useSetAccentColor() {
-  return useSetRecoilState(accentColorState);
+export function useSetLightAccentColor() {
+  return useSetRecoilState(lightAccentColorState);
+}
+
+export function useDarkAccentColor() {
+  return useRecoilValue(darkAccentColorState);
+}
+
+export function useSetDarkAccentColor() {
+  return useSetRecoilState(darkAccentColorState);
 }

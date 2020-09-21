@@ -39,7 +39,7 @@ export function useGetCurrentPlayback() {
     },
     {
       onSuccess({ item, is_playing, progress_ms }) {
-        setCurrentPlayback({ ...item, progress_ms });
+        setCurrentPlayback({ item, progress_ms });
         setIsPlaying(is_playing);
       },
       onError(err) {

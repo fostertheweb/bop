@@ -30,15 +30,15 @@ function PlaylistListItem({ playlist }) {
   return (
     <div
       onClick={() => console.log(playlist.id)}
-      className="p-4 text-gray-400 flex items-center cursor-pointer hover:bg-gray-700 transition ease-in-out duration-150">
+      className="p-2 text-gray-400 flex items-center cursor-pointer hover:bg-gray-100 transition ease-in-out duration-150 border-b border-gray-200">
       <div
-        className="h-16 w-16 bg-cover flex-shrink-0"
+        className="h-12 w-12 bg-cover flex-shrink-0"
         style={{
           backgroundImage: `url(${playlist.images[0].url})`,
         }}></div>
       <div className="truncate flex-shrink ml-4">
-        <div className="text-base truncate">{playlist.name}</div>
-        <div className="truncate">{playlist.description}</div>
+        <div className="text-base truncate text-gray-700">{playlist.name}</div>
+        <div className="truncate text-gray-500">{playlist.description}</div>
       </div>
     </div>
   );

@@ -13,18 +13,18 @@ export default function Search() {
   const { isFetching: isLoading, data: tracks } = useSearch(debounced);
 
   return (
-    <div className="p-2">
-      <div className="sticky top-0">
-        <div className="p-2 flex items-center">
-          <div className="flex items-center border-2 border-gray-400 text-base rounded focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-200">
+    <div className="">
+      <div className="sticky top-0 p-2 bg-white">
+        <div className="flex items-center">
+          <div className="flex items-center border-2 border-gray-400 text-base rounded bg-gray-100 focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-600">
             <FontAwesomeIcon
               icon={isLoading ? faSpinnerThird : faSpotify}
               size="lg"
-              className="text-gray-400 fill-current ml-2"
+              className="text-gray-600 fill-current ml-2"
               spin={isLoading}
             />
             <input
-              className="appearance-none bg-transparent text-base rounded px-4 py-2 pl-2 focus:outline-none w-full text-gray-200"
+              className="appearance-none bg-transparent text-base rounded px-4 py-2 pl-2 focus:outline-none w-full text-gray-600"
               id="search"
               placeholder="Search by track or artist"
               onChange={({ target }) => setQuery(target.value)}
@@ -38,7 +38,7 @@ export default function Search() {
           <button
             onClick={() => addToQueue(item)}
             key={item.id}
-            className="text-left p-2 flex items-center w-full border-b border-gray-900">
+            className="p-2 text-left flex items-center w-full border-b border-gray-200 hover:bg-gray-100">
             <div className="p-2">
               <img
                 src={item.album.images[2].url}
@@ -47,8 +47,8 @@ export default function Search() {
               />
             </div>
             <div className="ml-1">
-              <div className="text-gray-400">{item.name}</div>
-              <div className="text-gray-500">
+              <div className="text-gray-700">{item.name}</div>
+              <div className="text-gray-600">
                 {item.artists.map((artist) => artist.name).join(", ")}
               </div>
             </div>

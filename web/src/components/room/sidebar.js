@@ -9,12 +9,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "react-router-dom";
 import { useIsHost } from "hooks/use-is-host";
+import { useDarkAccentColor } from "hooks/use-accent-color";
+import { readableColor } from "polished";
 
 export default function Sidebar() {
   return (
-    <div
-      className="flex flex-col"
-      style={{ width: "80px", backgroundColor: "#efefef" }}>
+    <div className="flex flex-col bg-gray-200 p-2" style={{ width: "80px" }}>
       <SidebarLink path="search" icon={faSearch}>
         Search
       </SidebarLink>
@@ -35,13 +35,15 @@ export default function Sidebar() {
 }
 
 export function SidebarLink({ path, icon, children }) {
+  const accentColor = useDarkAccentColor();
   return (
     <NavLink
       to={path}
-      className="text-gray-600 block mt-2 text-center p-2 rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
-      activeClassName="text-teal-300 font-medium">
+      className="text-gray-600 font-medium block mt-2 text-center py-2 rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
+      activeClassName="bg-gray-100"
+      activeStyle={{ color: accentColor }}>
       <FontAwesomeIcon icon={icon} size="lg" className="fill-current" />
-      <div className="mt-1 text-sm">{children}</div>
+      <div className="mt-1 text-xs">{children}</div>
     </NavLink>
   );
 }
