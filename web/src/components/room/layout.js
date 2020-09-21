@@ -12,9 +12,7 @@ export default function Layout() {
         <div className="w-1/2 overflow-y-scroll hide-native-scrollbar">
           <Outlet />
         </div>
-        <div
-          className="flex-grow overflow-y-scroll hide-native-scrollbar"
-          style={{ backgroundColor: "#efefef" }}>
+        <div className="flex-grow overflow-y-scroll hide-native-scrollbar bg-gray-200">
           <Queue />
         </div>
       </div>

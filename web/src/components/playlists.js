@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useUserDetails } from "hooks/use-user-details";
 import { usePlaylists } from "hooks/use-playlists";
+import { useTable, useExpanded } from "react-table";
 
 export default function Playlists() {
   const { data: userDetails } = useUserDetails();

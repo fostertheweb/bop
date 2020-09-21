@@ -105,10 +105,9 @@ export function usePlayNextTrack() {
       );
     },
     {
-      onSuccess(data) {
-        console.log({ playNextData: data });
+      onSuccess() {
         nextTrackInQueue();
-        setCurrentPlayback({ ...item, progress_ms: 0 });
+        setCurrentPlayback({ item, progress_ms: 0 });
       },
     },
   );
