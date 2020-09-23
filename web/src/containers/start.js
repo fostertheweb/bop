@@ -79,7 +79,7 @@ function HostNewSession() {
         className={classNames(
           baseButton,
           hover,
-          "cq-bg-green",
+          "bg-blue-500",
           "text-white",
           "mt-4",
         )}>
@@ -101,4 +101,4 @@ const baseButton = [
   "text-shadow",
 ];
 
-const hover = ["bg-opacity-75"];
+const hover = ["hover:bg-blue-400"];

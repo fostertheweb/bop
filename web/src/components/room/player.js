@@ -85,10 +85,10 @@ export default function Player() {
   }, [currentPlayback, isPlaying, progress]);
 
   return (
-    <PlayerBackground colors={backgroundGradient}>
+    <PlayerBackground colors={backgroundGradient} className="bg-gray-600">
       <div
         style={{ height: "4px", backgroundColor: "rgba(0,0,0,0.3)" }}
-        className="w-full absolute top-0"></div>
+        className="max-w-full"></div>
       <motion.div
         style={{ height: "4px", backgroundColor: lightAccentColor }}
         className="absolute top-0 max-w-full"
@@ -101,7 +101,7 @@ export default function Player() {
         transition={{ ease: "linear", duration: 1.6 }}></motion.div>
       <div
         className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between"
-        style={{ height: "80px" }}>
+        style={{ height: "76px" }}>
         <div className="w-1/3">
           <CurrentPlayback
             item={currentPlayback?.item}
@@ -119,7 +119,7 @@ function CurrentPlayback({ item, loading }) {
     return (
       <div
         className="pl-4 text-gray-600 flex items-center"
-        style={{ height: "80px" }}>
+        style={{ height: "76px" }}>
         <FontAwesomeIcon
           icon={faSpinnerThird}
           size="lg"
@@ -135,15 +135,13 @@ function CurrentPlayback({ item, loading }) {
     return (
       <div>
         <div key={item.id} className="text-left flex items-center w-full">
-          <div className="pl-4">
-            <img
-              src={item.album.images[1].url}
-              width="48"
-              height="48"
-              alt="album art"
-              className="shadow"
-            />
-          </div>
+          <img
+            src={item.album.images[1].url}
+            width="60"
+            height="60"
+            alt="album art"
+            className="ml-2 shadow"
+          />
           <div className="pl-4">
             <div style={{ color: "rgba(255,255,255,0.8)" }}>{item.name}</div>
             <div style={{ color: "rgba(255,255,255,0.6)" }}>
@@ -157,8 +155,8 @@ function CurrentPlayback({ item, loading }) {
 
   return (
     <div
-      className="pl-4 text-gray-600 flex items-center"
-      style={{ height: "80px" }}>
+      className="pl-4 text-gray-400 flex items-center"
+      style={{ height: "76px" }}>
       <FontAwesomeIcon
         icon={faMusicSlash}
         size="lg"
@@ -183,7 +181,6 @@ function HostControls() {
 }
 
 const PlayerBackground = styled.div`
-  width: 100vw;
   position: relative;
   background: ${(props) => props.colors};
 `;
