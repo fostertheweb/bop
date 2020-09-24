@@ -2,9 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
-  faChevronLeft,
   faChevronRight,
-  faChevronUp,
   faSpinnerThird,
 } from "@fortawesome/pro-solid-svg-icons";
 import { useUserDetails } from "hooks/use-user-details";
@@ -14,30 +12,11 @@ import { useQuery } from "react-query";
 import Axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenState } from "hooks/use-login";
+import { useRemoteQueue } from "hooks/use-remote-queue";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export default function Playlists() {
-  const { data: userDetails } = useUserDetails();
-  const { isFetching: loading, data: playlists } = usePlaylists(userDetails);
-
-  return (
-    <>
-      <h1 className="p-4 font-medium text-lg tracking-wide">Playlists</h1>
-      <div>
-        {loading ? (
-          <FontAwesomeIcon icon={faSpinnerThird} spin />
-        ) : (
-          playlists?.items?.map((playlist) => (
-            <PlaylistListItem playlist={playlist} />
-          ))
-        )}
-      </div>
-    </>
-  );
-}
-
-export function NewPlaylists() {
   const { data: userDetails } = useUserDetails();
   const { status, data: playlists } = usePlaylists(userDetails);
 
@@ -61,7 +40,10 @@ export function NewPlaylists() {
           {
             Header: "Name",
             accessor: (p) => p.name,
-            SubCell: (cellProps) => <>{cellProps.value}</>,
+            SubCell: (cellProps) => {
+              console.log({ cellProps });
+              return <>{cellProps.value}</>;
+            },
           },
         ],
       },
@@ -118,19 +100,18 @@ function PlaylistsTable({ columns, data, renderRowSubComponent }) {
   );
 
   return (
-    <table {...getTableProps()}>
+    <table {...getTableProps()} className="w-full">
       <tbody {...getTableBodyProps()}>
         {rows.map((row, i) => {
           prepareRow(row);
           const rowProps = row.getRowProps();
           return (
             // Use a React.Fragment here so the table markup is still valid
-
             <React.Fragment>
               <tr
                 {...rowProps}
                 {...row.getToggleRowExpandedProps()}
-                className="text-gray-700 hover:bg-gray-200">
+                className="text-gray-700 hover:bg-blue-100">
                 {row.cells.map((cell) => {
                   return (
                     <td {...cell.getCellProps()} className="p-2">
@@ -166,7 +147,10 @@ function PlaylistsTable({ columns, data, renderRowSubComponent }) {
 }
 
 function SubRowAsync({ row, rowProps, visibleColumns }) {
-  const id = "2gOCJPggNgsuq9sftLGFZh";
+  const { addToQueue } = useRemoteQueue();
+  const {
+    original: { id },
+  } = row;
   const userAccessToken = useRecoilValue(userAccessTokenState);
   const { data, status } = useQuery(id && ["playlist", id], async () => {
     const { data } = await Axios.get(
@@ -189,19 +173,22 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
     );
   }
 
-  console.log({ data });
-
   return (
     <>
-      {data.map((x, i) => {
+      {data.map((track, i) => {
         return (
-          <tr {...rowProps} key={`${rowProps.key}-expanded-${i}`}>
+          <tr
+            {...rowProps}
+            key={`${rowProps.key}-expanded-${i}`}
+            className="hover:bg-blue-100"
+            onClick={() => addToQueue(track)}>
             {row.cells.map((cell) => {
               return (
-                <td {...cell.getCellProps()}>
+                <td {...cell.getCellProps()} className="p-2 cursor-pointer">
                   {cell.render(cell.column.SubCell ? "SubCell" : "Cell", {
-                    value: cell.column.accessor && cell.column.accessor(x, i),
-                    row: { ...row, original: x },
+                    value:
+                      cell.column.accessor && cell.column.accessor(track, i),
+                    row: { ...row, original: track },
                   })}
                 </td>
               );
@@ -209,6 +196,28 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
           </tr>
         );
       })}
+    </>
+  );
+}
+
+// IGNORE BELOW, ref for markup
+
+function OldPlaylists() {
+  const { data: userDetails } = useUserDetails();
+  const { isFetching: loading, data: playlists } = usePlaylists(userDetails);
+
+  return (
+    <>
+      <h1 className="p-4 font-medium text-lg tracking-wide">Playlists</h1>
+      <div>
+        {loading ? (
+          <FontAwesomeIcon icon={faSpinnerThird} spin />
+        ) : (
+          playlists?.items?.map((playlist) => (
+            <PlaylistListItem playlist={playlist} />
+          ))
+        )}
+      </div>
     </>
   );
 }
@@ -226,6 +235,40 @@ function PlaylistListItem({ playlist }) {
       <div className="truncate flex-shrink ml-4">
         <div className="text-base truncate text-gray-700">{playlist.name}</div>
         <div className="truncate text-gray-500">{playlist.description}</div>
+      </div>
+    </div>
+  );
+}
+
+function Playlist() {
+  const playlist = {};
+  const items = [];
+  return (
+    <div>
+      <div className="flex items-center justify-between p-4 text-gray-500">
+        <h1 className="text-center text-gray-500 font-medium text-lg tracking-wide">
+          {playlist.name}
+        </h1>
+        <span>&nbsp;</span>
+      </div>
+      <div>
+        {items.map((item) => (
+          <div className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-700 transition ease-in-out duration-150">
+            <div className="">
+              <img
+                src={item.track.album.images[2].url}
+                alt="album art"
+                className="shadow h-10 w-10"
+              />
+            </div>
+            <div className="ml-4">
+              <div className="text-gray-400">{item.track.name}</div>
+              <div className="text-gray-500">
+                {item.track.artists.map(({ name }) => name).join(", ")}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
