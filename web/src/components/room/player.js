@@ -56,6 +56,7 @@ export default function Player() {
 
       setProgress(parseInt(currentPlayback.progress_ms));
     }
+    // eslint-disable-next-line
   }, [currentPlayback, setProgress]);
 
   useEffect(() => {

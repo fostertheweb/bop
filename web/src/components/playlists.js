@@ -202,7 +202,7 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
 
 // IGNORE BELOW, ref for markup
 
-function OldPlaylists() {
+export function OldPlaylists() {
   const { data: userDetails } = useUserDetails();
   const { isFetching: loading, data: playlists } = usePlaylists(userDetails);
 
@@ -240,7 +240,7 @@ function PlaylistListItem({ playlist }) {
   );
 }
 
-function Playlist() {
+export function Playlist() {
   const playlist = {};
   const items = [];
   return (

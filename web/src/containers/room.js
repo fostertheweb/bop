@@ -13,6 +13,7 @@ export function Room() {
 
   useEffect(() => {
     join();
+    // eslint-disable-next-line
   }, []);
 
   return (

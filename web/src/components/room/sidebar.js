@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "react-router-dom";
 import { useIsHost } from "hooks/use-is-host";
 import { useDarkAccentColor } from "hooks/use-accent-color";
-import { readableColor } from "polished";
 
 export default function Sidebar() {
   return (
