@@ -125,12 +125,17 @@ function CurrentPlayback({ item, loading }) {
   if (loading) {
     return (
       <div className="text-gray-600 flex items-center">
-        <FontAwesomeIcon
-          icon={faSpinnerThird}
-          size="lg"
-          className="fill-current mr-2"
-          spin
-        />
+        <div
+          style={{ width: "60px", height: "60px" }}
+          className="flex items-center justify-center">
+          <FontAwesomeIcon
+            icon={faSpinnerThird}
+            size="lg"
+            className="fill-current"
+            spin
+          />
+        </div>
+        <HorizontalSpace />
         {/* TODO: add skeleton lines */}
       </div>
     );
