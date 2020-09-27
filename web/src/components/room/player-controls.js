@@ -26,13 +26,13 @@ export default function PlayerControls() {
     <div>
       <div className="flex items-center justify-center text-white">
         <motion.button
-          className="hover:text-gray-400"
+          className="hover:text-gray-300"
           whileTap={{ scale: 0.8 }}
           onClick={() => restartCurrentTrack()}>
           <FontAwesomeIcon icon={faStepBackward} size="lg" />
         </motion.button>
         <motion.button
-          className="px-4 text-white hover:text-gray-400"
+          className="px-4 text-white hover:text-gray-300"
           whileTap={{ scale: 0.8 }}
           onClick={() => (isPlaying ? pause() : play())}>
           <FontAwesomeIcon

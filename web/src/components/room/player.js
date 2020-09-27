@@ -86,30 +86,36 @@ export default function Player() {
   }, [currentPlayback, isPlaying, progress]);
 
   return (
-    <PlayerBackground colors={backgroundGradient} className="bg-gray-600">
-      <div
-        style={{ height: "4px", backgroundColor: "rgba(0,0,0,0.3)" }}
-        className="max-w-full"></div>
-      <motion.div
-        style={{ height: "4px", backgroundColor: lightAccentColor }}
-        className="absolute top-0 max-w-full"
-        animate={{
-          width: `${(
-            (progress * 100) /
-            currentPlayback?.item?.duration_ms
-          ).toFixed(2)}%`,
-        }}
-        transition={{ ease: "linear", duration: 1.6 }}></motion.div>
-      <div
-        className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between"
-        style={{ height: "76px" }}>
+    <PlayerBackground colors={backgroundGradient} className="p-4 bg-gray-600">
+      <AlbumBackdrop />
+      <div className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between">
         <div className="w-1/3">
           <CurrentPlayback
             item={currentPlayback?.item}
             loading={currentPlaybackStatus === "loading"}
           />
         </div>
-        {isHost && <HostControls />}
+        <div className="w-1/3">
+          {isHost && <PlayerControls />}
+          <VerticalSpace />
+          <div
+            style={{ height: "4px", backgroundColor: "rgba(0,0,0,0.3)" }}
+            className="rounded">
+            <motion.div
+              style={{ height: "4px", backgroundColor: lightAccentColor }}
+              className="rounded"
+              animate={{
+                width: `${(
+                  (progress * 100) /
+                  currentPlayback?.item?.duration_ms
+                ).toFixed(2)}%`,
+              }}
+              transition={{ ease: "linear", duration: 1.6 }}></motion.div>
+          </div>
+        </div>
+        <div className="w-1/3 flex items-center justify-end">
+          {isHost && <Devices />}
+        </div>
       </div>
     </PlayerBackground>
   );
@@ -118,9 +124,7 @@ export default function Player() {
 function CurrentPlayback({ item, loading }) {
   if (loading) {
     return (
-      <div
-        className="pl-4 text-gray-600 flex items-center"
-        style={{ height: "76px" }}>
+      <div className="text-gray-600 flex items-center">
         <FontAwesomeIcon
           icon={faSpinnerThird}
           size="lg"
@@ -136,14 +140,17 @@ function CurrentPlayback({ item, loading }) {
     return (
       <div>
         <div key={item.id} className="text-left flex items-center w-full">
-          <img
-            src={item.album.images[1].url}
-            width="60"
-            height="60"
-            alt="album art"
-            className="ml-2 shadow"
-          />
-          <div className="pl-4">
+          <div style={{ background: "rgba(0,0,0,0.2)" }}>
+            <img
+              src={item.album.images[1].url}
+              width="60"
+              height="60"
+              alt="album art"
+              className="shadow"
+            />
+          </div>
+          <HorizontalSpace />
+          <div>
             <div style={{ color: "rgba(255,255,255,0.8)" }}>{item.name}</div>
             <div style={{ color: "rgba(255,255,255,0.6)" }}>
               {item.artists.map((artist) => artist.name).join(", ")}
@@ -155,33 +162,29 @@ function CurrentPlayback({ item, loading }) {
   }
 
   return (
-    <div
-      className="pl-4 text-gray-400 flex items-center"
-      style={{ height: "76px" }}>
-      <FontAwesomeIcon
-        icon={faMusicSlash}
-        size="lg"
-        className="fill-current mr-2"
-      />
-      Add songs to the Play Queue
+    <div className="text-gray-400 flex items-center">
+      <div
+        style={{ width: "60px", height: "60px" }}
+        className="flex items-center justify-center">
+        <FontAwesomeIcon
+          icon={faMusicSlash}
+          size="2x"
+          className="fill-current"
+        />
+      </div>
+      <HorizontalSpace />
+      <div>Add songs to the Play Queue</div>
     </div>
-  );
-}
-
-function HostControls() {
-  return (
-    <>
-      <div className="w-1/3">
-        <PlayerControls />
-      </div>
-      <div className="w-1/3 flex items-center justify-end">
-        <Devices />
-      </div>
-    </>
   );
 }
 
 const PlayerBackground = styled.div`
   position: relative;
   background: ${(props) => props.colors};
+  box-shadow: inset 0 2px rgba(255, 255, 255, 0.25);
 `;
+
+const VerticalSpace = () => <div className="h-2"></div>;
+const HorizontalSpace = () => <div className="w-8"></div>;
+
+const AlbumBackdrop = () => <div className="album-backdrop"></div>;
