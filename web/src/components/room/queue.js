@@ -20,7 +20,7 @@ export default function Queue() {
           <motion.div
             key={item.id}
             onClick={() => removeFromQueue(index)}
-            className="text-left p-2 flex items-center w-full opacity-0 cursor-pointer hover:bg-gray-300 border-b border-gray-300"
+            className="text-left px-3 py-2 flex items-center w-full opacity-0 cursor-pointer hover:bg-gray-300 border-b border-gray-300"
             variants={variants}
             initial="enter"
             animate="center"
@@ -29,14 +29,15 @@ export default function Queue() {
               x: { type: "spring", stiffness: 300, damping: 200 },
               opacity: { duration: 0.2 },
             }}>
-            <div className="p-2">
+            <div className="">
               <img
                 src={item.album.images[2].url}
                 alt="album art"
-                className="shadow w-10 h-10"
+                className="shadow w-12 h-12"
               />
             </div>
-            <div className="ml-1">
+            <div className="w-3"></div>
+            <div>
               <div className="text-gray-700">{item.name}</div>
               <div className="text-gray-600">
                 {item.artists.map((artist) => artist.name).join(", ")}

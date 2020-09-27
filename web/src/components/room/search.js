@@ -38,15 +38,16 @@ export default function Search() {
           <button
             onClick={() => addToQueue(item)}
             key={item.id}
-            className="p-2 text-left flex items-center w-full border-b border-gray-200 hover:bg-gray-100">
-            <div className="p-2">
+            className="px-3 py-2 text-left flex items-center w-full border-b border-gray-200 hover:bg-gray-100">
+            <div className="">
               <img
                 src={item.album.images[2].url}
                 alt="album art"
-                className="shadow h-10 w-10"
+                className="shadow h-12 w-12"
               />
             </div>
-            <div className="ml-1">
+            <div className="w-3"></div>
+            <div>
               <div className="text-gray-700">{item.name}</div>
               <div className="text-gray-600">
                 {item.artists.map((artist) => artist.name).join(", ")}

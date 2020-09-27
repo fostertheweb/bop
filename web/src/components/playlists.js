@@ -40,6 +40,23 @@ export default function Playlists() {
           {
             Header: "Name",
             accessor: (p) => p.name,
+            Cell: ({ row }) => (
+              <div className="flex items-center">
+                <div
+                  className="h-16 w-16 bg-cover flex-shrink-0"
+                  style={{
+                    backgroundImage: `url(${row.original.images[0].url})`,
+                  }}></div>
+                <div className="ml-4">
+                  <div className="text-base text-gray-700">
+                    {row.original.name}
+                  </div>
+                  <div className="text-gray-500">
+                    {row.original.description}
+                  </div>
+                </div>
+              </div>
+            ),
             SubCell: (cellProps) => {
               console.log({ cellProps });
               return <>{cellProps.value}</>;
@@ -102,7 +119,7 @@ function PlaylistsTable({ columns, data, renderRowSubComponent }) {
   return (
     <table {...getTableProps()} className="w-full">
       <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
+        {rows.map((row) => {
           prepareRow(row);
           const rowProps = row.getRowProps();
           return (
