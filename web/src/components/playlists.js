@@ -180,6 +180,35 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
     );
     return data.items.map((i) => i.track);
   });
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Tracks",
+        columns: [
+          {
+            Header: "Name",
+            accessor: "name",
+          },
+          {
+            Header: "Artist",
+            accessor: "artist",
+          },
+        ],
+      },
+    ],
+    [],
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({
+    columns,
+    data,
+  });
 
   if (status === "loading" || !data) {
     return (
@@ -190,30 +219,31 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
     );
   }
 
+  // Render the UI for your table
   return (
-    <>
-      {data.map((track, i) => {
-        return (
-          <tr
-            {...rowProps}
-            key={`${rowProps.key}-expanded-${i}`}
-            className="hover:bg-blue-100"
-            onClick={() => addToQueue(track)}>
-            {row.cells.map((cell) => {
-              return (
-                <td {...cell.getCellProps()} className="p-2 cursor-pointer">
-                  {cell.render(cell.column.SubCell ? "SubCell" : "Cell", {
-                    value:
-                      cell.column.accessor && cell.column.accessor(track, i),
-                    row: { ...row, original: track },
-                  })}
-                </td>
-              );
-            })}
+    <table {...getTableProps()}>
+      <thead>
+        {headerGroups.map((headerGroup) => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column) => (
+              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+            ))}
           </tr>
-        );
-      })}
-    </>
+        ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map((row, i) => {
+          prepareRow(row);
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map((cell) => {
+                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }
 
