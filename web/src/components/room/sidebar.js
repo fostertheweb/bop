@@ -13,7 +13,7 @@ import { useDarkAccentColor } from "hooks/use-accent-color";
 
 export default function Sidebar() {
   return (
-    <div className="flex flex-col bg-gray-200 p-2" style={{ width: "80px" }}>
+    <div className="bg-gray-200 p-2" style={{ width: "calc(60px + 2rem)" }}>
       <SidebarLink path="search" icon={faSearch}>
         Search
       </SidebarLink>
@@ -38,11 +38,12 @@ export function SidebarLink({ path, icon, children }) {
   return (
     <NavLink
       to={path}
-      className="text-gray-600 font-medium block mt-2 first:mt-0 text-center py-2 rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
+      className="text-gray-600 text-sm block p-2 mt-2 first:mt-0 text-center rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
       activeClassName="bg-gray-100"
       activeStyle={{ color: accentColor }}>
-      <FontAwesomeIcon icon={icon} size="lg" className="fill-current" />
-      <div className="mt-1 text-xs">{children}</div>
+      <FontAwesomeIcon icon={icon} className="fill-current" size="lg" />
+
+      <div className="mt-1">{children}</div>
     </NavLink>
   );
 }

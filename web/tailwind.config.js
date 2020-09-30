@@ -8,6 +8,7 @@ module.exports = {
   },
   variants: {
     backgroundColor: ["group-hover", "hover"],
+    borderWidth: ["first"],
     borderColor: ["group-focus", "focus", "focus-within"],
     display: ["group-hover"],
     margin: ["first"],

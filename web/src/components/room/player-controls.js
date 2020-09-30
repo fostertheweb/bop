@@ -41,7 +41,6 @@ export default function PlayerControls() {
             className="fill-current"
           />
         </motion.button>
-
         <motion.button
           className="hover:text-gray-400"
           whileTap={{ scale: 0.8 }}

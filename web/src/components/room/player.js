@@ -89,7 +89,7 @@ export default function Player() {
     <PlayerBackground colors={backgroundGradient} className="p-4 bg-gray-600">
       <AlbumBackdrop />
       <div className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between">
-        <div className="w-1/3">
+        <div className="w-1/3 max-w-1/3 truncate">
           <CurrentPlayback
             item={currentPlayback?.item}
             loading={currentPlaybackStatus === "loading"}
@@ -145,7 +145,9 @@ function CurrentPlayback({ item, loading }) {
     return (
       <div>
         <div key={item.id} className="text-left flex items-center w-full">
-          <div style={{ background: "rgba(0,0,0,0.2)" }}>
+          <div
+            className="flex-shrink-0"
+            style={{ background: "rgba(0,0,0,0.2)" }}>
             <img
               src={item.album.images[1].url}
               width="60"
@@ -190,6 +192,6 @@ const PlayerBackground = styled.div`
 `;
 
 const VerticalSpace = () => <div className="h-2"></div>;
-const HorizontalSpace = () => <div className="w-8"></div>;
+const HorizontalSpace = () => <div className="w-8 flex-shrink-0"></div>;
 
 const AlbumBackdrop = () => <div className="album-backdrop"></div>;

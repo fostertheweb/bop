@@ -48,10 +48,10 @@ export default function Playlists() {
                     backgroundImage: `url(${row.original.images[0].url})`,
                   }}></div>
                 <div className="ml-4">
-                  <div className="text-base text-gray-700">
+                  <div className="text-base text-gray-800">
                     {row.original.name}
                   </div>
-                  <div className="text-gray-500">
+                  <div className="text-gray-600">
                     {row.original.description}
                   </div>
                 </div>
@@ -180,35 +180,6 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
     );
     return data.items.map((i) => i.track);
   });
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Tracks",
-        columns: [
-          {
-            Header: "Name",
-            accessor: "name",
-          },
-          {
-            Header: "Artist",
-            accessor: "artist",
-          },
-        ],
-      },
-    ],
-    [],
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data,
-  });
 
   if (status === "loading" || !data) {
     return (
@@ -221,29 +192,22 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
 
   // Render the UI for your table
   return (
-    <table {...getTableProps()}>
-      <thead>
-        {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <>
+      {data.map((track, i) => {
+        console.log(track);
+        return (
+          <div
+            {...rowProps}
+            key={`${rowProps.key}-expanded-${i}`}
+            className="hover:bg-blue-100 flex items-center w-full text-sm"
+            onClick={() => addToQueue(track)}>
+            <div className="p-1 w-1/3 truncate">{track.name}</div>
+            <div classaName="p-1 w-1/3">{track.artists[0].name}</div>
+            <div classaName="p-1 w-1/3">{track.album.name}</div>
+          </div>
+        );
+      })}
+    </>
   );
 }
 
