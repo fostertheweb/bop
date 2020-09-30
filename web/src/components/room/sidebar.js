@@ -38,7 +38,7 @@ export function SidebarLink({ path, icon, children }) {
   return (
     <NavLink
       to={path}
-      className="text-gray-600 font-medium block mt-2 text-center py-2 rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
+      className="text-gray-600 font-medium block mt-2 first:mt-0 text-center py-2 rounded cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
       activeClassName="bg-gray-100"
       activeStyle={{ color: accentColor }}>
       <FontAwesomeIcon icon={icon} size="lg" className="fill-current" />
