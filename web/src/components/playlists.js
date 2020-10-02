@@ -51,9 +51,11 @@ export default function Playlists() {
                   <div className="text-base text-gray-800">
                     {row.original.name}
                   </div>
-                  <div className="text-gray-600">
-                    {row.original.description}
-                  </div>
+                  <div
+                    className="text-gray-600 text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: row.original.description,
+                    }}></div>
                 </div>
               </div>
             ),
@@ -193,22 +195,50 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
   // Render the UI for your table
   return (
     <>
+      <div className="flex text-xs text-gray-700">
+        <div style={{ width: "30%" }} className="p-1 font-medium">
+          Name
+        </div>
+        <div style={{ width: "30%" }} className="p-1 font-medium">
+          Artist
+        </div>
+        <div style={{ width: "30%" }} className="p-1 font-medium">
+          Album
+        </div>
+        <div style={{ width: "10%" }} className="p-1 font-medium">
+          Duration
+        </div>
+      </div>
       {data.map((track, i) => {
-        console.log(track);
         return (
           <div
             {...rowProps}
             key={`${rowProps.key}-expanded-${i}`}
-            className="hover:bg-blue-100 flex items-center w-full text-sm"
+            className="hover:bg-purple-200 text-gray-800 flex items-center w-full text-xs cursor-pointer"
             onClick={() => addToQueue(track)}>
-            <div className="p-1 w-1/3 truncate">{track.name}</div>
-            <div classaName="p-1 w-1/3">{track.artists[0].name}</div>
-            <div classaName="p-1 w-1/3">{track.album.name}</div>
+            <div style={{ width: "30%" }} className="p-1 truncate">
+              {track.name}
+            </div>
+            <div style={{ width: "30%" }} className="p-1 truncate">
+              {track.artists[0].name}
+            </div>
+            <div style={{ width: "30%" }} className="p-1 truncate">
+              {track.album.name}
+            </div>
+            <div style={{ width: "10%" }} className="p-1">
+              {millisToMinutesAndSeconds(track.duration_ms)}
+            </div>
           </div>
         );
       })}
     </>
   );
+}
+
+function millisToMinutesAndSeconds(millis) {
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
 
 // IGNORE BELOW, ref for markup
