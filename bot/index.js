@@ -1,41 +1,39 @@
 const { MessageEmbed, Client } = require("discord.js");
-const spdl = require("spdl-core");
+const spdl = require("spdl-core").default;
+const { default: ShortUniqueId } = require("short-unique-id");
 
-function formatDuration(duration) {
-  let seconds = duration / 1000;
-  return `${Math.floor(seconds / 60)}m ${Math.floor(seconds % 60)}s`;
-}
+const createNewId = new ShortUniqueId();
+const COMMAND = "📻";
+const WEB_URL = "https://crowdq.fm";
+
+spdl.setCredentials(
+  process.env.SPOTIFY_CLIENT_ID,
+  process.env.SPOTIFY_CLIENT_SECRET,
+);
 
 const client = new Client();
 
-client.login("Your Discord Bot Token");
-client.on("ready", () => console.log("Ready"));
+client.login(process.env.DISCORD_BOT_TOKEN);
+client.on("ready", () => console.log("[READY]"));
 
-client.on("message", async (msg) => {
-  if (!msg.content.startsWith("!play")) return;
-  const url = msg.content.split("!play ")[1];
-  if (!spdl.validateURL(url)) return msg.channel.send("Invalid URL");
-  const channel = msg.member.voice.channel;
-  if (!channel) return msg.channel.send("Not in a voice channel");
+client.on("message", async (message) => {
+  console.log("[MESSAGE] - ", message);
+
+  const channel = message.member.voice.channel;
+  if (!channel) return message.channel.send("Not in a voice channel");
+
   try {
-    const connection = await channel.join();
-    connection.play(await spdl(url)).on("error", (e) => console.error(e));
-    const infos = await spdl.getInfo(url);
-    const embed = new MessageEmbed()
-      .setTitle(`Now playing: ${infos.title}`)
-      .setURL(infos.url)
-      .setColor("#1DB954")
-      .addField(
-        `Artist${infos.artists.length > 1 ? "s" : ""}`,
-        infos.artists.join(", "),
-        true,
-      )
-      .addField("Duration", formatDuration(infos.duration), true)
-      .addField("Preview", `[Click here](${infos.preview_url})`, true)
-      .setThumbnail(infos.thumbnail);
-    msg.channel.send(embed);
+    if (message.content === COMMAND) {
+      await channel.join();
+
+      return message.channel.send(
+        new MessageEmbed()
+          .setTitle("CrowdQ Room Created")
+          .setURL(`${WEB_URL}/rooms/${createNewId()}`),
+      );
+    }
   } catch (err) {
-    console.error(err);
-    msg.channel.send(`An error occurred: ${err.message}`);
+    console.error("[ERROR] - ", err);
+    return message.channel.send(`Oops, ${err.message}`);
   }
 });

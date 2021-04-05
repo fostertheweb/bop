@@ -11382,6 +11382,11 @@ short-unique-id@^3.0.4:
   resolved "https://registry.yarnpkg.com/short-unique-id/-/short-unique-id-3.0.4.tgz#70322ff4393d3ea383a30f6950ca2bba65acda87"
   integrity sha512-M2VEyhMf5H+GUkImMTM5cJMJanm/jgJJf6NSWdNzkIx5oMtQvGm9k6oom3OV77m/RyIe1+MXPkxGqdaipzCRcw==
 
+short-unique-id@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/short-unique-id/-/short-unique-id-3.2.3.tgz#c35c8230d4ece9c27a14c41d2ca24730344c6e01"
+  integrity sha512-DaUTmZe2PP34AQ2DmBOjo0W41Br/74EbKmEosfipbMJdJf2MCdzgJBOXn+PRe/ERFnr9uRKnUa6Kb5X+VC3bCQ==
+
 side-channel@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/side-channel/-/side-channel-1.0.2.tgz#df5d1abadb4e4bf4af1cd8852bf132d2f7876947"
