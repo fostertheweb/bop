@@ -2,6 +2,9 @@ const app = require("./app");
 const { MessageEmbed, Client } = require("discord.js");
 const client = new Client();
 const spdl = require("spdl-core").default;
+const { default: ShortUniqueId } = require("short-unique-id");
+
+const createNewRoom = new ShortUniqueId();
 
 const COMMAND = "📻";
 const WEB_URL = "https://crowdq.fm";
@@ -19,16 +22,22 @@ let connection;
 client.on("message", async (message) => {
   try {
     if (message.content === COMMAND) {
+      const channel = message.member.voice.channel;
+      if (!channel) {
+        return message.channel.send(`Oops, you are not in a voice channel.`);
+      }
+
       if (!connection) {
         console.log("[CONNECTING]");
-        connection = await message.member.voice.channel.join();
+        connection = await channel.join();
         console.log("[CONNECTED]");
       }
 
       return message.channel.send(
         new MessageEmbed()
           .setTitle("CrowdQ Room Created")
-          .setURL(`${WEB_URL}/rooms/${createNewId()}`),
+          .setColor("#abc8f2")
+          .addField(`[join the party](${WEB_URL}/rooms/${createNewRoom()})`),
       );
     }
   } catch (err) {
@@ -42,14 +51,18 @@ app.listen(process.env.PORT, function (err, address) {
     app.log.error(err);
     process.exit(1);
   }
-  app.log.info(`API server listening on ${address}`);
+
+  app.log.info(`API server listening`);
 
   app.io.on("connection", (socket) => {
-    socket.on("message", (payload) => {
-      console.log(payload);
+    socket.on("ADD_TO_QUEUE", async (payload) => {
+      console.log("Attempting to add song.");
+      connection.play(await spdl(payload.data.external_urls.spotify));
+      console.log("[PLAYING] - ", payload.data.name);
     });
 
-    socket.on("ADD_TO_QUEUE", async (payload) => {
+    socket.on("SONG_REQUEST", async (payload) => {
+      console.log("Attempting to add song.");
       connection.play(await spdl(payload.data.external_urls.spotify));
       console.log("[PLAYING] - ", payload.data.name);
     });

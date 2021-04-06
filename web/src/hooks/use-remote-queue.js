@@ -62,8 +62,7 @@ export function useRemoteQueue() {
   }
 
   function songRequest(item) {
-    sendJsonMessage({
-      action: "SONG_REQUEST",
+    socket.emit("SONG_REQUEST", {
       room: id,
       data: item,
       username: username || "Anonymous",
