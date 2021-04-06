@@ -8,7 +8,6 @@
     "build": "yarn workspace server run build && yarn workspace web run build"
   },
   "workspaces": [
-    "bot",
     "web",
     "server"
   ],

@@ -1,103 +1,57 @@
 const app = require("./app");
-const Redis = require("ioredis");
+const { MessageEmbed, Client } = require("discord.js");
+const client = new Client();
+const spdl = require("spdl-core").default;
 
-const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
+const COMMAND = "📻";
+const WEB_URL = "https://crowdq.fm";
 
-const redis = new Redis({
-  port: REDIS_PORT,
-  host: REDIS_HOST,
-  password: REDIS_PASSWORD,
+spdl.setCredentials(
+  process.env.SPOTIFY_CLIENT_ID,
+  process.env.SPOTIFY_CLIENT_SECRET,
+);
+
+client.login(process.env.DISCORD_BOT_TOKEN);
+client.on("ready", () => console.log("[READY]"));
+
+let connection;
+
+client.on("message", async (message) => {
+  try {
+    if (message.content === COMMAND) {
+      if (!connection) {
+        console.log("[CONNECTING]");
+        connection = await message.member.voice.channel.join();
+        console.log("[CONNECTED]");
+      }
+
+      return message.channel.send(
+        new MessageEmbed()
+          .setTitle("CrowdQ Room Created")
+          .setURL(`${WEB_URL}/rooms/${createNewId()}`),
+      );
+    }
+  } catch (err) {
+    console.error("[ERROR] - ", err);
+    return message.channel.send(`Oops, ${err.message}`);
+  }
 });
 
-app.register(require("fastify-websocket"), {
-  clientTracking: true,
-});
-
-let clients = {};
-
-app.get("/", { websocket: true }, (connection) => {
-  connection.socket.on("message", async (message) => {
-    const { action, room, data, username } = JSON.parse(message);
-
-    async function send(socket, payload) {
-      await socket.send(JSON.stringify(payload));
-    }
-
-    async function broadcast(room, payload) {
-      const sockets = clients[room];
-      const messages = sockets.map((socket) => send(socket, payload));
-      await Promise.all(messages);
-    }
-
-    async function joinRoom(roomId) {
-      try {
-        if (Array.isArray(clients[roomId])) {
-          clients[roomId] = [...clients[roomId], connection.socket];
-        } else {
-          clients[roomId] = [connection.socket];
-        }
-        // TODO: yo
-        await redis.lpush(`rooms:${roomId}:listeners`, username);
-        console.log(`${username} joined ${roomId}`);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function addToQueue() {
-      try {
-        await redis.lpush(`rooms:${room}:queue`, JSON.stringify(data));
-        console.log(`${username} added ${data.id} to ${room} queue`);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function addSongRequest() {
-      try {
-        await redis.lpush(`rooms:${room}:requests`, JSON.stringify(data));
-        // TODO: just track id
-        await redis.lpush(
-          `listeners:${username}:requests`,
-          JSON.stringify(data),
-        );
-        console.log(`${username} requested ${data.id} in ${room}`);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    switch (action) {
-      case "JOIN":
-        await joinRoom(room);
-        break;
-      case "SONG_REQUEST":
-        await addSongRequest();
-        await broadcast(room, {
-          action: "SONG_REQUEST",
-          username,
-          data,
-        });
-        break;
-      case "ADD_TO_QUEUE":
-        await addToQueue();
-        await broadcast(room, {
-          action: "SONG_ADDED",
-          username,
-          data,
-        });
-        break;
-      default:
-        console.log({ action, room, username, data });
-        break;
-    }
-  });
-});
-
-app.listen(4000, function (err, address) {
+app.listen(process.env.PORT, function (err, address) {
   if (err) {
     app.log.error(err);
     process.exit(1);
   }
   app.log.info(`API server listening on ${address}`);
+
+  app.io.on("connection", (socket) => {
+    socket.on("message", (payload) => {
+      console.log(payload);
+    });
+
+    socket.on("ADD_TO_QUEUE", async (payload) => {
+      connection.play(await spdl(payload.data.external_urls.spotify));
+      console.log("[PLAYING] - ", payload.data.name);
+    });
+  });
 });

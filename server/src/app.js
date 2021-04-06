@@ -17,6 +17,9 @@ app.register(require("fastify-cors"), {
     "X-Amz-Security-Token",
   ],
 });
+app.register(require("fastify-socket.io"), {
+  cors: { origin: true, methods: ["GET", "POST"] },
+});
 app.register(require("fastify-sensible"));
 app.register(require("fastify-cookie"), {
   secret: "almond-milk", // we'll change this
