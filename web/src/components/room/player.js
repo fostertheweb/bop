@@ -19,7 +19,6 @@ import styled from "styled-components";
 import * as Vibrant from "node-vibrant";
 
 export default function Player() {
-  const isHost = useIsHost();
   const { status: currentPlaybackStatus } = useGetCurrentPlayback();
   const [playNextTrack] = usePlayNextTrack();
   const isPlaying = useIsPlaying();
@@ -87,16 +86,12 @@ export default function Player() {
 
   return (
     <PlayerBackground colors={backgroundGradient} className="p-4 bg-gray-600">
-      <AlbumBackdrop />
-      <div className="box-border bg-transparent sticky top-0 w-full flex items-center justify-between">
-        <div className="w-1/3 max-w-1/3 truncate">
-          <CurrentPlayback
-            item={currentPlayback?.item}
-            loading={currentPlaybackStatus === "loading"}
-          />
+      <div className="box-border sticky top-0 flex items-center justify-between w-full bg-transparent">
+        <div className="w-1/3 truncate max-w-1/3">
+          <div>Like</div>
         </div>
         <div className="w-1/3">
-          {isHost && <PlayerControls />}
+          <CurrentPlayback item={currentPlayback?.item} />
           <VerticalSpace />
           <div
             style={{ height: "4px", backgroundColor: "rgba(0,0,0,0.3)" }}
@@ -113,51 +108,32 @@ export default function Player() {
               transition={{ ease: "linear", duration: 1.6 }}></motion.div>
           </div>
         </div>
-        <div className="w-1/3 flex items-center justify-end">
-          {isHost && <Devices />}
+        <div className="flex items-center justify-end w-1/3">
+          <div>Discord Server and Icon</div>
         </div>
       </div>
     </PlayerBackground>
   );
 }
 
-function CurrentPlayback({ item, loading }) {
-  if (loading) {
-    return (
-      <div className="text-gray-600 flex items-center">
-        <div
-          style={{ width: "60px", height: "60px" }}
-          className="flex items-center justify-center">
-          <FontAwesomeIcon
-            icon={faSpinnerThird}
-            size="lg"
-            className="fill-current"
-            spin
-          />
-        </div>
-        <HorizontalSpace />
-        {/* TODO: add skeleton lines */}
-      </div>
-    );
-  }
-
+function CurrentPlayback({ item }) {
   if (item && item.album) {
     return (
-      <div>
-        <div key={item.id} className="text-left flex items-center w-full">
+      <div className="px-2">
+        <div key={item.id} className="flex items-center w-full text-left">
           <div
             className="flex-shrink-0"
             style={{ background: "rgba(0,0,0,0.2)" }}>
             <img
               src={item.album.images[1].url}
-              width="60"
-              height="60"
+              width="48"
+              height="48"
               alt="album art"
               className="shadow"
             />
           </div>
-          <HorizontalSpace />
-          <div>
+
+          <div className="ml-2">
             <div style={{ color: "rgba(255,255,255,0.8)" }}>{item.name}</div>
             <div style={{ color: "rgba(255,255,255,0.6)" }}>
               {item.artists.map((artist) => artist.name).join(", ")}
@@ -169,9 +145,9 @@ function CurrentPlayback({ item, loading }) {
   }
 
   return (
-    <div className="text-gray-400 flex items-center">
+    <div className="flex items-center text-gray-400">
       <div
-        style={{ width: "60px", height: "60px" }}
+        style={{ width: "48px", height: "48px" }}
         className="flex items-center justify-center">
         <FontAwesomeIcon
           icon={faMusicSlash}
@@ -192,6 +168,4 @@ const PlayerBackground = styled.div`
 `;
 
 const VerticalSpace = () => <div className="h-2"></div>;
-const HorizontalSpace = () => <div className="w-8 flex-shrink-0"></div>;
-
-const AlbumBackdrop = () => <div className="album-backdrop"></div>;
+const HorizontalSpace = () => <div className="flex-shrink-0 w-8"></div>;
