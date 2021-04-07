@@ -48,12 +48,14 @@ client.on("message", async (message) => {
 
       const host = {
         id: author.id,
+        type: "DISCORD",
         username: author.username,
         avatar_url: `${CDN}/avatars/${author.id}/${author.avatar}.png`,
       };
 
       const room = {
         id: newRoomId(),
+        type: "DISCORD",
         guild_id: guild.id,
         name: guild.name,
         icon_url: `${CDN}/icons/${guild.id}/${guild.icon}.png`,
@@ -74,7 +76,7 @@ client.on("message", async (message) => {
           .addField("Host", host.username)
           .addField(
             "Room",
-            `[crowdq.fm/${room.id}](${WEB_URL}/rooms/${room.id})/search`,
+            `[crowdq.fm/${room.id}](${WEB_URL}/rooms/${room.id}/search)`,
             true,
           ),
       );

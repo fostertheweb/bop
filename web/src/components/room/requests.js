@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useRemoteQueue } from "hooks/use-remote-queue";
+import { useQueue } from "hooks/use-queue";
 import { useSongRequests, songRequestsState } from "hooks/use-song-requests";
 import { motion } from "framer-motion";
 import { useRecoilState } from "recoil";
@@ -17,7 +17,7 @@ const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 export default function Requests() {
   const { id: room } = useParams();
   const { removeSongRequest } = useSongRequests();
-  const { addToQueue } = useRemoteQueue();
+  const { addToQueue } = useQueue();
   const [requests, setSongRequests] = useRecoilState(songRequestsState);
   const { status, isFetching, data } = useQuery(
     ["songRequests", room],
@@ -41,14 +41,14 @@ export default function Requests() {
 
   return (
     <>
-      <h1 className="p-4 text-gray-500 font-medium text-lg tracking-wide">
+      <h1 className="p-4 text-lg font-medium tracking-wide text-gray-500">
         Song Requests
       </h1>
       {requests?.map((item, index) => {
         return (
           <motion.div
             key={item.id}
-            className="text-left p-2 flex items-center justify-between w-full opacity-0 cursor-pointer hover:bg-gray-800"
+            className="flex items-center justify-between w-full p-2 text-left opacity-0 cursor-pointer hover:bg-gray-800"
             variants={variants}
             initial="enter"
             animate="center"
@@ -62,7 +62,7 @@ export default function Requests() {
                 <img
                   src={item.album.images[2].url}
                   alt="album art"
-                  className="shadow w-10 h-10"
+                  className="w-10 h-10 shadow"
                 />
               </div>
               <div className="ml-1">
@@ -75,19 +75,19 @@ export default function Requests() {
             <div className="flex">
               <button
                 onClick={() => addToQueue(item)}
-                className="flex flex-col items-center text-green-700 py-2 px-4 hover:text-green-500">
+                className="flex flex-col items-center px-4 py-2 text-green-700 hover:text-green-500">
                 <FontAwesomeIcon
                   icon={faPlusCircle}
-                  className="fill-current mr-1"
+                  className="mr-1 fill-current"
                   size="lg"
                 />
               </button>
               <button
                 onClick={() => removeSongRequest(index)}
-                className="flex flex-col items-center text-red-800 py-2 px-4 hover:text-red-600">
+                className="flex flex-col items-center px-4 py-2 text-red-800 hover:text-red-600">
                 <FontAwesomeIcon
                   icon={faTimesCircle}
-                  className="fill-current mr-1"
+                  className="mr-1 fill-current"
                   size="lg"
                 />
               </button>

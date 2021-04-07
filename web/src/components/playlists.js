@@ -12,7 +12,7 @@ import { useQuery } from "react-query";
 import Axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenState } from "hooks/use-login";
-import { useRemoteQueue } from "hooks/use-remote-queue";
+import { useQueue } from "hooks/use-queue";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
@@ -43,7 +43,7 @@ export default function Playlists() {
             Cell: ({ row }) => (
               <div className="flex items-center">
                 <div
-                  className="h-16 w-16 bg-cover flex-shrink-0"
+                  className="flex-shrink-0 w-16 h-16 bg-cover"
                   style={{
                     backgroundImage: `url(${row.original.images[0].url})`,
                   }}></div>
@@ -52,7 +52,7 @@ export default function Playlists() {
                     {row.original.name}
                   </div>
                   <div
-                    className="text-gray-600 text-sm"
+                    className="text-sm text-gray-600"
                     dangerouslySetInnerHTML={{
                       __html: row.original.description,
                     }}></div>
@@ -166,7 +166,7 @@ function PlaylistsTable({ columns, data, renderRowSubComponent }) {
 }
 
 function SubRowAsync({ row, rowProps, visibleColumns }) {
-  const { addToQueue } = useRemoteQueue();
+  const { addToQueue } = useQueue();
   const {
     original: { id },
   } = row;
@@ -214,7 +214,7 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
           <div
             {...rowProps}
             key={`${rowProps.key}-expanded-${i}`}
-            className="hover:bg-purple-200 text-gray-800 flex items-center w-full text-xs cursor-pointer"
+            className="flex items-center w-full text-xs text-gray-800 cursor-pointer hover:bg-purple-200"
             onClick={() => addToQueue(track)}>
             <div style={{ width: "30%" }} className="p-1 truncate">
               {track.name}
@@ -249,7 +249,7 @@ export function OldPlaylists() {
 
   return (
     <>
-      <h1 className="p-4 font-medium text-lg tracking-wide">Playlists</h1>
+      <h1 className="p-4 text-lg font-medium tracking-wide">Playlists</h1>
       <div>
         {loading ? (
           <FontAwesomeIcon icon={faSpinnerThird} spin />
@@ -267,15 +267,15 @@ function PlaylistListItem({ playlist }) {
   return (
     <div
       onClick={() => console.log(playlist.id)}
-      className="p-2 text-gray-400 flex items-center cursor-pointer hover:bg-gray-100 transition ease-in-out duration-150 border-b border-gray-200">
+      className="flex items-center p-2 text-gray-400 transition duration-150 ease-in-out border-b border-gray-200 cursor-pointer hover:bg-gray-100">
       <div
-        className="h-12 w-12 bg-cover flex-shrink-0"
+        className="flex-shrink-0 w-12 h-12 bg-cover"
         style={{
           backgroundImage: `url(${playlist.images[0].url})`,
         }}></div>
-      <div className="truncate flex-shrink ml-4">
-        <div className="text-base truncate text-gray-700">{playlist.name}</div>
-        <div className="truncate text-gray-500">{playlist.description}</div>
+      <div className="flex-shrink ml-4 truncate">
+        <div className="text-base text-gray-700 truncate">{playlist.name}</div>
+        <div className="text-gray-500 truncate">{playlist.description}</div>
       </div>
     </div>
   );
@@ -287,19 +287,19 @@ export function Playlist() {
   return (
     <div>
       <div className="flex items-center justify-between p-4 text-gray-500">
-        <h1 className="text-center text-gray-500 font-medium text-lg tracking-wide">
+        <h1 className="text-lg font-medium tracking-wide text-center text-gray-500">
           {playlist.name}
         </h1>
         <span>&nbsp;</span>
       </div>
       <div>
         {items.map((item) => (
-          <div className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-700 transition ease-in-out duration-150">
+          <div className="flex items-center px-4 py-2 transition duration-150 ease-in-out cursor-pointer hover:bg-gray-700">
             <div className="">
               <img
                 src={item.track.album.images[2].url}
                 alt="album art"
-                className="shadow h-10 w-10"
+                className="w-10 h-10 shadow"
               />
             </div>
             <div className="ml-4">

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { useRemoteQueue } from "hooks/use-remote-queue";
+import { useQueue } from "hooks/use-queue";
 import { useSearch } from "hooks/use-search";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
 
 export default function Search() {
-  const { addToQueue } = useRemoteQueue();
+  const { addToQueue } = useQueue();
   const [query, setQuery] = useState("");
   const debounced = useDebounce(query, 500);
   const { isFetching: isLoading, data: tracks } = useSearch(debounced);
@@ -16,15 +16,15 @@ export default function Search() {
     <div className="">
       <div className="sticky top-0 p-2 bg-white">
         <div className="flex items-center">
-          <div className="flex items-center border-2 border-gray-400 text-base rounded bg-gray-100 focus-within:border-green-500 focus-within:bg-gray-800 w-full text-gray-600">
+          <div className="flex items-center w-full text-base text-gray-600 bg-gray-100 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-800">
             <FontAwesomeIcon
               icon={isLoading ? faSpinnerThird : faSpotify}
               size="lg"
-              className="text-gray-600 fill-current ml-2"
+              className="ml-2 text-gray-600 fill-current"
               spin={isLoading}
             />
             <input
-              className="appearance-none bg-transparent text-base rounded px-4 py-2 pl-2 focus:outline-none w-full text-gray-600"
+              className="w-full px-4 py-2 pl-2 text-base text-gray-600 bg-transparent rounded appearance-none focus:outline-none"
               id="search"
               placeholder="Search by track or artist"
               onChange={({ target }) => setQuery(target.value)}
@@ -38,12 +38,12 @@ export default function Search() {
           <button
             onClick={() => addToQueue(item)}
             key={item.id}
-            className="px-3 py-2 text-left flex items-center w-full border-b border-gray-200 hover:bg-gray-100">
+            className="flex items-center w-full px-3 py-2 text-left border-b border-gray-200 hover:bg-gray-100">
             <div className="">
               <img
                 src={item.album.images[2].url}
                 alt="album art"
-                className="shadow h-12 w-12"
+                className="w-12 h-12 shadow"
               />
             </div>
             <div className="w-3"></div>
