@@ -24,7 +24,7 @@ export default function Login() {
   }, [code, status]);
 
   return (
-    <div className="flex flex-col justify-center h-screen w-full items-center">
+    <div className="flex flex-col items-center justify-center w-full h-screen">
       <LoginButton loading={status === "loading"} redirect_uri={redirect_uri} />
     </div>
   );

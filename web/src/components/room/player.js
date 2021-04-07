@@ -1,11 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import PlayerControls from "components/room/player-controls";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash, faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
-import Devices from "components/room/devices";
+import { faMusicSlash } from "@fortawesome/pro-duotone-svg-icons";
 import { useIsPlaying, usePlayNextTrack } from "hooks/use-player";
-import { useIsHost } from "hooks/use-is-host";
 import {
   useCurrentPlayback,
   useGetCurrentPlayback,
@@ -17,17 +14,20 @@ import {
 } from "hooks/use-accent-color";
 import styled from "styled-components";
 import * as Vibrant from "node-vibrant";
+import DiscordServer from "components/discord/discord-server";
+import Reactions from "components/room/reactions";
 
 export default function Player() {
-  const { status: currentPlaybackStatus } = useGetCurrentPlayback();
   const [playNextTrack] = usePlayNextTrack();
   const isPlaying = useIsPlaying();
   const [progress, setProgress] = useState(0);
   const timer = useRef(null);
+
   const [backgroundGradient, setBackgroundGradient] = useState();
   const setLightAccentColor = useSetLightAccentColor();
   const setDarkAccentColor = useSetDarkAccentColor();
   const lightAccentColor = useLightAccentColor();
+
   const currentPlayback = useCurrentPlayback();
 
   useEffect(() => {
@@ -88,8 +88,9 @@ export default function Player() {
     <PlayerBackground colors={backgroundGradient} className="p-4 bg-gray-600">
       <div className="box-border sticky top-0 flex items-center justify-between w-full bg-transparent">
         <div className="w-1/3 truncate max-w-1/3">
-          <div>Like</div>
+          <DiscordServer />
         </div>
+
         <div className="w-1/3">
           <CurrentPlayback item={currentPlayback?.item} />
           <VerticalSpace />
@@ -108,8 +109,9 @@ export default function Player() {
               transition={{ ease: "linear", duration: 1.6 }}></motion.div>
           </div>
         </div>
+
         <div className="flex items-center justify-end w-1/3">
-          <div>Discord Server and Icon</div>
+          <Reactions />
         </div>
       </div>
     </PlayerBackground>
@@ -155,8 +157,8 @@ function CurrentPlayback({ item }) {
           className="fill-current"
         />
       </div>
-      <HorizontalSpace />
-      <div>Add songs to the Play Queue</div>
+
+      <div className="ml-2">Add songs to the Play Queue</div>
     </div>
   );
 }

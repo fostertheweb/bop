@@ -1,9 +1,8 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
 import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
+import { useRoom } from "./use-rooms";
 
 const {
   REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
@@ -23,12 +22,9 @@ export function usePlayQueue() {
 export function useQueue() {
   const { id } = useParams();
   const username = useUsername();
-
-  const { data: room } = useQuery(id && ["room", id], async () => {
-    const response = await fetch(`${API_BASE_URL}/rooms/${id}`);
-    return await response.json();
-  });
+  const { data: room } = useRoom(id);
   const setQueue = useSetRecoilState(playQueueAtom);
+  const playQueue = usePlayQueue();
 
   const socket = io(WEBSOCKET_API_URL);
 
@@ -42,10 +38,19 @@ export function useQueue() {
   }
 
   function removeFromQueue(index) {
+    socket.emit("REMOVE_FROM_QUEUE", {
+      room,
+      data: index,
+      username: username || "Anonymous",
+    });
     setQueue((queue) => [...queue.slice(0, index), ...queue.slice(index + 1)]);
   }
 
   function nextTrackInQueue() {
+    socket.emit("PLAY_NEXT_SONG", {
+      room,
+      data: playQueue[0],
+    });
     setQueue((queue) => queue.slice(1));
   }
 

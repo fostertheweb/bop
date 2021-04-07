@@ -70,14 +70,13 @@ client.on("message", async (message) => {
 
       return message.channel.send(
         new MessageEmbed()
-          .setTitle(`New CrowdQ Room Created`)
+          .setTitle(`New Room Created`)
           .setColor("#8B5CF6")
           .setThumbnail(host.avatar_url)
           .addField("Host", host.username)
           .addField(
             "Room",
             `[crowdq.fm/${room.id}](${WEB_URL}/rooms/${room.id}/search)`,
-            true,
           ),
       );
     }
