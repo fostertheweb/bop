@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { parse } from "query-string";
 
 import { useLogin } from "hooks/use-login";
-import { LoginButton } from "components/login-button";
+import { LoginButton } from "components/spotify/login-button";
 
 export default function Login() {
   const location = useLocation();
