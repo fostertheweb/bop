@@ -91,13 +91,17 @@ app.listen(process.env.PORT, function (err) {
       const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
       const dispatcher = connection.play(stream);
 
-      app.io.emit("START", { item: payload.data, duration: video.duration });
+      app.io.emit("START", {
+        item: payload.data,
+        duration: video.duration * 1000,
+      });
 
       console.log("[PLAYING] - ", payload.data.name);
 
       dispatcher.on("finish", () => {
         console.log("[FINISHED]");
-        // play next song in queue
+        // play next song in queue for room ID
+        // shift the persisted queue
       });
     });
   });

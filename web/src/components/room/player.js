@@ -52,18 +52,21 @@ export default function Player() {
         });
     }
 
-    // setProgress(parseInt(currentPlayback.progress_ms));
+    setProgress(0);
 
     // eslint-disable-next-line
-  }, [currentPlayback, setProgress]);
+  }, [currentPlayback]);
 
-  // useEffect(() => {
-  //   if (progress >= parseInt(currentPlayback?.item?.duration_ms)) {
-  //     clearInterval(timer.current);
-  //     playNextTrack();
-  //   }
-  //   //eslint-disable-next-line
-  // }, [progress]);
+  useEffect(() => {
+    if (currentPlayback) {
+      if (progress >= parseInt(currentPlayback.duration)) {
+        clearInterval(timer.current);
+        // play next track
+        // restart progress
+      }
+    }
+    //eslint-disable-next-line
+  }, [progress]);
 
   useEffect(() => {
     function tick() {
@@ -102,7 +105,7 @@ export default function Player() {
               animate={{
                 width: `${(
                   (progress * 100) /
-                  currentPlayback?.duration_ms
+                  currentPlayback?.duration
                 ).toFixed(2)}%`,
               }}
               transition={{ ease: "linear", duration: 1.6 }}></motion.div>
@@ -146,14 +149,14 @@ function CurrentPlayback({ item }) {
   }
 
   return (
-    <div className="flex items-center text-gray-400">
+    <div className="flex items-center px-2 text-gray-400">
       <div
         style={{ width: "48px", height: "48px" }}
-        className="flex items-center justify-center">
+        className="flex items-center justify-center bg-gray-500 shadow">
         <FontAwesomeIcon
           icon={faMusicSlash}
-          size="2x"
-          className="fill-current"
+          size="lg"
+          className="text-gray-300 fill-current"
         />
       </div>
 

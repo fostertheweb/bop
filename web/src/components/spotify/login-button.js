@@ -4,8 +4,8 @@ import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useLoginUrl } from "hooks/use-login";
 
-export function LoginButton({ loading, redirect_uri }) {
-  const url = useLoginUrl(redirect_uri);
+export function LoginButton({ loading }) {
+  const url = useLoginUrl(window.location.href);
 
   return (
     <a
