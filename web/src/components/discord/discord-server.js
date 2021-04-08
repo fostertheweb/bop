@@ -17,8 +17,8 @@ export default function DiscordServer() {
       <div className="flex-shrink-0">
         <img
           src={room.icon_url}
-          width="60"
-          height="60"
+          width="48"
+          height="48"
           alt="Discord Server Icon"
           className="rounded shadow"
         />
