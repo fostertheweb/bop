@@ -1,31 +1,13 @@
 const app = require("./app");
 const { MessageEmbed, Client } = require("discord.js");
-const client = new Client();
-const spdl = require("spdl-core").default;
 const { default: ShortUniqueId } = require("short-unique-id");
-const Redis = require("ioredis");
+const ytdl = require("ytdl-core");
+const YouTube = require("youtube-sr").default;
+const { redis, setJSON, getJSON } = require("./queue");
 
-spdl.setCredentials(
-  process.env.SPOTIFY_CLIENT_ID,
-  process.env.SPOTIFY_CLIENT_SECRET,
-);
+YouTube.set("api", process.env.YOUTUBE_API_KEY);
 
-function setJSON(key, value) {
-  return new Redis.Command("JSON.SET", [key, ".", JSON.stringify(value)]);
-}
-
-function getJSON(key) {
-  return new Redis.Command("JSON.GET", [key]);
-}
-
-const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
-
-const redis = new Redis({
-  port: REDIS_PORT,
-  host: REDIS_HOST,
-  password: REDIS_PASSWORD,
-});
-
+const client = new Client();
 const newRoomId = new ShortUniqueId();
 
 const COMMAND = "📻";
@@ -92,8 +74,6 @@ app.listen(process.env.PORT, function (err) {
     process.exit(1);
   }
 
-  app.log.info(`API server listening`);
-
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
       const guild = await client.guilds.fetch(payload.room.guild_id);
@@ -106,10 +86,19 @@ app.listen(process.env.PORT, function (err) {
         connection = await channel.join();
       }
 
-      connection
-        .play(await spdl(payload.data.external_urls.spotify))
-        .on("error", (e) => console.error(e));
+      const { name, artists } = payload.data;
+      const video = await YouTube.searchOne(`${name} ${artists[0].name}`);
+      const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
+      const dispatcher = connection.play(stream);
+
+      app.io.emit("START", { item: payload.data, duration: video.duration });
+
       console.log("[PLAYING] - ", payload.data.name);
+
+      dispatcher.on("finish", () => {
+        console.log("[FINISHED]");
+        // play next song in queue
+      });
     });
   });
 });

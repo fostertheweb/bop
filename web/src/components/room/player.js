@@ -32,39 +32,38 @@ export default function Player() {
 
   useEffect(() => {
     if (currentPlayback) {
-      if (currentPlayback.item) {
-        Vibrant.from(currentPlayback.item.album.images[1].url)
-          .getPalette()
-          .then((palette) => {
-            const colors = Object.keys(palette).reduce((theme, key) => {
-              return { ...theme, [key]: palette[key].hex };
-            }, {});
-            setDarkAccentColor(colors.DarkVibrant);
-            setLightAccentColor(colors.LightVibrant);
-            setBackgroundGradient(
-              `linear-gradient(0.3turn, ${[
-                colors.DarkVibrant,
-                colors.DarkMuted,
-              ].join(",")})`,
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-
-      setProgress(parseInt(currentPlayback.progress_ms));
+      Vibrant.from(currentPlayback.album.images[1].url)
+        .getPalette()
+        .then((palette) => {
+          const colors = Object.keys(palette).reduce((theme, key) => {
+            return { ...theme, [key]: palette[key].hex };
+          }, {});
+          setDarkAccentColor(colors.DarkVibrant);
+          setLightAccentColor(colors.LightVibrant);
+          setBackgroundGradient(
+            `linear-gradient(0.3turn, ${[
+              colors.DarkVibrant,
+              colors.DarkMuted,
+            ].join(",")})`,
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
+
+    // setProgress(parseInt(currentPlayback.progress_ms));
+
     // eslint-disable-next-line
   }, [currentPlayback, setProgress]);
 
-  useEffect(() => {
-    if (progress >= parseInt(currentPlayback?.item?.duration_ms)) {
-      clearInterval(timer.current);
-      playNextTrack();
-    }
-    //eslint-disable-next-line
-  }, [progress]);
+  // useEffect(() => {
+  //   if (progress >= parseInt(currentPlayback?.item?.duration_ms)) {
+  //     clearInterval(timer.current);
+  //     playNextTrack();
+  //   }
+  //   //eslint-disable-next-line
+  // }, [progress]);
 
   useEffect(() => {
     function tick() {
@@ -92,7 +91,7 @@ export default function Player() {
         </div>
 
         <div className="w-1/3">
-          <CurrentPlayback item={currentPlayback?.item} />
+          <CurrentPlayback item={currentPlayback} />
           <VerticalSpace />
           <div
             style={{ height: "4px", backgroundColor: "rgba(0,0,0,0.3)" }}
@@ -103,7 +102,7 @@ export default function Player() {
               animate={{
                 width: `${(
                   (progress * 100) /
-                  currentPlayback?.item?.duration_ms
+                  currentPlayback?.duration_ms
                 ).toFixed(2)}%`,
               }}
               transition={{ ease: "linear", duration: 1.6 }}></motion.div>

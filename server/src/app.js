@@ -1,6 +1,5 @@
 const app = require("fastify")({ logger: true });
-
-const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
+const { redis } = require("./queue");
 
 // health check
 app.get("/ping", () => "PONG");
@@ -26,9 +25,7 @@ app.register(require("fastify-cookie"), {
   parseOptions: {}, // options for parsing cookies
 });
 app.register(require("fastify-redis"), {
-  host: REDIS_HOST,
-  port: REDIS_PORT,
-  password: REDIS_PASSWORD,
+  client: redis,
 });
 
 // routes

@@ -27,7 +27,8 @@
     "ioredis": "^4.25.0",
     "node-fetch": "^2.6.0",
     "short-unique-id": "^3.2.3",
-    "spdl-core": "^1.6.0"
+    "youtube-sr": "^4.0.4",
+    "ytdl-core": "^4.5.0"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",

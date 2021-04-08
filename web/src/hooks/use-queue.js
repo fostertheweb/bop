@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
 import { useRoom } from "./use-rooms";
+import { useEffect } from "react";
+import { useSetCurrentPlayback } from "./use-current-playback";
 
 const {
   REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
@@ -25,8 +27,14 @@ export function useQueue() {
   const { data: room } = useRoom(id);
   const setQueue = useSetRecoilState(playQueueAtom);
   const playQueue = usePlayQueue();
+  const setCurrentPlayback = useSetCurrentPlayback();
 
   const socket = io(WEBSOCKET_API_URL);
+
+  socket.on("START", ({ item, duration }) => {
+    console.log({ item, duration });
+    setCurrentPlayback(item);
+  });
 
   function addToQueue(item) {
     socket.emit("ADD_TO_QUEUE", {
