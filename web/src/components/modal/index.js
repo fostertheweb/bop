@@ -5,7 +5,7 @@ export default function Modal({ children, show }) {
   const [isOpen, setOpen] = useState(show);
   return (
     <Transition
-      className="absolute top-0 left-0 flex items-center justify-center w-screen h-screen bg-black bg-opacity-25"
+      className="absolute top-0 left-0 z-10 flex items-center justify-center w-screen h-screen bg-black bg-opacity-25"
       show={isOpen}
       enter="transition ease-out duration-100"
       enterFrom="transform opacity-0"

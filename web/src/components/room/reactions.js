@@ -4,7 +4,7 @@ import React from "react";
 
 export default function Reactions() {
   return (
-    <div className="flex justify-around text-white">
+    <div className="flex justify-center text-white">
       <button>
         <FontAwesomeIcon icon={faHeart} size="lg" />
       </button>

@@ -3,10 +3,7 @@ import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusicSlash } from "@fortawesome/pro-duotone-svg-icons";
 import { useIsPlaying, usePlayNextTrack } from "hooks/use-player";
-import {
-  useCurrentPlayback,
-  useGetCurrentPlayback,
-} from "hooks/use-current-playback";
+import { useCurrentPlayback } from "hooks/use-current-playback";
 import {
   useLightAccentColor,
   useSetDarkAccentColor,
@@ -14,7 +11,6 @@ import {
 } from "hooks/use-accent-color";
 import styled from "styled-components";
 import * as Vibrant from "node-vibrant";
-import DiscordServer from "components/discord/discord-server";
 import Reactions from "components/room/reactions";
 
 export default function Player() {
@@ -29,6 +25,8 @@ export default function Player() {
   const lightAccentColor = useLightAccentColor();
 
   const currentPlayback = useCurrentPlayback();
+
+  console.log({ currentPlayback });
 
   useEffect(() => {
     if (currentPlayback) {
@@ -52,21 +50,8 @@ export default function Player() {
         });
     }
 
-    setProgress(0);
-
     // eslint-disable-next-line
   }, [currentPlayback]);
-
-  useEffect(() => {
-    if (currentPlayback) {
-      if (progress >= parseInt(currentPlayback.duration)) {
-        clearInterval(timer.current);
-        // play next track
-        // restart progress
-      }
-    }
-    //eslint-disable-next-line
-  }, [progress]);
 
   useEffect(() => {
     function tick() {
@@ -88,13 +73,13 @@ export default function Player() {
 
   return (
     <PlayerBackground colors={backgroundGradient} className="p-4 bg-gray-600">
-      <div className="box-border sticky top-0 flex items-center justify-between w-full bg-transparent">
-        <div className="w-1/3 truncate max-w-1/3">
-          <DiscordServer />
-        </div>
-
+      <div className="box-border sticky top-0 flex items-center justify-center w-full bg-transparent">
         <div className="w-1/3">
-          <CurrentPlayback item={currentPlayback} />
+          <div className="flex items-center justify-between px-2">
+            <CurrentPlayback item={currentPlayback} />
+            <Reactions />
+          </div>
+
           <VerticalSpace />
           <div
             style={{ height: "4px", backgroundColor: "rgba(0,0,0,0.3)" }}
@@ -111,10 +96,6 @@ export default function Player() {
               transition={{ ease: "linear", duration: 1.6 }}></motion.div>
           </div>
         </div>
-
-        <div className="flex items-center justify-end w-1/3">
-          <Reactions />
-        </div>
       </div>
     </PlayerBackground>
   );
@@ -123,7 +104,7 @@ export default function Player() {
 function CurrentPlayback({ item }) {
   if (item && item.album) {
     return (
-      <div className="px-2">
+      <div className="flex items-center">
         <div key={item.id} className="flex items-center w-full text-left">
           <div
             className="flex-shrink-0"
@@ -149,7 +130,7 @@ function CurrentPlayback({ item }) {
   }
 
   return (
-    <div className="flex items-center px-2 text-gray-400">
+    <div className="flex items-center text-gray-400">
       <div
         style={{ width: "48px", height: "48px" }}
         className="flex items-center justify-center bg-gray-500 shadow">
@@ -172,4 +153,3 @@ const PlayerBackground = styled.div`
 `;
 
 const VerticalSpace = () => <div className="h-2"></div>;
-const HorizontalSpace = () => <div className="flex-shrink-0 w-8"></div>;

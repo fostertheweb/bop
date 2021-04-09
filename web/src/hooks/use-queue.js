@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
 import { useRoom } from "./use-rooms";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
 import { useSetIsPlaying } from "./use-player";
 
@@ -30,18 +30,21 @@ export function useQueue() {
   const playQueue = usePlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
   const setIsPlaying = useSetIsPlaying(true);
-
-  const socket = io(WEBSOCKET_API_URL);
+  const socketRef = useRef(null);
 
   useEffect(() => {
+    const socket = io(WEBSOCKET_API_URL);
+
     socket.on("START", ({ item, duration }) => {
       setCurrentPlayback({ ...item, duration });
       setIsPlaying(true);
     });
+
+    socketRef.current = socket;
   }, []);
 
   function addToQueue(item) {
-    socket.emit("ADD_TO_QUEUE", {
+    socketRef.current.emit("ADD_TO_QUEUE", {
       room,
       data: item,
       username: username || "Anonymous",
@@ -50,7 +53,7 @@ export function useQueue() {
   }
 
   function removeFromQueue(index) {
-    socket.emit("REMOVE_FROM_QUEUE", {
+    socketRef.current.emit("REMOVE_FROM_QUEUE", {
       room,
       data: index,
       username: username || "Anonymous",
@@ -59,7 +62,7 @@ export function useQueue() {
   }
 
   function nextTrackInQueue() {
-    socket.emit("PLAY_NEXT_SONG", {
+    socketRef.current.emit("PLAY_NEXT_SONG", {
       room,
       data: playQueue[0],
     });

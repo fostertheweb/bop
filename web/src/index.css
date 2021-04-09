@@ -21,3 +21,7 @@ code {
   height: 0;
   width: 0;
 }
+
+.small-caps {
+  font-variant: small-caps;
+}

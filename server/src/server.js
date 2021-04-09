@@ -1,13 +1,13 @@
 const app = require("./app");
-const { MessageEmbed, Client } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const { default: ShortUniqueId } = require("short-unique-id");
 const ytdl = require("ytdl-core");
 const YouTube = require("youtube-sr").default;
 const { redis, setJSON, getJSON } = require("./queue");
+const discord = require("./shared/discord.js");
 
 YouTube.set("api", process.env.YOUTUBE_API_KEY);
 
-const client = new Client();
 const newRoomId = new ShortUniqueId();
 
 const COMMAND = "📻";
@@ -15,10 +15,7 @@ const BOT_NAME = "CrowdQ";
 const WEB_URL = "http://localhost:3000"; //"https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
 
-client.login(process.env.DISCORD_BOT_TOKEN);
-client.on("ready", () => console.log("[READY]"));
-
-client.on("message", async (message) => {
+discord.on("message", async (message) => {
   try {
     if (message.content === COMMAND) {
       const channel = message.member.voice.channel;
@@ -58,7 +55,7 @@ client.on("message", async (message) => {
           .addField("Host", host.username)
           .addField(
             "Room",
-            `[crowdq.fm/${room.id}](${WEB_URL}/rooms/${room.id}/search)`,
+            `[crowdq.fm/${room.id}](${WEB_URL}/rooms/${room.id})`,
           ),
       );
     }
@@ -76,24 +73,27 @@ app.listen(process.env.PORT, function (err) {
 
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
-      const guild = await client.guilds.fetch(payload.room.guild_id);
+      const guild = await discord.guilds.fetch(payload.room.guild_id);
       const members = await guild.members.fetch({ query: BOT_NAME, limit: 1 });
       const [bot] = members.values();
       let connection = bot.voice.connection;
 
       if (!connection) {
-        const channel = await client.channels.fetch(bot.voice.channelID);
+        const channel = await discord.channels.fetch(bot.voice.channelID);
         connection = await channel.join();
       }
 
       const { name, artists } = payload.data;
-      const video = await YouTube.searchOne(`${name} ${artists[0].name}`);
+      let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
+      if (!video) {
+        video = await YouTube.searchOne(`${name} ${artists[0].name}`);
+      }
       const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
       const dispatcher = connection.play(stream);
 
       app.io.emit("START", {
         item: payload.data,
-        duration: video.duration * 1000,
+        duration: video.duration,
       });
 
       console.log("[PLAYING] - ", payload.data.name);
