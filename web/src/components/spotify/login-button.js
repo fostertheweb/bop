@@ -4,7 +4,7 @@ import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useLoginUrl, useSetRedirectTo } from "hooks/use-login";
 
 export function LoginButton() {
-  const url = useLoginUrl(`${window.location.origin}/login`);
+  const url = useLoginUrl();
   const setRedirectTo = useSetRedirectTo();
 
   useEffect(() => {
