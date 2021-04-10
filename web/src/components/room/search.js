@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useQueue } from "hooks/use-queue";
 import { useSearch } from "hooks/use-search";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
+import { faTimesCircle } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Search() {
   const { addToQueue } = useQueue();
   const [query, setQuery] = useState("");
   const debounced = useDebounce(query, 500);
   const { isFetching: isLoading, data: tracks } = useSearch(debounced);
+  const searchInputRef = useRef(null);
 
   return (
     <div className="">
@@ -29,7 +31,17 @@ export default function Search() {
               placeholder="Search by track or artist"
               onChange={({ target }) => setQuery(target.value)}
               autoComplete="false"
+              ref={searchInputRef}
             />
+            {query.length > 0 ? (
+              <button onClick={() => (searchInputRef.current.value = "")}>
+                <FontAwesomeIcon
+                  icon={faTimesCircle}
+                  size="lg"
+                  className="mr-2 text-gray-600 fill-current"
+                />
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

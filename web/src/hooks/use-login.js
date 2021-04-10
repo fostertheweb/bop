@@ -1,4 +1,9 @@
-import { atom, useRecoilState, useSetRecoilState } from "recoil";
+import {
+  atom,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 import { stringify } from "query-string";
 import { useMutation } from "react-query";
 import axios from "axios";
@@ -82,4 +87,18 @@ export function useRefreshSession() {
       },
     },
   );
+}
+
+const redirectTotState = atom({
+  key: "crowdQ.storage.redirectTo",
+  default: null,
+  persistence_UNSTABLE: true,
+});
+
+export function useRedirectTo() {
+  return useRecoilValue(redirectTotState);
+}
+
+export function useSetRedirectTo() {
+  return useSetRecoilState(redirectTotState);
 }

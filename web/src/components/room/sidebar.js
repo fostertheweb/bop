@@ -3,7 +3,6 @@ import {
   faSearch,
   faListMusic,
   faSpinnerThird,
-  faGamepadAlt,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
@@ -26,12 +25,10 @@ export default function Sidebar() {
 }
 
 function DiscordLink({ path }) {
-  const { id } = useParams();
-  const { data: room, status } = useRoom(id);
+  const { data: room, status } = useRoom();
   const accentColor = useDarkAccentColor();
   const location = useLocation();
   const active = location.pathname === path;
-  console.log({ active });
 
   if (status === "loading") {
     return <FontAwesomeIcon icon={faSpinnerThird} spin color={accentColor} />;

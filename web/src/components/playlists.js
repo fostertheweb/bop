@@ -13,12 +13,14 @@ import Axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userAccessTokenState } from "hooks/use-login";
 import { useQueue } from "hooks/use-queue";
+import { LoginButton } from "components/spotify/login-button";
+import { faUserLock } from "@fortawesome/pro-duotone-svg-icons";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
 export default function Playlists() {
-  const { data: userDetails } = useUserDetails();
-  const { status, data: playlists } = usePlaylists(userDetails);
+  const { data: user, status: userStatus } = useUserDetails();
+  const { status: playlistsStatus, data: playlists } = usePlaylists(user);
 
   // Create a function that will render our row sub components
   const renderRowSubComponent = React.useCallback(
@@ -90,8 +92,13 @@ export default function Playlists() {
     [],
   );
 
-  if (status === "loading" || !playlists) {
+  if (userStatus === "loading" || playlistsStatus === "loading") {
+    // skeleton table
     return <FontAwesomeIcon icon={faSpinnerThird} spin />;
+  }
+
+  if (!user) {
+    return <NotLoggedIn />;
   }
 
   return (
@@ -241,75 +248,27 @@ function millisToMinutesAndSeconds(millis) {
   return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
 
-// IGNORE BELOW, ref for markup
-
-export function OldPlaylists() {
-  const { data: userDetails } = useUserDetails();
-  const { isFetching: loading, data: playlists } = usePlaylists(userDetails);
-
+function NotLoggedIn() {
   return (
-    <>
-      <h1 className="p-4 text-lg font-medium tracking-wide">Playlists</h1>
-      <div>
-        {loading ? (
-          <FontAwesomeIcon icon={faSpinnerThird} spin />
-        ) : (
-          playlists?.items?.map((playlist) => (
-            <PlaylistListItem playlist={playlist} />
-          ))
-        )}
-      </div>
-    </>
-  );
-}
-
-function PlaylistListItem({ playlist }) {
-  return (
-    <div
-      onClick={() => console.log(playlist.id)}
-      className="flex items-center p-2 text-gray-400 transition duration-150 ease-in-out border-b border-gray-200 cursor-pointer hover:bg-gray-100">
+    <div className="flex p-2">
       <div
-        className="flex-shrink-0 w-12 h-12 bg-cover"
-        style={{
-          backgroundImage: `url(${playlist.images[0].url})`,
-        }}></div>
-      <div className="flex-shrink ml-4 truncate">
-        <div className="text-base text-gray-700 truncate">{playlist.name}</div>
-        <div className="text-gray-500 truncate">{playlist.description}</div>
-      </div>
-    </div>
-  );
-}
-
-export function Playlist() {
-  const playlist = {};
-  const items = [];
-  return (
-    <div>
-      <div className="flex items-center justify-between p-4 text-gray-500">
-        <h1 className="text-lg font-medium tracking-wide text-center text-gray-500">
-          {playlist.name}
-        </h1>
-        <span>&nbsp;</span>
-      </div>
-      <div>
-        {items.map((item) => (
-          <div className="flex items-center px-4 py-2 transition duration-150 ease-in-out cursor-pointer hover:bg-gray-700">
-            <div className="">
-              <img
-                src={item.track.album.images[2].url}
-                alt="album art"
-                className="w-10 h-10 shadow"
-              />
-            </div>
-            <div className="ml-4">
-              <div className="text-gray-400">{item.track.name}</div>
-              <div className="text-gray-500">
-                {item.track.artists.map(({ name }) => name).join(", ")}
-              </div>
-            </div>
-          </div>
-        ))}
+        className="flex flex-col justify-center gap-4 p-2 p-4 text-gray-800 bg-gray-100 rounded-md"
+        style={{ width: "24rem" }}>
+        <div className="flex items-center gap-2">
+          <FontAwesomeIcon
+            icon={faUserLock}
+            className="fill-current"
+            size="lg"
+          />
+          <h1 className="text-xl font-medium">Not logged in to Spotify</h1>
+        </div>
+        <div className="text-gray-700">
+          Login with your Spotify account to view your Playlists and save songs
+          you like.
+        </div>
+        <div>
+          <LoginButton />
+        </div>
       </div>
     </div>
   );

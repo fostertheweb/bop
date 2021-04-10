@@ -3,13 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import Search from "components/room/search";
 import Playlists from "components/playlists";
 import Layout from "components/room/layout";
-import LoginModal from "components/spotify/login-modal";
-import { useParams } from "react-router";
 import { useRoom } from "hooks/use-rooms";
 
 function Info() {
-  const { id } = useParams();
-  const { data: room, status } = useRoom(id);
+  const { data: room, status } = useRoom();
 
   if (status === "loading") {
     return "Loading...";
@@ -35,6 +32,8 @@ function Info() {
         />
         <div className="ml-2 text-lg font-medium">{room.host.username}</div>
       </div>
+
+      {/* Share Link for Room */}
     </div>
   );
 }
@@ -42,7 +41,6 @@ function Info() {
 export function Room() {
   return (
     <>
-      <LoginModal show={true} />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Info />} />

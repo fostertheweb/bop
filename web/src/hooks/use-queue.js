@@ -25,7 +25,7 @@ export function usePlayQueue() {
 export function useQueue() {
   const { id } = useParams();
   const username = useUsername();
-  const { data: room } = useRoom(id);
+  const { data: room } = useRoom();
   const setQueue = useSetRecoilState(playQueueAtom);
   const playQueue = usePlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
