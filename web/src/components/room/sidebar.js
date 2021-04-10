@@ -3,6 +3,7 @@ import {
   faSearch,
   faListMusic,
   faSpinnerThird,
+  faGamepadAlt,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
@@ -39,13 +40,13 @@ function DiscordLink({ path }) {
   return (
     <NavLink
       to={path}
-      className="flex items-center justify-center p-2 mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700">
+      className="flex items-center justify-center mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700">
       <div className="flex items-center">
         <div className="flex-shrink-0">
           <img
             src={room.icon_url}
-            width="48"
-            height="48"
+            width="56"
+            height="56"
             alt="Discord Server Icon"
             className="rounded shadow"
             style={
@@ -68,7 +69,7 @@ export function SidebarLink({ path, icon, children }) {
     <NavLink
       to={path}
       className="block p-2 mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700"
-      activeClassName="bg-gray-100"
+      activeClassName="bg-gray-400 text-gray-900"
       activeStyle={{ color: accentColor }}>
       <FontAwesomeIcon icon={icon} className="fill-current" size="lg" />
 

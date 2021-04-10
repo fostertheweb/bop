@@ -88,15 +88,16 @@ app.listen(process.env.PORT, function (err) {
       if (!video) {
         video = await YouTube.searchOne(`${name} ${artists[0].name}`);
       }
+
       const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
       const dispatcher = connection.play(stream);
+      // video.duration was sometimes a oddly small number
+      const [minutes, seconds] = video.durationFormatted.split(":");
 
       app.io.emit("START", {
         item: payload.data,
-        duration: video.duration,
+        duration: (parseInt(minutes) * 60 + parseInt(seconds)) * 1000,
       });
-
-      console.log("[PLAYING] - ", payload.data.name);
 
       dispatcher.on("finish", () => {
         console.log("[FINISHED]");
