@@ -42,7 +42,7 @@ export function useLoginUrl(redirect_uri) {
     response_type: "code",
     client_id: SPOTIFY_CLIENT_ID,
     scope,
-    redirect_uri,
+    redirect_uri: `${window.location.origin}/login`,
   })}`;
 }
 
