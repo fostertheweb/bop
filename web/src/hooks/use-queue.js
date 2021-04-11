@@ -66,11 +66,10 @@ export function useQueue() {
     }
   }
 
-  function remove(index) {
+  function remove(trackId, index) {
     socketRef.current.emit("REMOVE_FROM_QUEUE", {
       room,
-      data: index,
-      username: username || "Anonymous",
+      track_id: trackId,
     });
     setQueue((queue) => [...queue.slice(0, index), ...queue.slice(index + 1)]);
   }

@@ -41,7 +41,7 @@ function Track({ id, index }) {
 
   return (
     <motion.div
-      onClick={() => remove(index)}
+      onClick={() => remove(id, index)}
       className="flex items-center w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer hover:bg-gray-300"
       variants={variants}
       initial="enter"

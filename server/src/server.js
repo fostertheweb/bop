@@ -78,6 +78,7 @@ app.listen(process.env.PORT, function (err) {
     process.exit(1);
   }
 
+  // redis debugging
   app.redis.monitor(function (err, monitor) {
     monitor.on("monitor", function (time, args) {
       console.log(time + ": " + util.inspect(args));
@@ -86,12 +87,16 @@ app.listen(process.env.PORT, function (err) {
 
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
-      await redis.lpush(`rooms:${payload.room.id}:queue`, payload.track_id);
+      await redis.rpush(`rooms:${payload.room.id}:queue`, payload.track_id);
+    });
+
+    socket.on("REMOVE_FROM_QUEUE", async (payload) => {
+      await redis.lrem(`rooms:${payload.room.id}:queue`, 0, payload.track_id);
     });
 
     socket.on("PLAY_SONG", async (payload) => {
-      console.log(payload);
       try {
+        // get connection
         const guild = await discord.guilds.fetch(payload.room.guild_id);
         const members = await guild.members.fetch({
           query: BOT_NAME,
@@ -105,22 +110,28 @@ app.listen(process.env.PORT, function (err) {
           connection = await channel.join();
         }
 
+        // get track info
         const {
           body: { access_token },
         } = await spotify.clientCredentialsGrant();
         spotify.setAccessToken(access_token);
         const { body: track } = await spotify.getTrack(payload.track_id);
         const { id, name, artists } = track;
+
+        // get youtube video url
         let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
         if (!video) {
           video = await YouTube.searchOne(`${name} ${artists[0].name}`);
         }
 
+        // play stream
         const stream = ytdl(video.url, {
           filter: "audioonly",
           dlChunkSize: 0,
         });
         const dispatcher = connection.play(stream);
+
+        // build playback info
         // video.duration was sometimes a oddly small number
         const [minutes, seconds] = video.durationFormatted.split(":");
         const duration = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000;
@@ -130,14 +141,19 @@ app.listen(process.env.PORT, function (err) {
           progress_ms: 0,
         };
 
+        // remove playing song from queue
+        await redis.lrem(`rooms:${payload.room.id}:queue`, 0, id);
+        // save current playback
         await app.redis.sendCommand(
           setJSON(`rooms:${payload.room.id}:playing`, currentPlayback),
         );
 
+        // song start
         dispatcher.on("start", () => {
           app.io.emit("PLAYBACK_START", currentPlayback);
         });
 
+        // song end
         dispatcher.on("finish", () => {
           app.io.emit("PLAYBACK_END");
         });
