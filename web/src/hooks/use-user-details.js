@@ -20,6 +20,7 @@ export function useUserDetails() {
       return data;
     },
     {
+      retry: false,
       onError(err) {
         if (err?.response?.status === 401) {
           console.log("Access token has expired, need to refresh");

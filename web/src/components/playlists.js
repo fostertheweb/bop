@@ -92,9 +92,12 @@ export default function Playlists() {
     [],
   );
 
-  if (userStatus === "loading" || playlistsStatus === "loading") {
-    // skeleton table
-    return <FontAwesomeIcon icon={faSpinnerThird} spin />;
+  if (userStatus === "loading") {
+    return "Fetching Spotify User Details";
+  }
+
+  if (playlistsStatus === "loading") {
+    return `Fetching Spotify Playlists for ${user.id}`;
   }
 
   if (!user) {
@@ -133,7 +136,7 @@ function PlaylistsTable({ columns, data, renderRowSubComponent }) {
           const rowProps = row.getRowProps();
           return (
             // Use a React.Fragment here so the table markup is still valid
-            <React.Fragment>
+            <React.Fragment key={row.id}>
               <tr
                 {...rowProps}
                 {...row.getToggleRowExpandedProps()}

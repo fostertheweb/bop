@@ -1,5 +1,4 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
-import { useParams } from "react-router-dom";
 import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
 import { useRoom } from "./use-rooms";
@@ -23,20 +22,19 @@ export function usePlayQueue() {
 }
 
 export function useQueue() {
-  const { id } = useParams();
   const username = useUsername();
   const { data: room } = useRoom();
   const setQueue = useSetRecoilState(playQueueAtom);
   const playQueue = usePlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
-  const setIsPlaying = useSetIsPlaying(true);
+  const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
 
   useEffect(() => {
     const socket = io(WEBSOCKET_API_URL);
 
-    socket.on("START", ({ item, duration }) => {
-      setCurrentPlayback({ ...item, duration });
+    socket.on("START", (currentPlayback) => {
+      setCurrentPlayback(currentPlayback);
       setIsPlaying(true);
     });
 

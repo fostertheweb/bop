@@ -27,6 +27,7 @@ app.register(require("fastify-cookie"), {
 app.register(require("fastify-redis"), {
   client: redis,
 });
+app.register(require("./plugins/discord"));
 
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });

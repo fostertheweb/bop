@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import { useDarkAccentColor } from "hooks/use-accent-color";
+import { useAccentColors } from "hooks/use-vibrant";
 import { useRoom } from "hooks/use-rooms";
 
 export default function Sidebar() {
@@ -26,12 +26,13 @@ export default function Sidebar() {
 
 function DiscordLink({ path }) {
   const { data: room, status } = useRoom();
-  const accentColor = useDarkAccentColor();
+  const [_, darkAccent] = useAccentColors();
   const location = useLocation();
   const active = location.pathname === path;
+  const boxShadowColor = darkAccent === "initial" ? "#718096" : darkAccent;
 
   if (status === "loading") {
-    return <FontAwesomeIcon icon={faSpinnerThird} spin color={accentColor} />;
+    return <FontAwesomeIcon icon={faSpinnerThird} spin color={darkAccent} />;
   }
 
   return (
@@ -49,7 +50,7 @@ function DiscordLink({ path }) {
             style={
               active
                 ? {
-                    boxShadow: `0px 0px 0px 4px ${accentColor || "#444"}`,
+                    boxShadow: `0px 0px 0px 4px ${boxShadowColor}`,
                   }
                 : null
             }
@@ -61,15 +62,14 @@ function DiscordLink({ path }) {
 }
 
 export function SidebarLink({ path, icon, children }) {
-  const accentColor = useDarkAccentColor();
+  const [_, darkAccent] = useAccentColors();
   return (
     <NavLink
       to={path}
       className="block p-2 mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700"
       activeClassName="bg-gray-400 text-gray-900"
-      activeStyle={{ color: accentColor }}>
+      activeStyle={{ color: darkAccent }}>
       <FontAwesomeIcon icon={icon} className="fill-current" size="lg" />
-
       <div className="mt-1">{children}</div>
     </NavLink>
   );

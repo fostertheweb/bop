@@ -1,13 +1,7 @@
 const { default: ShortUniqueId } = require("short-unique-id");
-const { Command } = require("ioredis");
+const { setJSON, getJSON } = require("../queue");
 
-function setJSON(key, value) {
-  return new Command("JSON.SET", [key, ".", JSON.stringify(value)]);
-}
-
-function getJSON(key) {
-  return new Command("JSON.GET", [key]);
-}
+const BOT_NAME = "CrowdQ";
 
 module.exports = function (app, _options, next) {
   app.get("/", async (_, reply) => {
@@ -44,7 +38,7 @@ module.exports = function (app, _options, next) {
   });
 
   app.get("/:id", async ({ params: { id } }) => {
-    return await app.redis.sendCommand(getJSON(`rooms:${id}`));
+    return JSON.parse(await app.redis.sendCommand(getJSON(`rooms:${id}`)));
   });
 
   app.get("/:id/listeners", async ({ params: { id } }) => {
@@ -78,6 +72,29 @@ module.exports = function (app, _options, next) {
   app.delete("/:id/requests", async ({ params: { id } }) => {
     await app.redis.del(`rooms:${id}:requests`);
     return [];
+  });
+
+  app.get("/:id/current-playback", async ({ params: { id } }, reply) => {
+    try {
+      const room = JSON.parse(
+        await app.redis.sendCommand(getJSON(`rooms:${id}`)),
+      );
+      const playback = JSON.parse(
+        await app.redis.sendCommand(getJSON(`rooms:${id}:playing`)),
+      );
+      const guild = await app.discord().guilds.fetch(room.guild_id);
+      const members = await guild.members.fetch({ query: BOT_NAME, limit: 1 });
+      const [bot] = members.values();
+      const connection = bot.voice.connection;
+      const progress_ms = connection.dispatcher.streamTime || 0;
+
+      console.log(playback);
+
+      return { ...playback, progress_ms };
+    } catch (err) {
+      app.log.error(err);
+      return reply.notFound();
+    }
   });
 
   next();

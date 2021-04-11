@@ -9,7 +9,8 @@ const redis = new Redis({
 });
 
 function setJSON(key, value) {
-  return new Redis.Command("JSON.SET", [key, ".", JSON.stringify(value)]);
+  const json = JSON.stringify(value);
+  return new Redis.Command("JSON.SET", [key, ".", json]);
 }
 
 function getJSON(key) {

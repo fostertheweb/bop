@@ -5,6 +5,7 @@ const ytdl = require("ytdl-core");
 const YouTube = require("youtube-sr").default;
 const { redis, setJSON, getJSON } = require("./queue");
 const discord = require("./shared/discord.js");
+const util = require("util");
 
 YouTube.set("api", process.env.YOUTUBE_API_KEY);
 
@@ -71,39 +72,65 @@ app.listen(process.env.PORT, function (err) {
     process.exit(1);
   }
 
+  app.redis.monitor(function (err, monitor) {
+    // Entering monitoring mode.
+    monitor.on("monitor", function (time, args, source, database) {
+      console.log(time + ": " + util.inspect(args));
+    });
+  });
+
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
-      const guild = await discord.guilds.fetch(payload.room.guild_id);
-      const members = await guild.members.fetch({ query: BOT_NAME, limit: 1 });
-      const [bot] = members.values();
-      let connection = bot.voice.connection;
+      try {
+        const guild = await discord.guilds.fetch(payload.room.guild_id);
+        const members = await guild.members.fetch({
+          query: BOT_NAME,
+          limit: 1,
+        });
+        const [bot] = members.values();
+        let connection = bot.voice.connection;
 
-      if (!connection) {
-        const channel = await discord.channels.fetch(bot.voice.channelID);
-        connection = await channel.join();
+        if (!connection) {
+          const channel = await discord.channels.fetch(bot.voice.channelID);
+          connection = await channel.join();
+        }
+
+        const { id, name, artists, album } = payload.data;
+        let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
+        if (!video) {
+          video = await YouTube.searchOne(`${name} ${artists[0].name}`);
+        }
+
+        const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
+        const dispatcher = connection.play(stream);
+        // video.duration was sometimes a oddly small number
+        const [minutes, seconds] = video.durationFormatted.split(":");
+        const duration = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000;
+        const currentPlayback = {
+          id,
+          name,
+          artist: artists[0].name,
+          album_art_url: album.images[2].url,
+          duration_ms: duration,
+          progress_ms: 0,
+        };
+
+        await app.redis.sendCommand(
+          setJSON(`rooms:${payload.room.id}:playing`, currentPlayback),
+        );
+
+        dispatcher.on("start", () => {
+          app.io.emit("START", currentPlayback);
+        });
+
+        dispatcher.on("finish", () => {
+          console.log("[FINISHED]");
+          // play next song in queue for room ID
+          // shift the persisted queue
+        });
+      } catch (err) {
+        app.log.error(err);
       }
-
-      const { name, artists } = payload.data;
-      let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
-      if (!video) {
-        video = await YouTube.searchOne(`${name} ${artists[0].name}`);
-      }
-
-      const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
-      const dispatcher = connection.play(stream);
-      // video.duration was sometimes a oddly small number
-      const [minutes, seconds] = video.durationFormatted.split(":");
-
-      app.io.emit("START", {
-        item: payload.data,
-        duration: (parseInt(minutes) * 60 + parseInt(seconds)) * 1000,
-      });
-
-      dispatcher.on("finish", () => {
-        console.log("[FINISHED]");
-        // play next song in queue for room ID
-        // shift the persisted queue
-      });
     });
   });
 });
