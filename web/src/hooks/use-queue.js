@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
 import { useIsPlaying, useSetIsPlaying } from "./use-player";
 import { useParams } from "react-router";
-import { useQuery } from "react-query";
+import { useQuery, useQueryCache } from "react-query";
 import axios from "axios";
 
 const {
@@ -37,6 +37,7 @@ export function useQueue() {
   const isPlaying = useIsPlaying();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
+  const queryCache = useQueryCache();
 
   useEffect(() => {
     const socket = io(WEBSOCKET_API_URL);
@@ -48,6 +49,10 @@ export function useQueue() {
 
     socket.on("PLAYBACK_END", () => {
       next();
+
+      if (playQueue.length === 0) {
+        queryCache.refetchQueries(["currentPlayback", room.id]);
+      }
     });
 
     socketRef.current = socket;

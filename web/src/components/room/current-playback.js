@@ -58,7 +58,9 @@ export default function CurrentPlayback({ item, loading }) {
                 className="w-20 h-2 rounded-sm"
                 style={{ backgroundColor: "rgba(255,255,255,0.6)" }}></div>
             </div>
-          ) : null}
+          ) : (
+            <div className="ml-2">Add songs to the Play Queue</div>
+          )}
         </div>
       )}
     </div>
