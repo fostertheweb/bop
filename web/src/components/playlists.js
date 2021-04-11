@@ -225,7 +225,7 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
             {...rowProps}
             key={`${rowProps.key}-expanded-${i}`}
             className="flex items-center w-full text-xs text-gray-800 cursor-pointer hover:bg-purple-200"
-            onClick={() => add(track)}>
+            onClick={() => add(track.id)}>
             <div style={{ width: "30%" }} className="p-1 truncate">
               {track.name}
             </div>

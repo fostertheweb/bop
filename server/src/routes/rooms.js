@@ -47,8 +47,7 @@ module.exports = function (app, _options, next) {
   });
 
   app.get("/:id/queue", async ({ params: { id } }) => {
-    const queue = await app.redis.lrange(`rooms:${id}:queue`, 0, -1);
-    return queue.map((i) => JSON.parse(i));
+    return await app.redis.lrange(`rooms:${id}:queue`, 0, -1);
   });
 
   app.get("/:id/requests", async ({ params: { id } }) => {

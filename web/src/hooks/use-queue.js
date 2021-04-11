@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { useRoom } from "./use-rooms";
 import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
-import { useSetIsPlaying } from "./use-player";
+import { useIsPlaying, useSetIsPlaying } from "./use-player";
 import { useParams } from "react-router";
 import { useQuery } from "react-query";
 import axios from "axios";
@@ -34,30 +34,35 @@ export function useQueue() {
   const playQueue = usePlayQueue();
   const setQueue = useSetPlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
+  const isPlaying = useIsPlaying();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
 
   useEffect(() => {
     const socket = io(WEBSOCKET_API_URL);
 
-    socket.on("START", (currentPlayback) => {
+    socket.on("PLAYBACK_START", (currentPlayback) => {
       setCurrentPlayback(currentPlayback);
       setIsPlaying(true);
+    });
+
+    socket.on("PLAYBACK_END", () => {
+      next();
     });
 
     socketRef.current = socket;
   }, []);
 
-  function add(item) {
-    if (playQueue.length === 0) {
-      play(item);
+  function add(trackId) {
+    if (playQueue.length === 0 && !isPlaying) {
+      play(trackId);
     } else {
       socketRef.current.emit("ADD_TO_QUEUE", {
         room,
-        data: item,
+        track_id: trackId,
         username: username || "Anonymous",
       });
-      setQueue((queue) => [...queue, item]);
+      setQueue((queue) => [...queue, trackId]);
     }
   }
 
@@ -70,10 +75,10 @@ export function useQueue() {
     setQueue((queue) => [...queue.slice(0, index), ...queue.slice(index + 1)]);
   }
 
-  function play(item) {
+  function play(trackId) {
     socketRef.current.emit("PLAY_SONG", {
       room,
-      data: item || playQueue[0],
+      track_id: trackId,
     });
   }
 

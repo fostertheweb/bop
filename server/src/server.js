@@ -6,6 +6,12 @@ const YouTube = require("youtube-sr").default;
 const { redis, setJSON, getJSON } = require("./queue");
 const discord = require("./shared/discord.js");
 const util = require("util");
+const Spotify = require("spotify-web-api-node");
+
+const spotify = new Spotify({
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+});
 
 YouTube.set("api", process.env.YOUTUBE_API_KEY);
 
@@ -73,21 +79,18 @@ app.listen(process.env.PORT, function (err) {
   }
 
   app.redis.monitor(function (err, monitor) {
-    // Entering monitoring mode.
-    monitor.on("monitor", function (time, args, source, database) {
+    monitor.on("monitor", function (time, args) {
       console.log(time + ": " + util.inspect(args));
     });
   });
 
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
-      await redis.lpush(
-        `rooms:${payload.room.id}:queue`,
-        JSON.stringify(payload.data),
-      );
+      await redis.lpush(`rooms:${payload.room.id}:queue`, payload.track_id);
     });
 
     socket.on("PLAY_SONG", async (payload) => {
+      console.log(payload);
       try {
         const guild = await discord.guilds.fetch(payload.room.guild_id);
         const members = await guild.members.fetch({
@@ -102,22 +105,27 @@ app.listen(process.env.PORT, function (err) {
           connection = await channel.join();
         }
 
-        const { id, name, artists, album } = payload.data;
+        const {
+          body: { access_token },
+        } = await spotify.clientCredentialsGrant();
+        spotify.setAccessToken(access_token);
+        const { body: track } = await spotify.getTrack(payload.track_id);
+        const { id, name, artists } = track;
         let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
         if (!video) {
           video = await YouTube.searchOne(`${name} ${artists[0].name}`);
         }
 
-        const stream = ytdl(video.url, { filter: "audioonly", dlChunkSize: 0 });
+        const stream = ytdl(video.url, {
+          filter: "audioonly",
+          dlChunkSize: 0,
+        });
         const dispatcher = connection.play(stream);
         // video.duration was sometimes a oddly small number
         const [minutes, seconds] = video.durationFormatted.split(":");
         const duration = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000;
         const currentPlayback = {
-          id,
-          name,
-          artist: artists[0].name,
-          album_art_url: album.images[2].url,
+          track_id: id,
           duration_ms: duration,
           progress_ms: 0,
         };
@@ -127,13 +135,11 @@ app.listen(process.env.PORT, function (err) {
         );
 
         dispatcher.on("start", () => {
-          app.io.emit("START", currentPlayback);
+          app.io.emit("PLAYBACK_START", currentPlayback);
         });
 
         dispatcher.on("finish", () => {
-          console.log("[FINISHED]");
-          // play next song in queue for room ID
-          // shift the persisted queue
+          app.io.emit("PLAYBACK_END");
         });
       } catch (err) {
         app.log.error(err);
