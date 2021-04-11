@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQueue, usePlayQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
 import { useGetTrackById } from "hooks/use-tracks";
+import { faStopwatch } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Queue() {
+  const [totalDuration, setTotalDuration] = useState(0);
   const { status: playQueueStatus } = useGetPlayQueue();
-  const { next } = useQueue();
   const queue = usePlayQueue();
+
+  function sumDuration(duration) {
+    setTotalDuration((total) => total + parseInt(duration));
+  }
 
   if (playQueueStatus === "loading") {
     return "Loading...";
@@ -17,21 +22,40 @@ export default function Queue() {
 
   return (
     <>
-      <div className="pt-4 pb-4 pl-4 mb-1 text-base text-gray-600">
-        <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
-        <span className="border-b-2 border-transparent">Play Queue</span>
-        <button onClick={() => next()}>Start</button>
+      <div className="flex items-center justify-between p-4 mb-1 text-base text-gray-600">
+        <div>
+          <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
+          <span className="border-b-2 border-transparent">Play Queue</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <FontAwesomeIcon icon={faStopwatch} className="fill-current" />
+          <div>{formatDuration(totalDuration)}</div>
+        </div>
       </div>
       {queue?.map((id, index) => {
-        return <Track key={id} id={id} index={index} />;
+        return (
+          <Track
+            key={id}
+            id={id}
+            index={index}
+            updateTotalDuration={sumDuration}
+          />
+        );
       })}
     </>
   );
 }
 
-function Track({ id, index }) {
+function Track({ id, index, updateTotalDuration }) {
   const { data: item, status } = useGetTrackById(id);
   const { remove } = useQueue();
+
+  useEffect(() => {
+    if (item) {
+      updateTotalDuration(item.duration_ms);
+    }
+  }, [item]);
 
   if (!item || status === "loading") {
     return (
@@ -55,7 +79,7 @@ function Track({ id, index }) {
         <img
           src={item.album.images[2].url}
           alt="album art"
-          className="w-12 h-12 shadow"
+          className="w-12 h-12 rounded shadow"
         />
       </div>
       <div className="w-3"></div>
@@ -89,3 +113,11 @@ const variants = {
     };
   },
 };
+
+function formatDuration(ms) {
+  const s = Math.ceil(ms / 1000);
+  const minutes = Math.ceil(s / 60);
+  const seconds = s % 60;
+
+  return `${minutes}:${String(seconds).length === 1 ? "0" + seconds : seconds}`;
+}

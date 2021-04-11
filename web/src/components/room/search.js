@@ -55,7 +55,7 @@ export default function Search() {
               <img
                 src={item.album.images[2].url}
                 alt="album art"
-                className="w-12 h-12 shadow"
+                className="w-12 h-12 rounded shadow"
               />
             </div>
             <div className="w-3"></div>

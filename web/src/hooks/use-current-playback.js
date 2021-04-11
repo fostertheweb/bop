@@ -41,6 +41,7 @@ export function useGetCurrentPlayback() {
         setCurrentPlayback(currentPlayback);
         setIsPlaying(true);
       },
+      retry: false,
     },
   );
 }

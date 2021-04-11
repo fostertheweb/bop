@@ -45,7 +45,7 @@ export default function Playlists() {
             Cell: ({ row }) => (
               <div className="flex items-center">
                 <div
-                  className="flex-shrink-0 w-16 h-16 bg-cover"
+                  className="flex-shrink-0 w-16 h-16 bg-cover rounded"
                   style={{
                     backgroundImage: `url(${row.original.images[0].url})`,
                   }}></div>
