@@ -86,7 +86,7 @@ export function usePlay() {
 
 export function usePlayNextTrack() {
   const userAccessToken = useRecoilValue(userAccessTokenState);
-  const { nextTrackInQueue } = useQueue();
+  const { next } = useQueue();
   const [item] = usePlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
 
@@ -106,7 +106,7 @@ export function usePlayNextTrack() {
     },
     {
       onSuccess() {
-        nextTrackInQueue();
+        next();
         setCurrentPlayback({ item, progress_ms: 0 });
       },
     },

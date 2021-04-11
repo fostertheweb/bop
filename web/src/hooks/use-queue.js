@@ -5,6 +5,9 @@ import { useRoom } from "./use-rooms";
 import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
 import { useSetIsPlaying } from "./use-player";
+import { useParams } from "react-router";
+import { useQuery } from "react-query";
+import axios from "axios";
 
 const {
   REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
@@ -21,11 +24,15 @@ export function usePlayQueue() {
   return useRecoilValue(playQueueAtom);
 }
 
+export function useSetPlayQueue() {
+  return useSetRecoilState(playQueueAtom);
+}
+
 export function useQueue() {
   const username = useUsername();
   const { data: room } = useRoom();
-  const setQueue = useSetRecoilState(playQueueAtom);
   const playQueue = usePlayQueue();
+  const setQueue = useSetPlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
@@ -41,16 +48,20 @@ export function useQueue() {
     socketRef.current = socket;
   }, []);
 
-  function addToQueue(item) {
-    socketRef.current.emit("ADD_TO_QUEUE", {
-      room,
-      data: item,
-      username: username || "Anonymous",
-    });
-    setQueue((queue) => [...queue, item]);
+  function add(item) {
+    if (playQueue.length === 0) {
+      play(item);
+    } else {
+      socketRef.current.emit("ADD_TO_QUEUE", {
+        room,
+        data: item,
+        username: username || "Anonymous",
+      });
+      setQueue((queue) => [...queue, item]);
+    }
   }
 
-  function removeFromQueue(index) {
+  function remove(index) {
     socketRef.current.emit("REMOVE_FROM_QUEUE", {
       room,
       data: index,
@@ -59,13 +70,35 @@ export function useQueue() {
     setQueue((queue) => [...queue.slice(0, index), ...queue.slice(index + 1)]);
   }
 
-  function nextTrackInQueue() {
-    socketRef.current.emit("PLAY_NEXT_SONG", {
+  function play(item) {
+    socketRef.current.emit("PLAY_SONG", {
       room,
-      data: playQueue[0],
+      data: item || playQueue[0],
     });
+  }
+
+  function next() {
+    play(playQueue[0]);
     setQueue((queue) => queue.slice(1));
   }
 
-  return { addToQueue, removeFromQueue, nextTrackInQueue };
+  return { add, remove, next };
+}
+
+export function useGetPlayQueue() {
+  const { id } = useParams();
+  const setPlayQueue = useSetPlayQueue();
+
+  return useQuery(
+    id && ["playQueue", id],
+    async () => {
+      const { data } = await axios.get(`${API_BASE_URL}/rooms/${id}/queue`);
+      return data;
+    },
+    {
+      onSuccess(queue) {
+        setPlayQueue(queue);
+      },
+    },
+  );
 }

@@ -81,6 +81,13 @@ app.listen(process.env.PORT, function (err) {
 
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
+      await redis.lpush(
+        `rooms:${payload.room.id}:queue`,
+        JSON.stringify(payload.data),
+      );
+    });
+
+    socket.on("PLAY_SONG", async (payload) => {
       try {
         const guild = await discord.guilds.fetch(payload.room.guild_id);
         const members = await guild.members.fetch({

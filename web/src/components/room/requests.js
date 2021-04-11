@@ -17,7 +17,7 @@ const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
 export default function Requests() {
   const { id: room } = useParams();
   const { removeSongRequest } = useSongRequests();
-  const { addToQueue } = useQueue();
+  const { add } = useQueue();
   const [requests, setSongRequests] = useRecoilState(songRequestsState);
   const { status, isFetching, data } = useQuery(
     ["songRequests", room],
@@ -74,7 +74,7 @@ export default function Requests() {
             </div>
             <div className="flex">
               <button
-                onClick={() => addToQueue(item)}
+                onClick={() => add(item)}
                 className="flex flex-col items-center px-4 py-2 text-green-700 hover:text-green-500">
                 <FontAwesomeIcon
                   icon={faPlusCircle}

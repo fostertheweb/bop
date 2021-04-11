@@ -1,26 +1,28 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useQueue, playQueueAtom } from "hooks/use-queue";
+import { useQueue, usePlayQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
-import { useRecoilValue } from "recoil";
+import { useGetPlayQueue } from "hooks/use-queue";
 
 export default function Queue() {
-  const { removeFromQueue } = useQueue();
-  const queue = useRecoilValue(playQueueAtom);
+  const { status: playQueueStatus } = useGetPlayQueue();
+  const { remove, next } = useQueue();
+  const queue = usePlayQueue();
 
   return (
     <>
       <div className="pt-4 pb-4 pl-4 mb-1 text-base text-gray-600">
         <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
         <span className="border-b-2 border-transparent">Play Queue</span>
+        <button onClick={() => next()}>Start</button>
       </div>
       {queue?.map((item, index) => {
         return (
           <motion.div
             key={item.id}
-            onClick={() => removeFromQueue(index)}
-            className="text-left px-3 py-2 flex items-center w-full opacity-0 cursor-pointer hover:bg-gray-300 border-b border-gray-300"
+            onClick={() => remove(index)}
+            className="flex items-center w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer hover:bg-gray-300"
             variants={variants}
             initial="enter"
             animate="center"
@@ -33,7 +35,7 @@ export default function Queue() {
               <img
                 src={item.album.images[2].url}
                 alt="album art"
-                className="shadow w-12 h-12"
+                className="w-12 h-12 shadow"
               />
             </div>
             <div className="w-3"></div>

@@ -176,7 +176,7 @@ function PlaylistsTable({ columns, data, renderRowSubComponent }) {
 }
 
 function SubRowAsync({ row, rowProps, visibleColumns }) {
-  const { addToQueue } = useQueue();
+  const { add } = useQueue();
   const {
     original: { id },
   } = row;
@@ -225,7 +225,7 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
             {...rowProps}
             key={`${rowProps.key}-expanded-${i}`}
             className="flex items-center w-full text-xs text-gray-800 cursor-pointer hover:bg-purple-200"
-            onClick={() => addToQueue(track)}>
+            onClick={() => add(track)}>
             <div style={{ width: "30%" }} className="p-1 truncate">
               {track.name}
             </div>
@@ -255,7 +255,7 @@ function NotLoggedIn() {
   return (
     <div className="flex p-2">
       <div
-        className="flex flex-col justify-center gap-4 p-2 p-4 text-gray-800 bg-gray-100 rounded-md"
+        className="flex flex-col justify-center gap-4 p-4 text-gray-800 bg-gray-100 rounded-md"
         style={{ width: "24rem" }}>
         <div className="flex items-center gap-2">
           <FontAwesomeIcon

@@ -8,7 +8,7 @@ import { useDebounce } from "hooks/use-debounce";
 import { faTimesCircle } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Search() {
-  const { addToQueue } = useQueue();
+  const { add } = useQueue();
   const [query, setQuery] = useState("");
   const debounced = useDebounce(query, 500);
   const { isFetching: isLoading, data: tracks } = useSearch(debounced);
@@ -48,7 +48,7 @@ export default function Search() {
       <div>
         {tracks?.map((item) => (
           <button
-            onClick={() => addToQueue(item)}
+            onClick={() => add(item)}
             key={item.id}
             className="flex items-center w-full px-3 py-2 text-left border-b border-gray-200 hover:bg-gray-100">
             <div className="">
