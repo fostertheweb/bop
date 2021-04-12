@@ -62,9 +62,6 @@ export function useQueue() {
       username: username || "Anonymous",
     });
     queryCache.refetchQueries(["playQueue", roomId]);
-    if (playQueue.length === 0 && !isPlaying) {
-      play();
-    }
   }
 
   function remove(trackId) {
