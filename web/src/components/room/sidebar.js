@@ -26,7 +26,7 @@ export default function Sidebar() {
 
 function DiscordLink({ path }) {
   const { data: room, status } = useRoom();
-  const [_, darkAccent] = useAccentColors();
+  const { darkAccent } = useAccentColors();
   const location = useLocation();
   const active = location.pathname === path;
   const boxShadowColor = darkAccent === "initial" ? "#718096" : darkAccent;
@@ -62,7 +62,7 @@ function DiscordLink({ path }) {
 }
 
 export function SidebarLink({ path, icon, children }) {
-  const [_, darkAccent] = useAccentColors();
+  const { darkAccent } = useAccentColors();
   return (
     <NavLink
       to={path}

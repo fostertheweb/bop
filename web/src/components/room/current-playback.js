@@ -48,6 +48,7 @@ export default function CurrentPlayback({ item, loading }) {
               />
             )}
           </div>
+
           {loading ? (
             <div className="ml-2 animate-pulse">
               <div

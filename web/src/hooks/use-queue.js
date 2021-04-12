@@ -1,14 +1,9 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
-import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
 import { useRoomId } from "./use-rooms";
 import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
-import {
-  useIsPlaying,
-  useSetIsPlaybackLoading,
-  useSetIsPlaying,
-} from "./use-player";
+import { useSetIsPlaybackLoading, useSetIsPlaying } from "./use-player";
 import { useParams } from "react-router";
 import { useQuery, useQueryCache } from "react-query";
 import axios from "axios";
@@ -33,7 +28,6 @@ export function useSetPlayQueue() {
 }
 
 export function useQueue() {
-  const username = useUsername();
   const setCurrentPlayback = useSetCurrentPlayback();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);

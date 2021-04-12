@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useQueue, usePlayQueue } from "hooks/use-queue";
+import { useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
 import { useGetTrackById } from "hooks/use-tracks";
-import {
-  faPlay,
-  faStopwatch,
-  faMusic,
-} from "@fortawesome/pro-duotone-svg-icons";
-import { useIsPlaying } from "hooks/use-player";
+import { faStopwatch, faMusic } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Queue() {
   const [totalDuration, setTotalDuration] = useState(0);
   const { data: queue, status: playQueueStatus } = useGetPlayQueue();
-  const { remove, playNext } = useQueue();
-  const isPlaying = useIsPlaying();
+  const { remove } = useQueue();
 
   function sumDuration(duration) {
     setTotalDuration((total) => total + parseInt(duration));
@@ -35,16 +29,6 @@ export default function Queue() {
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
             <span className="border-b-2 border-transparent">Play Queue</span>
           </div>
-          {queue.length > 0 && !isPlaying ? (
-            <button
-              onClick={playNext}
-              className="flex items-center gap-2 p-1 text-gray-600 bg-gray-300 rounded hover:text-gray-700 hover:bg-gray-400">
-              <FontAwesomeIcon icon={faPlay} className="fill-current" />
-              <span className="text-xs font-medium tracking-wide uppercase">
-                Start
-              </span>
-            </button>
-          ) : null}
         </div>
 
         <div className="flex items-center gap-2">

@@ -106,6 +106,7 @@ app.listen(process.env.PORT, function (err) {
 
         const connection = await getVoiceConnection(room.guild_id);
         const stream = ytdl(video.url, {
+          type: "opus",
           filter: "audioonly",
           dlChunkSize: 0,
         });
