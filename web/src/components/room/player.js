@@ -9,6 +9,7 @@ import Progress from "components/room/progress";
 import { useVibrant } from "hooks/use-vibrant";
 import CurrentPlayback from "components/room/current-playback";
 import { useGetTrackById } from "hooks/use-tracks";
+import { useIsPlaybackLoading } from "hooks/use-player";
 
 export default function Player() {
   const { status: getPlaybackStatus } = useGetCurrentPlayback();
@@ -17,8 +18,11 @@ export default function Player() {
     currentPlayback?.track_id,
   );
   const { background, lightAccent } = useVibrant(track?.album.images[2].url);
+  const isPlaybackLoading = useIsPlaybackLoading();
   const loading =
-    getPlaybackStatus === "loading" || getTrackStatus === "loading";
+    getPlaybackStatus === "loading" ||
+    getTrackStatus === "loading" ||
+    isPlaybackLoading;
 
   return (
     <PlayerBackground gradient={background} className="p-4 bg-gray-600">

@@ -15,7 +15,7 @@ import { useIsPlaying } from "hooks/use-player";
 export default function Queue() {
   const [totalDuration, setTotalDuration] = useState(0);
   const { data: queue, status: playQueueStatus } = useGetPlayQueue();
-  const { remove, next } = useQueue();
+  const { remove, playNext } = useQueue();
   const isPlaying = useIsPlaying();
 
   function sumDuration(duration) {
@@ -37,7 +37,7 @@ export default function Queue() {
           </div>
           {queue.length > 0 && !isPlaying ? (
             <button
-              onClick={next}
+              onClick={playNext}
               className="flex items-center gap-2 p-1 text-gray-600 bg-gray-300 rounded hover:text-gray-700 hover:bg-gray-400">
               <FontAwesomeIcon icon={faPlay} className="fill-current" />
               <span className="text-xs font-medium tracking-wide uppercase">

@@ -1,10 +1,14 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
-import { useRoom, useRoomId } from "./use-rooms";
+import { useRoomId } from "./use-rooms";
 import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
-import { useIsPlaying, useSetIsPlaying } from "./use-player";
+import {
+  useIsPlaying,
+  useSetIsPlaybackLoading,
+  useSetIsPlaying,
+} from "./use-player";
 import { useParams } from "react-router";
 import { useQuery, useQueryCache } from "react-query";
 import axios from "axios";
@@ -30,25 +34,25 @@ export function useSetPlayQueue() {
 
 export function useQueue() {
   const username = useUsername();
-  const playQueue = usePlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
-  const isPlaying = useIsPlaying();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
   const queryCache = useQueryCache();
   const roomId = useRoomId();
+  const setIsPlaybackLoading = useSetIsPlaybackLoading();
 
   useEffect(() => {
     const socket = io(WEBSOCKET_API_URL);
 
     socket.on("PLAYBACK_START", (currentPlayback) => {
+      setIsPlaybackLoading(false);
       setCurrentPlayback(currentPlayback);
       setIsPlaying(true);
       queryCache.refetchQueries(["playQueue", roomId]);
     });
 
     socket.on("PLAYBACK_END", () => {
-      next();
+      playNext();
     });
 
     socketRef.current = socket;
@@ -73,22 +77,15 @@ export function useQueue() {
     queryCache.refetchQueries(["playQueue", roomId]);
   }
 
-  function play(trackId) {
-    socketRef.current.emit("PLAY_SONG", {
-      room_id: roomId,
-      track_id: trackId,
-    });
-    queryCache.refetchQueries(["playQueue", roomId]);
-  }
-
-  function next() {
-    socketRef.current.emit("PLAY_SONG", {
+  function playNext() {
+    setIsPlaybackLoading(true);
+    socketRef.current.emit("PLAY_NEXT", {
       room_id: roomId,
     });
     queryCache.refetchQueries(["playQueue", roomId]);
   }
 
-  return { add, remove, next };
+  return { add, remove, playNext };
 }
 
 export function useGetPlayQueue() {

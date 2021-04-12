@@ -7,6 +7,19 @@ import Axios from "axios";
 
 const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
 
+const isPlaybackLoading = atom({
+  key: "crowdQ.isPlaybackLoading",
+  default: false,
+});
+
+export function useIsPlaybackLoading() {
+  return useRecoilValue(isPlaybackLoading);
+}
+
+export function useSetIsPlaybackLoading() {
+  return useSetRecoilState(isPlaybackLoading);
+}
+
 export const isPlayingState = atom({
   key: "crowdQ.isPlaying",
   default: false,
@@ -86,7 +99,7 @@ export function usePlay() {
 
 export function usePlayNextTrack() {
   const userAccessToken = useRecoilValue(userAccessTokenState);
-  const { next } = useQueue();
+  const { playNext } = useQueue();
   const [item] = usePlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
 
@@ -106,7 +119,7 @@ export function usePlayNextTrack() {
     },
     {
       onSuccess() {
-        next();
+        playNext();
         setCurrentPlayback({ item, progress_ms: 0 });
       },
     },
