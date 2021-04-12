@@ -42,7 +42,11 @@ export function useQueue() {
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
 
   useEffect(() => {
-    const socket = io(WEBSOCKET_API_URL);
+    const socket = io(WEBSOCKET_API_URL, {
+      query: {
+        room_id: roomId,
+      },
+    });
 
     socket.on("PLAYBACK_START", (currentPlayback) => {
       setIsPlaybackLoading(false);
@@ -60,28 +64,18 @@ export function useQueue() {
   }, []);
 
   function add(trackId) {
-    socketRef.current.emit("ADD_TO_QUEUE", {
-      room_id: roomId,
-      track_id: trackId,
-      username: username || "Anonymous",
-    });
+    socketRef.current.emit("ADD_TO_QUEUE", trackId);
     queryCache.refetchQueries(["playQueue", roomId]);
   }
 
   function remove(trackId) {
-    socketRef.current.emit("REMOVE_FROM_QUEUE", {
-      room_id: roomId,
-      track_id: trackId,
-      username: username || "Anonymous",
-    });
+    socketRef.current.emit("REMOVE_FROM_QUEUE", trackId);
     queryCache.refetchQueries(["playQueue", roomId]);
   }
 
   function playNext() {
     setIsPlaybackLoading(true);
-    socketRef.current.emit("PLAY_NEXT", {
-      room_id: roomId,
-    });
+    socketRef.current.emit("PLAY_NEXT");
     queryCache.refetchQueries(["playQueue", roomId]);
   }
 

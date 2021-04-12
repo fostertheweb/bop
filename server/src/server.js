@@ -84,24 +84,23 @@ app.listen(process.env.PORT, function (err) {
   });
 
   app.io.on("connection", (socket) => {
-    socket.on("ADD_TO_QUEUE", async (payload) => {
-      await redis.rpush(`rooms:${payload.room_id}:queue`, payload.track_id);
+    const roomId = socket.handshake.query.room_id;
+    socket.join(roomId);
+
+    socket.on("ADD_TO_QUEUE", async (trackId) => {
+      await redis.rpush(`rooms:${roomId}:queue`, trackId);
     });
 
-    socket.on("REMOVE_FROM_QUEUE", async (payload) => {
-      await redis.lrem(`rooms:${payload.room_id}:queue`, 0, payload.track_id);
+    socket.on("REMOVE_FROM_QUEUE", async (trackId) => {
+      await redis.lrem(`rooms:${roomId}:queue`, 0, trackId);
     });
 
-    socket.on("PLAY_NEXT", async (payload) => {
+    socket.on("PLAY_NEXT", async () => {
       try {
         const room = JSON.parse(
-          await app.redis.sendCommand(getJSON(`rooms:${payload.room_id}`)),
+          await app.redis.sendCommand(getJSON(`rooms:${roomId}`)),
         );
-        const [trackId] = await app.redis.lrange(
-          `rooms:${payload.room_id}:queue`,
-          0,
-          0,
-        );
+        const [trackId] = await app.redis.lrange(`rooms:${roomId}:queue`, 0, 0);
         const { id, name, artists } = await getSpotifyTrack(trackId);
         const video = await getYouTubeVideo(name, artists);
 
@@ -118,18 +117,18 @@ app.listen(process.env.PORT, function (err) {
         );
         // save current playback
         await app.redis.sendCommand(
-          setJSON(`rooms:${room.id}:playing`, currentPlayback),
+          setJSON(`rooms:${roomId}:playing`, currentPlayback),
         );
 
         // remove currently playing song from queue
-        await redis.lrem(`rooms:${room.id}:queue`, 0, id);
+        await redis.lrem(`rooms:${roomId}:queue`, 0, id);
 
         dispatcher.on("start", () => {
-          app.io.emit("PLAYBACK_START", currentPlayback);
+          app.io.to(roomId).emit("PLAYBACK_START", currentPlayback);
         });
 
         dispatcher.on("finish", async () => {
-          app.io.emit("PLAYBACK_END");
+          app.io.to(roomId).emit("PLAYBACK_END");
         });
       } catch (err) {
         app.log.error(err);
