@@ -87,17 +87,21 @@ app.listen(process.env.PORT, function (err) {
 
   app.io.on("connection", (socket) => {
     socket.on("ADD_TO_QUEUE", async (payload) => {
-      await redis.rpush(`rooms:${payload.room.id}:queue`, payload.track_id);
+      await redis.rpush(`rooms:${payload.room_id}:queue`, payload.track_id);
     });
 
     socket.on("REMOVE_FROM_QUEUE", async (payload) => {
-      await redis.lrem(`rooms:${payload.room.id}:queue`, 0, payload.track_id);
+      await redis.lrem(`rooms:${payload.room_id}:queue`, 0, payload.track_id);
     });
 
     socket.on("PLAY_SONG", async (payload) => {
       try {
+        // get room details
+        const room = JSON.parse(
+          await app.redis.sendCommand(getJSON(`rooms:${payload.room_id}`)),
+        );
         // get connection
-        const guild = await discord.guilds.fetch(payload.room.guild_id);
+        const guild = await discord.guilds.fetch(room.guild_id);
         const members = await guild.members.fetch({
           query: BOT_NAME,
           limit: 1,
@@ -110,12 +114,22 @@ app.listen(process.env.PORT, function (err) {
           connection = await channel.join();
         }
 
+        let trackId = payload.track_id;
+        if (!trackId) {
+          const [nextSong] = await app.redis.lrange(
+            `rooms:${payload.room_id}:queue`,
+            0,
+            0,
+          );
+          trackId = nextSong;
+        }
+
         // get track info
         const {
           body: { access_token },
         } = await spotify.clientCredentialsGrant();
         spotify.setAccessToken(access_token);
-        const { body: track } = await spotify.getTrack(payload.track_id);
+        const { body: track } = await spotify.getTrack(trackId);
         const { id, name, artists } = track;
 
         // get youtube video url
@@ -142,10 +156,10 @@ app.listen(process.env.PORT, function (err) {
         };
 
         // remove playing song from queue
-        await redis.lrem(`rooms:${payload.room.id}:queue`, 0, id);
+        await redis.lrem(`rooms:${room.id}:queue`, 0, id);
         // save current playback
         await app.redis.sendCommand(
-          setJSON(`rooms:${payload.room.id}:playing`, currentPlayback),
+          setJSON(`rooms:${room.id}:playing`, currentPlayback),
         );
 
         // song start

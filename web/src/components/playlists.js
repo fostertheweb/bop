@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
   faChevronRight,
-  faSpinnerThird,
 } from "@fortawesome/pro-solid-svg-icons";
 import { useUserDetails } from "hooks/use-user-details";
 import { usePlaylists } from "hooks/use-playlists";

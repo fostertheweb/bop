@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash } from "@fortawesome/pro-duotone-svg-icons";
+import React from "react";
 import {
   useCurrentPlayback,
   useGetCurrentPlayback,
@@ -30,7 +28,7 @@ export default function Player() {
             <CurrentPlayback item={track} loading={loading} />
             <Reactions />
           </div>
-          <VerticalSpace />
+          <div className="h-2"></div>
           <Progress
             currentProgress={currentPlayback?.progress_ms}
             duration={currentPlayback?.duration_ms}
@@ -47,5 +45,3 @@ const PlayerBackground = styled.div`
   background: ${(props) => props.gradient};
   box-shadow: inset 0 2px rgba(255, 255, 255, 0.25);
 `;
-
-const VerticalSpace = () => <div className="h-2"></div>;

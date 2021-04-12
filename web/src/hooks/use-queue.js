@@ -1,7 +1,7 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { useUsername } from "hooks/use-username";
 import { io } from "socket.io-client";
-import { useRoom } from "./use-rooms";
+import { useRoom, useRoomId } from "./use-rooms";
 import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
 import { useIsPlaying, useSetIsPlaying } from "./use-player";
@@ -30,14 +30,13 @@ export function useSetPlayQueue() {
 
 export function useQueue() {
   const username = useUsername();
-  const { data: room } = useRoom();
   const playQueue = usePlayQueue();
-  const setQueue = useSetPlayQueue();
   const setCurrentPlayback = useSetCurrentPlayback();
   const isPlaying = useIsPlaying();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
   const queryCache = useQueryCache();
+  const roomId = useRoomId();
 
   useEffect(() => {
     const socket = io(WEBSOCKET_API_URL);
@@ -45,50 +44,51 @@ export function useQueue() {
     socket.on("PLAYBACK_START", (currentPlayback) => {
       setCurrentPlayback(currentPlayback);
       setIsPlaying(true);
+      queryCache.refetchQueries(["playQueue", roomId]);
     });
 
     socket.on("PLAYBACK_END", () => {
       next();
-
-      if (playQueue.length === 0) {
-        queryCache.refetchQueries(["currentPlayback", room.id]);
-      }
     });
 
     socketRef.current = socket;
+    // eslint-disable-next-line
   }, []);
 
   function add(trackId) {
+    socketRef.current.emit("ADD_TO_QUEUE", {
+      room_id: roomId,
+      track_id: trackId,
+      username: username || "Anonymous",
+    });
+    queryCache.refetchQueries(["playQueue", roomId]);
     if (playQueue.length === 0 && !isPlaying) {
-      play(trackId);
-    } else {
-      socketRef.current.emit("ADD_TO_QUEUE", {
-        room,
-        track_id: trackId,
-        username: username || "Anonymous",
-      });
-      setQueue((queue) => [...queue, trackId]);
+      play();
     }
   }
 
-  function remove(trackId, index) {
+  function remove(trackId) {
     socketRef.current.emit("REMOVE_FROM_QUEUE", {
-      room,
+      room_id: roomId,
       track_id: trackId,
+      username: username || "Anonymous",
     });
-    setQueue((queue) => [...queue.slice(0, index), ...queue.slice(index + 1)]);
+    queryCache.refetchQueries(["playQueue", roomId]);
   }
 
   function play(trackId) {
     socketRef.current.emit("PLAY_SONG", {
-      room,
+      room_id: roomId,
       track_id: trackId,
     });
+    queryCache.refetchQueries(["playQueue", roomId]);
   }
 
   function next() {
-    play(playQueue[0]);
-    setQueue((queue) => queue.slice(1));
+    socketRef.current.emit("PLAY_SONG", {
+      room_id: roomId,
+    });
+    queryCache.refetchQueries(["playQueue", roomId]);
   }
 
   return { add, remove, next };
@@ -107,6 +107,9 @@ export function useGetPlayQueue() {
     {
       onSuccess(queue) {
         setPlayQueue(queue);
+      },
+      onError(err) {
+        console.error(err);
       },
     },
   );

@@ -32,6 +32,7 @@ export default function Login() {
       }
     }, 1500);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line
   }, [isRedirecting]);
 
   return (

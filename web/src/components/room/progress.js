@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useIsPlaying } from "hooks/use-player";
 import { motion } from "framer-motion";
+import { useQueryCache } from "react-query";
+import { useRoom } from "hooks/use-rooms";
 
 export default function Progress({ currentProgress = 0, duration, color }) {
   const isPlaying = useIsPlaying();

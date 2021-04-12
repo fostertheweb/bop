@@ -1,6 +1,6 @@
-import { useQuery, useQueryCache } from "react-query";
+import { useQuery } from "react-query";
 import axios from "axios";
-import { userAccessTokenState, userRefreshTokenState } from "./use-login";
+import { userAccessTokenState } from "./use-login";
 import { useRecoilValue } from "recoil";
 
 const {
