@@ -25,3 +25,8 @@ variable "redis_port" {
 variable "redis_password" {
   type = string
 }
+
+variable "instance_ami" {
+  type = string
+  default = "ami-0742b4e673072066f"
+}
