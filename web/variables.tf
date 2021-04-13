@@ -1,16 +1,19 @@
 variable "application" {
   type = string
+  default = "crowdq-fm"
 }
 
 variable "domain_name" {
   type = string
+  default = "crowdq.fm"
 }
 
-variable "spotify_client_id" {
+variable "spotify_api_url" {
   type = string
+  default = "https://api.spotify.com/v1"
 }
 
-variable "spotify_client_secret" {
+variable "api_url" {
   type = string
 }
 

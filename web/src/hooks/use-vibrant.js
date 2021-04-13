@@ -10,7 +10,7 @@ const initialColorState = {
 
 const accentColorsState = atom({
   key: "crowdQ.accentColors",
-  default: ["initial", "initial"],
+  default: { lightAccent: "initial", darkAccent: "initial" },
 });
 
 export function useAccentColors() {
@@ -34,7 +34,10 @@ export function useVibrant(imageUrl) {
             return { ...theme, [key]: palette[key].hex };
           }, {});
           setColors(colors);
-          setAccentColors([colors.LightVibrant, colors.DarkVibrant]);
+          setAccentColors({
+            lightAccent: colors.LightVibrant,
+            darkAccent: colors.DarkVibrant,
+          });
         })
         .catch((err) => {
           console.log(err);

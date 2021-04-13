@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMusicSlash } from "@fortawesome/pro-duotone-svg-icons";
+import React from "react";
 import {
   useCurrentPlayback,
   useGetCurrentPlayback,
@@ -11,6 +9,10 @@ import Progress from "components/room/progress";
 import { useVibrant } from "hooks/use-vibrant";
 import CurrentPlayback from "components/room/current-playback";
 import { useGetTrackById } from "hooks/use-tracks";
+import { useIsPlaying, useIsPlaybackLoading } from "hooks/use-player";
+import { usePlayQueue, useQueue } from "hooks/use-queue";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlayCircle } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Player() {
   const { status: getPlaybackStatus } = useGetCurrentPlayback();
@@ -19,18 +21,31 @@ export default function Player() {
     currentPlayback?.track_id,
   );
   const { background, lightAccent } = useVibrant(track?.album.images[2].url);
+  const isPlaybackLoading = useIsPlaybackLoading();
   const loading =
-    getPlaybackStatus === "loading" || getTrackStatus === "loading";
+    getPlaybackStatus === "loading" ||
+    getTrackStatus === "loading" ||
+    isPlaybackLoading;
+  const isPlaying = useIsPlaying();
+  const playQueue = usePlayQueue();
+  const { playNext } = useQueue();
+  const showPlayButton = playQueue.length > 0 && !isPlaying && !loading;
 
   return (
     <PlayerBackground gradient={background} className="p-4 bg-gray-600">
       <div className="box-border sticky top-0 flex items-center justify-center w-full bg-transparent">
         <div className="w-1/3">
-          <div className="flex items-center justify-between px-2">
-            <CurrentPlayback item={track} loading={loading} />
-            <Reactions />
-          </div>
-          <VerticalSpace />
+          {showPlayButton ? (
+            <div className="flex justify-center">
+              <PlayButton onClick={playNext} />
+            </div>
+          ) : (
+            <div className="flex items-center justify-between px-2">
+              <CurrentPlayback item={track} loading={loading} />
+              <Reactions />
+            </div>
+          )}
+          <div className="h-2"></div>
           <Progress
             currentProgress={currentPlayback?.progress_ms}
             duration={currentPlayback?.duration_ms}
@@ -42,10 +57,19 @@ export default function Player() {
   );
 }
 
+function PlayButton({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{ width: "48px", height: "48px" }}
+      className="flex items-center justify-center text-gray-300 hover:text-gray-100">
+      <FontAwesomeIcon icon={faPlayCircle} size="3x" className="fill-current" />
+    </button>
+  );
+}
+
 const PlayerBackground = styled.div`
   position: relative;
   background: ${(props) => props.gradient};
   box-shadow: inset 0 2px rgba(255, 255, 255, 0.25);
 `;
-
-const VerticalSpace = () => <div className="h-2"></div>;

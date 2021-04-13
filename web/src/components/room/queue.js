@@ -1,31 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useQueue, usePlayQueue } from "hooks/use-queue";
+import { useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
 import { useGetTrackById } from "hooks/use-tracks";
-import { faStopwatch } from "@fortawesome/pro-duotone-svg-icons";
+import { faStopwatch, faMusic } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Queue() {
   const [totalDuration, setTotalDuration] = useState(0);
-  const { status: playQueueStatus } = useGetPlayQueue();
-  const queue = usePlayQueue();
+  const { data: queue, status: playQueueStatus } = useGetPlayQueue();
+  const { remove } = useQueue();
 
   function sumDuration(duration) {
     setTotalDuration((total) => total + parseInt(duration));
   }
 
   if (playQueueStatus === "loading") {
+    console.log("FETCHING THE PLAY QUEUE");
     return "Loading...";
   }
 
   return (
     <>
       <div className="flex items-center justify-between p-4 mb-1 text-base text-gray-600">
-        <div>
-          <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
-          <span className="border-b-2 border-transparent">Play Queue</span>
+        <div className="flex items-center gap-2">
+          <div>
+            <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
+            <span className="border-b-2 border-transparent">Play Queue</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -39,6 +42,7 @@ export default function Queue() {
             key={id}
             id={id}
             index={index}
+            remove={remove}
             updateTotalDuration={sumDuration}
           />
         );
@@ -47,19 +51,42 @@ export default function Queue() {
   );
 }
 
-function Track({ id, index, updateTotalDuration }) {
+function Track({ id, index, remove, updateTotalDuration }) {
   const { data: item, status } = useGetTrackById(id);
-  const { remove } = useQueue();
 
   useEffect(() => {
     if (item) {
       updateTotalDuration(item.duration_ms);
     }
+    // eslint-disable-next-line
   }, [item]);
 
   if (!item || status === "loading") {
     return (
-      <div className="flex items-center w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer hover:bg-gray-300"></div>
+      <motion.div
+        className="flex items-center px-3 py-2 border-b border-gray-200"
+        key={index}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{
+          x: { type: "spring", stiffness: 300, damping: 200 },
+          opacity: { duration: 0.2 },
+        }}>
+        <div className="flex items-center justify-center w-12 h-12 bg-gray-300 rounded shadow">
+          <FontAwesomeIcon
+            icon={faMusic}
+            size="lg"
+            className="text-gray-500 fill-current"
+          />
+        </div>
+        <div className="ml-2 animate-pulse">
+          <div className="w-40 h-2 bg-gray-400 rounded-sm"></div>
+          <div className="h-2"></div>
+          <div className="w-20 h-2 bg-gray-300 rounded-sm"></div>
+        </div>
+      </motion.div>
     );
   }
 

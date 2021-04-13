@@ -17,4 +17,8 @@ function getJSON(key) {
   return new Redis.Command("JSON.GET", [key]);
 }
 
-module.exports = { redis, setJSON, getJSON };
+function removeJSON(key) {
+  return new Redis.Command("JSON.DEL", [key]);
+}
+
+module.exports = { redis, setJSON, getJSON, removeJSON };

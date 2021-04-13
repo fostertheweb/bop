@@ -7,7 +7,7 @@ import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useParams } from "react-router";
 import { useQuery } from "react-query";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+const { REACT_APP_API_URL: API_URL } = process.env;
 
 export default function Listeners() {
   const { id: room } = useParams();
@@ -15,7 +15,7 @@ export default function Listeners() {
   const { status, isFetching, data } = useQuery(
     ["listeners", room],
     async (_, id) => {
-      const response = await fetch(`${API_BASE_URL}/rooms/${id}/listeners`);
+      const response = await fetch(`${API_URL}/rooms/${id}/listeners`);
       return await response.json();
     },
   );
@@ -33,14 +33,14 @@ export default function Listeners() {
 
   return (
     <>
-      <h1 className="p-4 cq-text-white font-medium text-lg tracking-wide">
+      <h1 className="p-4 text-lg font-medium tracking-wide cq-text-white">
         Listeners
       </h1>
       {listeners?.map((listener) => {
         return (
           <motion.div
             key={listener}
-            className="text-left p-2 flex items-center justify-between w-full opacity-0 cursor-pointer hover:bg-gray-800"
+            className="flex items-center justify-between w-full p-2 text-left opacity-0 cursor-pointer hover:bg-gray-800"
             variants={variants}
             initial="enter"
             animate="center"

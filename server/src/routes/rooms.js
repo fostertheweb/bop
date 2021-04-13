@@ -87,8 +87,6 @@ module.exports = function (app, _options, next) {
       const connection = bot.voice.connection;
       const progress_ms = connection.dispatcher.streamTime || 0;
 
-      console.log(playback);
-
       return { ...playback, progress_ms };
     } catch (err) {
       app.log.error(err);

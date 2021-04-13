@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router";
 import axios from "axios";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+const { REACT_APP_API_URL: API_URL } = process.env;
 
 const usernameState = atom({
   key: "crowdQ.storage.username",
@@ -21,7 +21,7 @@ export function useCheckUsername(username) {
     username && ["check", username],
     async () => {
       return await axios.get(
-        `${API_BASE_URL}/rooms/${room}/join?username=${username}`,
+        `${API_URL}/rooms/${room}/join?username=${username}`,
       );
     },
     { retry: false },
