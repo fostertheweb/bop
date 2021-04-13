@@ -1,29 +1,16 @@
 variable "application" {
   type = string
+  default = "crowdq-fm"
 }
 
 variable "domain_name" {
   type = string
+  default = "crowdq.fm"
 }
 
-variable "spotify_client_id" {
+variable "spotify_auth_url"{
   type = string
-}
-
-variable "spotify_client_secret" {
-  type = string
-}
-
-variable "redis_host" {
-  type = string
-}
-
-variable "redis_port" {
-  type = string
-}
-
-variable "redis_password" {
-  type = string
+  default = "https://accounts.spotify.com"
 }
 
 variable "instance_ami" {

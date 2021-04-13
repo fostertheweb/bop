@@ -10,7 +10,7 @@ import axios from "axios";
 
 const {
   REACT_APP_WEBSOCKET_API_URL: WEBSOCKET_API_URL,
-  REACT_APP_API_BASE_URL: API_BASE_URL,
+  REACT_APP_API_URL: API_URL,
 } = process.env;
 
 // selector fetch queue
@@ -83,7 +83,7 @@ export function useGetPlayQueue() {
   return useQuery(
     id && ["playQueue", id],
     async () => {
-      const { data } = await axios.get(`${API_BASE_URL}/rooms/${id}/queue`);
+      const { data } = await axios.get(`${API_URL}/rooms/${id}/queue`);
       return data;
     },
     {

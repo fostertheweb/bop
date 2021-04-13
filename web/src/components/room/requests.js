@@ -12,7 +12,7 @@ import {
 import { useParams } from "react-router";
 import { useQuery } from "react-query";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+const { REACT_APP_API_URL: API_URL } = process.env;
 
 export default function Requests() {
   const { id: room } = useParams();
@@ -22,7 +22,7 @@ export default function Requests() {
   const { status, isFetching, data } = useQuery(
     ["songRequests", room],
     async (_, id) => {
-      const response = await fetch(`${API_BASE_URL}/rooms/${id}/requests`);
+      const response = await fetch(`${API_URL}/rooms/${id}/requests`);
       return await response.json();
     },
     { refetchOnWindowFocus: false, refetchOnMount: false },

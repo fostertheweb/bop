@@ -9,7 +9,7 @@ import { useMutation } from "react-query";
 import axios from "axios";
 
 const {
-  REACT_APP_API_BASE_URL: API_BASE_URL,
+  REACT_APP_API_URL: API_URL,
   REACT_APP_SPOTIFY_CLIENT_ID: SPOTIFY_CLIENT_ID,
 } = process.env;
 
@@ -52,10 +52,7 @@ export function useLogin() {
 
   return useMutation(
     async (payload) => {
-      const { data } = await axios.post(
-        `${API_BASE_URL}/spotify/login`,
-        payload,
-      );
+      const { data } = await axios.post(`${API_URL}/spotify/login`, payload);
       return data;
     },
     {
@@ -75,7 +72,7 @@ export function useRefreshSession() {
 
   return useMutation(
     async () => {
-      const { data } = await axios.post(`${API_BASE_URL}/spotify/refresh`, {
+      const { data } = await axios.post(`${API_URL}/spotify/refresh`, {
         refresh_token: userRefreshToken,
       });
       return data;

@@ -4,7 +4,7 @@ import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { useParams } from "react-router";
 import { useEffect } from "react";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+const { REACT_APP_API_URL: API_URL } = process.env;
 
 const roomIdState = atom({
   key: "crowdQ.storage.roomId",
@@ -25,7 +25,7 @@ export function useSetRoomId() {
 
 export function useRooms() {
   return useQuery("rooms", async function () {
-    const { data } = await axios.get(`${API_BASE_URL}/rooms`);
+    const { data } = await axios.get(`${API_URL}/rooms`);
     return data;
   });
 }
@@ -39,7 +39,7 @@ export function useRoom() {
   }, [id, setRoomId]);
 
   return useQuery(id && ["room", id], async () => {
-    const { data } = await axios.get(`${API_BASE_URL}/rooms/${id}`);
+    const { data } = await axios.get(`${API_URL}/rooms/${id}`);
     return data;
   });
 }

@@ -4,13 +4,13 @@ import { userAccessTokenState } from "./use-login";
 import { useRecoilValue } from "recoil";
 
 const {
-  REACT_APP_API_BASE_URL: API_BASE_URL,
-  REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL,
+  REACT_APP_API_URL: API_URL,
+  REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL,
 } = process.env;
 
 export function useGetSpotifyCredentials() {
   return useQuery("clientAccessToken", async () => {
-    const { data } = await axios.get(`${API_BASE_URL}/spotify/authorize`);
+    const { data } = await axios.get(`${API_URL}/spotify/authorize`);
     return data;
   });
 }
@@ -23,7 +23,7 @@ export function useSpotifyQuery(path) {
   return useQuery(
     path,
     async () => {
-      const { data } = await axios.get(SPOTIFY_API_BASE_URL + path, {
+      const { data } = await axios.get(SPOTIFY_API_URL + path, {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
         },
@@ -45,7 +45,7 @@ export function useSpotifyMutation(path) {
 
   return useQuery(
     async () => {
-      const { data } = await axios.put(SPOTIFY_API_BASE_URL + path, {
+      const { data } = await axios.put(SPOTIFY_API_URL + path, {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
         },

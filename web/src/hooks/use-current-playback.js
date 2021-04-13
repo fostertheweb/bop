@@ -6,8 +6,8 @@ import axios from "axios";
 import { useParams } from "react-router";
 
 const {
-  REACT_APP_API_BASE_URL: API_BASE_URL,
-  REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL,
+  REACT_APP_API_URL: API_URL,
+  REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL,
 } = process.env;
 
 const currentPlaybackState = atom({
@@ -32,7 +32,7 @@ export function useGetCurrentPlayback() {
     id && ["currentPlayback", id],
     async () => {
       const { data } = await axios.get(
-        `${API_BASE_URL}/rooms/${id}/current-playback`,
+        `${API_URL}/rooms/${id}/current-playback`,
       );
       return data;
     },
@@ -55,7 +55,7 @@ export function useGetSpotifyCurrentPlayback() {
     "currentPlayback",
     async () => {
       const { data } = await axios.get(
-        `${SPOTIFY_API_BASE_URL}/me/player/currently-playing`,
+        `${SPOTIFY_API_URL}/me/player/currently-playing`,
         {
           headers: {
             Authorization: `Bearer ${userAccessToken}`,

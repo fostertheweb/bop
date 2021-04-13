@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
 
 const {
-  SPOTIFY_AUTH_API_BASE_URL,
+  SPOTIFY_AUTH_URL,
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET,
 } = process.env;
@@ -14,7 +14,7 @@ module.exports = function (app, _options, next) {
   app.get("/authorize", async () => {
     app.log.info("POST /spotify/authorize");
     try {
-      const response = await fetch(`${SPOTIFY_AUTH_API_BASE_URL}/api/token`, {
+      const response = await fetch(`${SPOTIFY_AUTH_URL}/api/token`, {
         method: "POST",
         headers: {
           Authorization: `Basic ${token}`,
@@ -39,7 +39,7 @@ module.exports = function (app, _options, next) {
     params.append("code", code);
 
     try {
-      const response = await fetch(`${SPOTIFY_AUTH_API_BASE_URL}/api/token`, {
+      const response = await fetch(`${SPOTIFY_AUTH_URL}/api/token`, {
         method: "POST",
         body: params,
         headers: { Authorization: "Basic " + token },
@@ -59,7 +59,7 @@ module.exports = function (app, _options, next) {
     params.append("redirect_uri", body.redirect_uri);
     params.append("grant_type", "authorization_code");
     try {
-      const response = await fetch(`${SPOTIFY_AUTH_API_BASE_URL}/api/token`, {
+      const response = await fetch(`${SPOTIFY_AUTH_URL}/api/token`, {
         method: "POST",
         body: params,
         headers: {

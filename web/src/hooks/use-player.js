@@ -5,7 +5,7 @@ import { useMutation, useQueryCache } from "react-query";
 import { useSetCurrentPlayback } from "hooks/use-current-playback";
 import Axios from "axios";
 
-const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 const isPlaybackLoading = atom({
   key: "crowdQ.isPlaybackLoading",
@@ -40,7 +40,7 @@ export function useRestartCurrentTrack() {
   return useMutation(
     async () => {
       return Axios.put(
-        `${SPOTIFY_API_BASE_URL}/me/player/seek?position_ms=0`,
+        `${SPOTIFY_API_URL}/me/player/seek?position_ms=0`,
         null,
         {
           headers: {
@@ -63,7 +63,7 @@ export function usePause() {
 
   return useMutation(
     async () => {
-      return Axios.put(`${SPOTIFY_API_BASE_URL}/me/player/pause`, null, {
+      return Axios.put(`${SPOTIFY_API_URL}/me/player/pause`, null, {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
         },
@@ -83,7 +83,7 @@ export function usePlay() {
 
   return useMutation(
     async () => {
-      return Axios.put(`${SPOTIFY_API_BASE_URL}/me/player/play`, null, {
+      return Axios.put(`${SPOTIFY_API_URL}/me/player/play`, null, {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,
         },
@@ -106,7 +106,7 @@ export function usePlayNextTrack() {
   return useMutation(
     async () => {
       return await Axios.put(
-        `${SPOTIFY_API_BASE_URL}/me/player/play`,
+        `${SPOTIFY_API_URL}/me/player/play`,
         {
           uris: [item?.uri],
         },
