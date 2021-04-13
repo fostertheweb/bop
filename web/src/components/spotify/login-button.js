@@ -9,6 +9,7 @@ export function LoginButton() {
 
   useEffect(() => {
     setRedirectTo(`${window.location.pathname}`);
+    //eslint-disable-next-line
   }, []);
 
   return (

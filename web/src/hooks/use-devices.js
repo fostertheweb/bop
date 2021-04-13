@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { userAccessTokenState } from "hooks/use-login";
 import { atom, selector, useRecoilValue } from "recoil";
 
-const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export const currentDeviceAtom = atom({
   key: "crowdQ.storage.currentDevice",
@@ -15,7 +15,7 @@ export const devicesQuery = selector({
   key: "crowdQ.devices",
   get: async ({ get }) => {
     const token = get(userAccessTokenState);
-    const response = await fetch(`${SPOTIFY_API_BASE_URL}/me/player/devices`, {
+    const response = await fetch(`${SPOTIFY_API_URL}/me/player/devices`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
   faChevronRight,
-  faSpinnerThird,
 } from "@fortawesome/pro-solid-svg-icons";
 import { useUserDetails } from "hooks/use-user-details";
 import { usePlaylists } from "hooks/use-playlists";
@@ -16,7 +15,7 @@ import { useQueue } from "hooks/use-queue";
 import { LoginButton } from "components/spotify/login-button";
 import { faUserLock } from "@fortawesome/pro-duotone-svg-icons";
 
-const { REACT_APP_SPOTIFY_API_BASE_URL: SPOTIFY_API_BASE_URL } = process.env;
+const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export default function Playlists() {
   const { data: user, status: userStatus } = useUserDetails();
@@ -183,7 +182,7 @@ function SubRowAsync({ row, rowProps, visibleColumns }) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
   const { data, status } = useQuery(id && ["playlist", id], async () => {
     const { data } = await Axios.get(
-      `${SPOTIFY_API_BASE_URL}/playlists/${id}/tracks`,
+      `${SPOTIFY_API_URL}/playlists/${id}/tracks`,
       {
         headers: {
           Authorization: `Bearer ${userAccessToken}`,

@@ -1,10 +1,10 @@
 import { queryCache, useMutation } from "react-query";
 import axios from "axios";
 
-const { REACT_APP_API_BASE_URL: API_BASE_URL } = process.env;
+const { REACT_APP_API_URL: API_URL } = process.env;
 
 async function createRoom(details) {
-  const { data } = await axios.post(`${API_BASE_URL}/rooms`, details);
+  const { data } = await axios.post(`${API_URL}/rooms`, details);
   return data;
 }
 

@@ -2,10 +2,23 @@ locals {
   common_tags = {
     project = var.application
   }
+
+  config = {
+    spotify_client_id = jsondecode(data.aws_secretsmanager_secret_version.config.secret_string)["SPOTIFY_CLIENT_ID"]
+    spotify_client_secret = jsondecode(data.aws_secretsmanager_secret_version.config.secret_string)["SPOTIFY_CLIENT_SECRET"]
+  }
 }
 
 data "aws_route53_zone" "selected" {
   name = "${var.domain_name}."
+}
+
+data "aws_secretsmanager_secret" "config" {
+  name = "${var.application}-config"
+}
+
+data "aws_secretsmanager_secret_version" "config" {
+  secret_id = data.aws_secretsmanager_secret.config.id
 }
 
 resource "aws_acm_certificate" "cert" {
@@ -35,6 +48,22 @@ resource "aws_acm_certificate_validation" "cert" {
 }
 
 # Client
+resource "null_resource" "build" {
+  triggers = {
+    always = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "yarn workspace web run build"
+    environment = {
+      REACT_APP_SPOTIFY_CLIENT_ID = local.config.spotify_client_id
+      REACT_APP_SPOTIFY_CLIENT_SECRET = local.config.spotify_client_secret
+      REACT_APP_API_URL = "http://localhost:4000" # var.api_url
+      REACT_APP_SPOTIFY_API_URL = var.spotify_api_url
+    }
+  }
+}
+
 resource "aws_s3_bucket" "web" {
   bucket = var.domain_name
   acl    = "public-read"
@@ -56,7 +85,7 @@ resource "aws_s3_bucket_object" "web_build" {
   etag         = filemd5("./web/build/${each.value}")
   content_type = lookup(var.client_mime_types, split(".", each.value)[length(split(".", each.value)) - 1])
 
-  depends_on = [aws_s3_bucket.web]
+  depends_on = [aws_s3_bucket.web, null_resource.build]
 }
 
 data "aws_iam_policy_document" "s3_policy" {
@@ -90,7 +119,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.s3_policy.json
 }
 
-#Cloudfront
+# Cloudfront
 resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   is_ipv6_enabled     = true
@@ -157,6 +186,7 @@ resource "aws_cloudfront_origin_access_identity" "access_identity" {
   comment = "${var.application}-access-identity"
 }
 
+# Route53
 resource "aws_route53_record" "web" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = data.aws_route53_zone.selected.name

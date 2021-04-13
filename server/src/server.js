@@ -16,16 +16,16 @@ const spotify = new Spotify({
 YouTube.set("api", process.env.YOUTUBE_API_KEY);
 
 const newRoomId = new ShortUniqueId();
-
-const COMMAND = "📻";
-const BOT_NAME = "CrowdQ";
-const WEB_URL = "http://localhost:3000"; //"https://crowdq.fm";
+const COMMAND = "📻"; // process.env.BOT_COMMAND
+const BOT_NAME = "CrowdQ"; // process.env.BOT_NAME
+const WEB_URL = "http://localhost:3000"; // process.env.WEB_URL
 const CDN = "https://cdn.discordapp.com";
 
 discord.on("message", async (message) => {
   try {
     if (message.content === COMMAND) {
       const channel = message.member.voice.channel;
+
       if (!channel) {
         return message.channel.send(`Oops, you are not in a voice channel.`);
       }
@@ -34,24 +34,22 @@ discord.on("message", async (message) => {
 
       const host = {
         id: author.id,
-        type: "DISCORD",
         username: author.username,
         avatar_url: `${CDN}/avatars/${author.id}/${author.avatar}.png`,
       };
 
       const room = {
         id: newRoomId(),
-        type: "DISCORD",
         guild_id: guild.id,
         name: guild.name,
         icon_url: `${CDN}/icons/${guild.id}/${guild.icon}.png`,
         host,
       };
 
-      console.log("[CONNECTING]");
+      // bot joins voice chat
       await channel.join();
-      console.log("[CONNECTED]");
 
+      // save room details
       await redis.sendCommand(setJSON(`rooms:${room.id}`, room));
 
       return message.channel.send(
@@ -86,76 +84,52 @@ app.listen(process.env.PORT, function (err) {
   });
 
   app.io.on("connection", (socket) => {
-    socket.on("ADD_TO_QUEUE", async (payload) => {
-      await redis.rpush(`rooms:${payload.room.id}:queue`, payload.track_id);
+    const roomId = socket.handshake.query.room_id;
+    socket.join(roomId);
+
+    socket.on("ADD_TO_QUEUE", async (trackId) => {
+      await redis.rpush(`rooms:${roomId}:queue`, trackId);
     });
 
-    socket.on("REMOVE_FROM_QUEUE", async (payload) => {
-      await redis.lrem(`rooms:${payload.room.id}:queue`, 0, payload.track_id);
+    socket.on("REMOVE_FROM_QUEUE", async (trackId) => {
+      await redis.lrem(`rooms:${roomId}:queue`, 0, trackId);
     });
 
-    socket.on("PLAY_SONG", async (payload) => {
+    socket.on("PLAY_NEXT", async () => {
       try {
-        // get connection
-        const guild = await discord.guilds.fetch(payload.room.guild_id);
-        const members = await guild.members.fetch({
-          query: BOT_NAME,
-          limit: 1,
-        });
-        const [bot] = members.values();
-        let connection = bot.voice.connection;
+        const room = JSON.parse(
+          await app.redis.sendCommand(getJSON(`rooms:${roomId}`)),
+        );
+        const [trackId] = await app.redis.lrange(`rooms:${roomId}:queue`, 0, 0);
+        const { id, name, artists } = await getSpotifyTrack(trackId);
+        const video = await getYouTubeVideo(name, artists);
 
-        if (!connection) {
-          const channel = await discord.channels.fetch(bot.voice.channelID);
-          connection = await channel.join();
-        }
-
-        // get track info
-        const {
-          body: { access_token },
-        } = await spotify.clientCredentialsGrant();
-        spotify.setAccessToken(access_token);
-        const { body: track } = await spotify.getTrack(payload.track_id);
-        const { id, name, artists } = track;
-
-        // get youtube video url
-        let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
-        if (!video) {
-          video = await YouTube.searchOne(`${name} ${artists[0].name}`);
-        }
-
-        // play stream
+        const connection = await getVoiceConnection(room.guild_id);
         const stream = ytdl(video.url, {
+          type: "opus",
           filter: "audioonly",
           dlChunkSize: 0,
         });
         const dispatcher = connection.play(stream);
 
-        // build playback info
-        // video.duration was sometimes a oddly small number
-        const [minutes, seconds] = video.durationFormatted.split(":");
-        const duration = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000;
-        const currentPlayback = {
-          track_id: id,
-          duration_ms: duration,
-          progress_ms: 0,
-        };
-
-        // remove playing song from queue
-        await redis.lrem(`rooms:${payload.room.id}:queue`, 0, id);
+        const currentPlayback = buildCurrentPlayback(
+          id,
+          video.durationFormatted,
+        );
         // save current playback
         await app.redis.sendCommand(
-          setJSON(`rooms:${payload.room.id}:playing`, currentPlayback),
+          setJSON(`rooms:${roomId}:playing`, currentPlayback),
         );
 
-        // song start
+        // remove currently playing song from queue
+        await redis.lrem(`rooms:${roomId}:queue`, 0, id);
+
         dispatcher.on("start", () => {
-          app.io.emit("PLAYBACK_START", currentPlayback);
+          app.io.to(roomId).emit("PLAYBACK_START", currentPlayback);
         });
 
-        // song end
-        dispatcher.on("finish", () => {
-          app.io.emit("PLAYBACK_END");
+        dispatcher.on("finish", async () => {
+          app.io.to(roomId).emit("PLAYBACK_END");
         });
       } catch (err) {
         app.log.error(err);
@@ -163,3 +137,56 @@ app.listen(process.env.PORT, function (err) {
     });
   });
 });
+
+async function getSpotifyTrack(trackId) {
+  const {
+    body: { access_token },
+  } = await spotify.clientCredentialsGrant();
+  spotify.setAccessToken(access_token);
+  const { body: track } = await spotify.getTrack(trackId);
+  return track;
+}
+
+async function getVoiceConnection(guildId) {
+  const guild = await discord.guilds.fetch(guildId);
+  const members = await guild.members.fetch({
+    query: BOT_NAME,
+    limit: 1,
+  });
+  const [bot] = members.values();
+  let connection = bot.voice.connection;
+
+  if (!connection) {
+    const channel = await discord.channels.fetch(bot.voice.channelID);
+    connection = await channel.join();
+  }
+
+  return connection;
+}
+
+async function getYouTubeVideo(name, artists) {
+  // get youtube video url
+  let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
+  if (!video) {
+    video = await YouTube.searchOne(`${name} ${artists[0].name}`);
+  }
+
+  return video;
+}
+
+function buildCurrentPlayback(id, durationFormatted) {
+  const [minutes, seconds] = durationFormatted.split(":");
+  let duration = 0;
+
+  if (!seconds) {
+    duration = minutes * 1000;
+  } else {
+    duration = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000;
+  }
+
+  return {
+    track_id: id,
+    duration_ms: duration,
+    progress_ms: 0,
+  };
+}
