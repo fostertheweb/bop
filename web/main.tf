@@ -63,11 +63,11 @@ resource "aws_acm_certificate_validation" "cert" {
 # Client
 resource "null_resource" "build" {
   triggers = {
-    always = timestamp()
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
-    command = "yarn workspace web run build"
+    command = "yarn run build"
     environment = {
       REACT_APP_SPOTIFY_CLIENT_ID     = local.config.spotify_client_id
       REACT_APP_SPOTIFY_CLIENT_SECRET = local.config.spotify_client_secret
