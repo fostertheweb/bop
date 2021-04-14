@@ -29,22 +29,21 @@ export default function Player() {
   const isPlaying = useIsPlaying();
   const playQueue = usePlayQueue();
   const { playNext } = useQueue();
-  const showPlayButton = playQueue.length > 0 && !isPlaying && !loading;
 
   return (
     <PlayerBackground gradient={background} className="p-4 bg-gray-600">
       <div className="box-border sticky top-0 flex items-center justify-center w-full bg-transparent">
         <div className="w-1/3">
-          {showPlayButton ? (
-            <div className="flex justify-center">
-              <PlayButton onClick={playNext} />
-            </div>
-          ) : (
-            <div className="flex items-center justify-between px-2">
-              <CurrentPlayback item={track} loading={loading} />
-              <Reactions />
-            </div>
-          )}
+          <div className="flex items-center justify-between px-2">
+            <CurrentPlayback item={track} loading={loading} />
+            <PlayButton
+              onClick={playNext}
+              show={!isPlaying && !loading}
+              disabled={playQueue.length === 0}
+            />
+            <Reactions />
+          </div>
+
           <div className="h-2"></div>
           <Progress
             currentProgress={currentPlayback?.progress_ms}
@@ -57,9 +56,12 @@ export default function Player() {
   );
 }
 
-function PlayButton({ onClick }) {
+function PlayButton({ disabled, show, onClick }) {
+  if (!show) return null;
+
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
       style={{ width: "48px", height: "48px" }}
       className="flex items-center justify-center text-gray-300 hover:text-gray-100">
