@@ -24,7 +24,7 @@ data "aws_secretsmanager_secret_version" "config" {
 
 resource "null_resource" "build" {
   triggers = {
-    always = timestamp()
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
