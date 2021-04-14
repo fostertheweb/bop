@@ -3,8 +3,8 @@ version: 0.2
 phases:
   install:
     commands:
-      - curl -fsSLO "https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip"
-      - unzip terraform_0.12.28_linux_amd64.zip -d /usr/local/bin
+      - curl -fsSLO "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip"
+      - unzip terraform_0.15.0_linux_amd64.zip -d /usr/local/bin
   pre_build:
     commands:
       - yarn install
