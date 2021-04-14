@@ -67,7 +67,7 @@ resource "null_resource" "build" {
   }
 
   provisioner "local-exec" {
-    command = "yarn run build"
+    command = "yarn workspace web run build"
     environment = {
       REACT_APP_SPOTIFY_CLIENT_ID     = local.config.spotify_client_id
       REACT_APP_SPOTIFY_CLIENT_SECRET = local.config.spotify_client_secret
