@@ -34,8 +34,8 @@ resource "null_resource" "build" {
 
 data "archive_file" "dist_zip" {
   type        = "zip"
-  source_dir  = "./server/dist"
-  output_path = "./server/dist.zip"
+  source_dir  = "${path.module}/dist"
+  output_path = "${path.module}/dist.zip"
 
   depends_on = [
     null_resource.build
@@ -53,7 +53,7 @@ resource "aws_s3_bucket" "dist" {
 resource "aws_s3_bucket_object" "dist" {
   key          = "dist.zip"
   bucket       = aws_s3_bucket.dist.id
-  source       = "./server/dist.zip"
+  source       = "${path.module}/dist.zip"
   etag         = data.archive_file.dist_zip.output_md5
 
   depends_on = [aws_s3_bucket.dist, data.archive_file.dist_zip]
