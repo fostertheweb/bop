@@ -15,6 +15,7 @@ variable "spotify_api_url" {
 
 variable "api_url" {
   type = string
+  default = "http://localhost:4000"
 }
 
 variable "client_mime_types" {

@@ -58,7 +58,7 @@ resource "null_resource" "build" {
     environment = {
       REACT_APP_SPOTIFY_CLIENT_ID = local.config.spotify_client_id
       REACT_APP_SPOTIFY_CLIENT_SECRET = local.config.spotify_client_secret
-      REACT_APP_API_URL = "http://localhost:4000" # var.api_url
+      REACT_APP_API_URL = var.api_url
       REACT_APP_SPOTIFY_API_URL = var.spotify_api_url
     }
   }
