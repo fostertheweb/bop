@@ -54,7 +54,7 @@ resource "aws_s3_bucket_object" "dist" {
   key          = "dist.zip"
   bucket       = aws_s3_bucket.dist.id
   source       = "./server/dist.zip"
-  etag         = filemd5("./server/dist.zip")
+  etag         = data.archive_file.dist_zip.output_md5
 
   depends_on = [aws_s3_bucket.dist, data.archive_file.dist_zip]
 }
