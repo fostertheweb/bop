@@ -12,11 +12,17 @@ export default function Reactions({ disabled }) {
 
   return (
     <div className="flex justify-center text-gray-300">
-      <button className="hover:text-white" onClick={() => setLiked(!liked)}>
+      <button
+        disabled={disabled}
+        className={disabled ? "text-gray-500" : "hover:text-white"}
+        onClick={() => setLiked(!liked)}>
         <FontAwesomeIcon icon={liked ? faHeartSolid : faHeart} size="lg" />
       </button>
       <div className="w-8"></div>
-      <button className="hover:text-white" onClick={() => setSkipped(!skipped)}>
+      <button
+        disabled={disabled}
+        className={disabled ? "text-gray-500" : "hover:text-white"}
+        onClick={() => setSkipped(!skipped)}>
         <FontAwesomeIcon
           icon={skipped ? faThumbsDownSolid : faThumbsDown}
           size="lg"

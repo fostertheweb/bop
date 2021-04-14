@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useQueue } from "hooks/use-queue";
+import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
@@ -11,6 +11,7 @@ export default function Queue() {
   const [totalDuration, setTotalDuration] = useState(0);
   const { data: queue, status: playQueueStatus } = useGetPlayQueue();
   const { remove } = useQueue();
+  const playQueue = usePlayQueue();
 
   function sumDuration(duration) {
     setTotalDuration((total) => total + parseInt(duration));
@@ -23,7 +24,8 @@ export default function Queue() {
 
   return (
     <>
-      <div className="flex items-center justify-between p-4 mb-1 text-base text-gray-600">
+      {/* gradient background for sticky headers */}
+      <div className="sticky top-0 flex items-center justify-between p-4 mb-1 text-base text-gray-600 bg-gray-200">
         <div className="flex items-center gap-2">
           <div>
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
@@ -36,17 +38,21 @@ export default function Queue() {
           <div>{formatDuration(totalDuration)}</div>
         </div>
       </div>
-      {queue?.map((id, index) => {
-        return (
-          <Track
-            key={id}
-            id={id}
-            index={index}
-            remove={remove}
-            updateTotalDuration={sumDuration}
-          />
-        );
-      })}
+      {playQueue.length > 0 ? (
+        queue.map((id, index) => {
+          return (
+            <Track
+              key={id}
+              id={id}
+              index={index}
+              remove={remove}
+              updateTotalDuration={sumDuration}
+            />
+          );
+        })
+      ) : (
+        <div className="flex items-center justify-center">No songs</div>
+      )}
     </>
   );
 }

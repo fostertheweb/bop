@@ -41,7 +41,7 @@ export default function Player() {
               show={!isPlaying && !loading}
               disabled={playQueue.length === 0}
             />
-            <Reactions />
+            <Reactions disabled={playQueue.length === 0 || loading} />
           </div>
 
           <div className="h-2"></div>
@@ -64,7 +64,9 @@ function PlayButton({ disabled, show, onClick }) {
       disabled={disabled}
       onClick={onClick}
       style={{ width: "48px", height: "48px" }}
-      className="flex items-center justify-center text-gray-300 hover:text-gray-100">
+      className={`flex items-center justify-center ${
+        disabled ? "text-gray-500" : "text-gray-300 hover:text-gray-100"
+      }`}>
       <FontAwesomeIcon icon={faPlayCircle} size="3x" className="fill-current" />
     </button>
   );

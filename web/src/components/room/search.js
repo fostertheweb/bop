@@ -3,9 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useQueue } from "hooks/use-queue";
 import { useSearch } from "hooks/use-search";
-import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 import { useDebounce } from "hooks/use-debounce";
-import { faTimesCircle, faMusic } from "@fortawesome/pro-duotone-svg-icons";
+import {
+  faTimesCircle,
+  faMusic,
+  faSpinnerThird,
+} from "@fortawesome/pro-duotone-svg-icons";
 
 function SkeletonSearchResults() {
   return Array.from({ length: 10 }, (_, index) => (
