@@ -32,6 +32,16 @@ resource "null_resource" "build" {
   }
 }
 
+data "archive_file" "dist_zip" {
+  type        = "zip"
+  source_dir  = "./server/dist"
+  output_path = "./server/dist.zip"
+
+  depends_on = [
+    null_resource.build
+  ]
+}
+
 resource "aws_s3_bucket" "dist" {
   bucket = "${var.application}-server-dist"
   acl = "private"
@@ -47,16 +57,6 @@ resource "aws_s3_bucket_object" "dist" {
   etag         = filemd5("./server/dist.zip")
 
   depends_on = [aws_s3_bucket.dist, data.archive_file.dist_zip]
-}
-
-data "archive_file" "dist_zip" {
-  type        = "zip"
-  source_dir  = "./server/dist"
-  output_path = "./server/dist.zip"
-
-  depends_on = [
-    null_resource.build
-  ]
 }
 
 # resource "aws_instance" "app_server" {
