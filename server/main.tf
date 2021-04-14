@@ -41,6 +41,7 @@ resource "aws_s3_bucket" "dist" {
 }
 
 resource "aws_s3_bucket_object" "dist" {
+  key          = "dist.zip"
   bucket       = aws_s3_bucket.dist.id
   source       = "./server/dist.zip"
   etag         = filemd5("./server/dist.zip")
