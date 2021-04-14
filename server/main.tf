@@ -45,7 +45,7 @@ resource "aws_s3_bucket_object" "dist" {
   source       = "./server/dist.zip"
   etag         = filemd5("./server/dist.zip")
 
-  depends_on = [aws_s3_bucket.dist, archive_file.dist_zip]
+  depends_on = [aws_s3_bucket.dist, data.archive_file.dist_zip]
 }
 
 data "archive_file" "dist_zip" {
