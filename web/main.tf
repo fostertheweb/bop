@@ -4,7 +4,7 @@ locals {
   }
 
   config = {
-    spotify_client_id = jsondecode(data.aws_secretsmanager_secret_version.config.secret_string)["SPOTIFY_CLIENT_ID"]
+    spotify_client_id     = jsondecode(data.aws_secretsmanager_secret_version.config.secret_string)["SPOTIFY_CLIENT_ID"]
     spotify_client_secret = jsondecode(data.aws_secretsmanager_secret_version.config.secret_string)["SPOTIFY_CLIENT_SECRET"]
   }
 }
@@ -34,17 +34,30 @@ resource "aws_acm_certificate" "cert" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  name            = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
-  type            = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
+  for_each = {
+    for options in aws_acm_certificate.cert.domain_validation_options : options.domain_name => {
+      name   = options.resource_record_name
+      type   = options.resource_record_type
+      record = options.resource_record_value
+    }
+  }
+
+  name            = each.value.name
+  records         = [each.value.record]
+  type            = each.value.type
   zone_id         = data.aws_route53_zone.selected.id
-  records         = [aws_acm_certificate.cert.domain_validation_options.0.resource_record_value]
   ttl             = 60
   allow_overwrite = true
+
+  depends_on = [
+    data.aws_route53_zone.selected,
+    aws_acm_certificate.cert
+  ]
 }
 
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
 
 # Client
@@ -56,10 +69,10 @@ resource "null_resource" "build" {
   provisioner "local-exec" {
     command = "yarn workspace web run build"
     environment = {
-      REACT_APP_SPOTIFY_CLIENT_ID = local.config.spotify_client_id
+      REACT_APP_SPOTIFY_CLIENT_ID     = local.config.spotify_client_id
       REACT_APP_SPOTIFY_CLIENT_SECRET = local.config.spotify_client_secret
-      REACT_APP_API_URL = var.api_url
-      REACT_APP_SPOTIFY_API_URL = var.spotify_api_url
+      REACT_APP_API_URL               = var.api_url
+      REACT_APP_SPOTIFY_API_URL       = var.spotify_api_url
     }
   }
 }
