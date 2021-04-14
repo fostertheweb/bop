@@ -4,7 +4,7 @@ terraform {
     organization = "fostertheweb"
 
     workspaces {
-      name = "crowdq-fm"
+      name = "crowdq"
     }
   }
 }
