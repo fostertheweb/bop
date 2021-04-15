@@ -2,10 +2,18 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
+import { faListMusic, faPlayCircle } from "@fortawesome/pro-duotone-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
 import { useGetTrackById } from "hooks/use-tracks";
-import { faStopwatch, faMusic } from "@fortawesome/pro-duotone-svg-icons";
+import {
+  faStopwatch,
+  faMusic,
+  faAlbumCollection,
+  faSearch,
+  faMusicSlash,
+  faCloudMusic,
+} from "@fortawesome/pro-duotone-svg-icons";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 export default function Queue() {
   const [totalDuration, setTotalDuration] = useState(0);
@@ -25,7 +33,7 @@ export default function Queue() {
   return (
     <>
       {/* gradient background for sticky headers */}
-      <div className="sticky top-0 flex items-center justify-between p-4 mb-1 text-base text-gray-600 bg-gray-200">
+      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-gray-200">
         <div className="flex items-center gap-2">
           <div>
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
@@ -38,6 +46,7 @@ export default function Queue() {
           <div>{formatDuration(totalDuration)}</div>
         </div>
       </div>
+
       {playQueue.length > 0 ? (
         queue.map((id, index) => {
           return (
@@ -51,7 +60,32 @@ export default function Queue() {
           );
         })
       ) : (
-        <div className="flex items-center justify-center">No songs</div>
+        <div className="flex flex-col items-center justify-center flex-grow gap-4 text-gray-600">
+          <FontAwesomeIcon
+            icon={faAlbumCollection}
+            size="4x"
+            className="text-gray-500 fill-current"
+          />
+          <h3 className="text-lg font-medium text-gray-700">
+            Add to Play Queue
+          </h3>
+          <ul className="flex flex-col gap-3 mt-4">
+            <li>
+              <FontAwesomeIcon icon={faSearch} />
+              <span className="ml-2">Search Spotify for music to add</span>
+            </li>
+            <li>
+              <FontAwesomeIcon icon={faSpotify} />
+              <span className="ml-2">
+                Add songs from your Spotify playlists
+              </span>
+            </li>
+            <li>
+              <FontAwesomeIcon icon={faPlayCircle} />
+              <span className="ml-2">Click the play button down below</span>
+            </li>
+          </ul>
+        </div>
       )}
     </>
   );
