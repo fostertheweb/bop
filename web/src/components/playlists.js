@@ -14,6 +14,7 @@ import { userAccessTokenState } from "hooks/use-login";
 import { useQueue } from "hooks/use-queue";
 import { LoginButton } from "components/spotify/login-button";
 import { faUserLock } from "@fortawesome/pro-duotone-svg-icons";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
@@ -99,16 +100,32 @@ export default function Playlists() {
     return `Fetching Spotify Playlists for ${user.id}`;
   }
 
-  if (!user) {
-    return <NotLoggedIn />;
-  }
-
   return (
-    <PlaylistsTable
-      columns={columns}
-      data={playlists.items}
-      renderRowSubComponent={renderRowSubComponent}
-    />
+    <>
+      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-white">
+        <div className="flex items-center gap-2">
+          <div>
+            <FontAwesomeIcon
+              icon={faSpotify}
+              size="lg"
+              className="mr-2 fill-current"
+            />
+            <span className="border-b-2 border-transparent">
+              {user ? `${user.id}'s` : null} Spotify Playlists
+            </span>
+          </div>
+        </div>
+      </div>
+      {user ? (
+        <PlaylistsTable
+          columns={columns}
+          data={playlists.items}
+          renderRowSubComponent={renderRowSubComponent}
+        />
+      ) : (
+        <NotLoggedIn />
+      )}
+    </>
   );
 }
 
@@ -252,23 +269,25 @@ function millisToMinutesAndSeconds(millis) {
 
 function NotLoggedIn() {
   return (
-    <div className="flex p-2">
+    <div className="flex items-center justify-center flex-grow text-gray-600">
       <div
-        className="flex flex-col justify-center gap-4 p-4 text-gray-800 bg-gray-100 rounded-md"
+        className="flex flex-col items-center gap-4 p-8"
         style={{ width: "24rem" }}>
-        <div className="flex items-center gap-2">
-          <FontAwesomeIcon
-            icon={faUserLock}
-            className="fill-current"
-            size="lg"
-          />
-          <h1 className="text-xl font-medium">Not logged in to Spotify</h1>
-        </div>
-        <div className="text-gray-700">
+        <FontAwesomeIcon
+          icon={faUserLock}
+          className="text-gray-500 fill-current"
+          size="4x"
+        />
+
+        <h3 className="text-lg font-medium text-gray-700">
+          Not logged in to Spotify
+        </h3>
+
+        <div className="mt-4 text-gray-700">
           Login with your Spotify account to view your Playlists and save songs
           you like.
         </div>
-        <div>
+        <div className="w-full">
           <LoginButton />
         </div>
       </div>

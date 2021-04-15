@@ -5,10 +5,16 @@ import {
   faMusicSlash,
 } from "@fortawesome/pro-duotone-svg-icons";
 
-export default function CurrentPlayback({ item, loading }) {
+export default function CurrentPlayback({ item, loading, playing }) {
   return (
     <div className="flex items-center text-gray-400">
-      {item ? <Playback item={item} /> : loading ? <Loading /> : <Idle />}
+      {item && playing ? (
+        <Playback item={item} />
+      ) : loading ? (
+        <Loading />
+      ) : (
+        <Idle />
+      )}
     </div>
   );
 }

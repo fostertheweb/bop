@@ -82,7 +82,7 @@ export default function Queue() {
             </li>
             <li>
               <FontAwesomeIcon icon={faPlayCircle} />
-              <span className="ml-2">Click the play button down below</span>
+              <span className="ml-2">Click the play button below</span>
             </li>
           </ul>
         </div>
