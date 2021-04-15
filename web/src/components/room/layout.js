@@ -9,10 +9,10 @@ export default function Layout() {
     <>
       <div className="flex overflow-hidden h-content">
         <Sidebar />
-        <div className="w-1/2 overflow-y-scroll hide-native-scrollbar">
+        <div className="flex flex-col flex-grow w-1/2 overflow-y-scroll hide-native-scrollbar">
           <Outlet />
         </div>
-        <div className="flex flex-col flex-grow overflow-y-scroll bg-gray-200 hide-native-scrollbar">
+        <div className="flex flex-col flex-grow w-1/2 overflow-y-scroll bg-gray-200 hide-native-scrollbar">
           <Queue />
         </div>
       </div>
