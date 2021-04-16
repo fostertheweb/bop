@@ -46,7 +46,9 @@ export default function Player() {
               disabled={playQueue.length === 0}
             />
             <Reactions
-              disabled={(playQueue.length === 0 && !isPlaying) || loading}
+              disabled={
+                (playQueue.length === 0 && !isPlaying) || !track || loading
+              }
             />
           </div>
 
