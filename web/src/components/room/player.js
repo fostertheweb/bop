@@ -35,13 +35,21 @@ export default function Player() {
       <div className="box-border sticky top-0 flex items-center justify-center w-full bg-transparent">
         <div className="w-1/3">
           <div className="flex items-center justify-between px-2">
-            <CurrentPlayback item={track} loading={loading} />
+            <CurrentPlayback
+              item={track}
+              loading={loading}
+              playing={isPlaying}
+            />
             <PlayButton
               onClick={playNext}
               show={!isPlaying && !loading}
               disabled={playQueue.length === 0}
             />
-            <Reactions disabled={playQueue.length === 0 || loading} />
+            <Reactions
+              disabled={
+                (playQueue.length === 0 && !isPlaying) || !track || loading
+              }
+            />
           </div>
 
           <div className="h-2"></div>

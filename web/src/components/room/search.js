@@ -39,7 +39,7 @@ export default function Search() {
   const searchInputRef = useRef(null);
 
   return (
-    <div className="">
+    <>
       <div className="sticky top-0 p-2 bg-white">
         <div className="flex items-center">
           <div className="flex items-center w-full text-base text-gray-600 bg-gray-100 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-800">
@@ -97,6 +97,6 @@ export default function Search() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

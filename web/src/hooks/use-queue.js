@@ -50,6 +50,7 @@ export function useQueue() {
     });
 
     socket.on("PLAYBACK_END", () => {
+      setIsPlaying(false);
       playNext();
     });
 

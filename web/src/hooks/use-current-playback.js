@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAccessTokenState } from "hooks/use-login";
-import { useSetIsPlaying } from "hooks/use-player";
+import { useSetIsPlaybackLoading, useSetIsPlaying } from "hooks/use-player";
 import axios from "axios";
 import { useParams } from "react-router";
 
@@ -27,6 +27,7 @@ export function useGetCurrentPlayback() {
   const { id } = useParams();
   const setIsPlaying = useSetIsPlaying();
   const setCurrentPlayback = useSetCurrentPlayback();
+  const setIsPlaybackLoading = useSetIsPlaybackLoading();
 
   return useQuery(
     id && ["currentPlayback", id],
@@ -37,10 +38,14 @@ export function useGetCurrentPlayback() {
       return data;
     },
     {
+      onSettled() {
+        setIsPlaybackLoading(false);
+      },
       onSuccess(currentPlayback) {
         setCurrentPlayback(currentPlayback);
         setIsPlaying(true);
       },
+      refetchOnWindowFocus: true,
       retry: false,
     },
   );
