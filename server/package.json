@@ -6,10 +6,9 @@
   "scripts": {
     "develop": "nodemon",
     "start": "node -r dotenv/config src/server",
-    "build": "run-s dist:clean dist:copy dist:install",
-    "dist:clean": "rm -rf dist && rm -f lambda.zip",
-    "dist:copy": "mkdir dist && cp -R src/** dist/ && cp package.json dist/",
-    "dist:install": "cd dist; yarn install --production"
+    "build": "run-s dist:clean dist:copy",
+    "dist:clean": "rm -rf dist && rm -f dist.zip",
+    "dist:copy": "mkdir dist && cp -R src/** dist/ && cp package.json package-lock.json dist/"
   },
   "keywords": [],
   "author": "",
