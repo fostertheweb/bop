@@ -36,7 +36,6 @@ resource "aws_s3_bucket" "dist" {
   bucket = "${var.application}-server-dist"
   acl    = "private"
 
-
   tags = local.common_tags
 }
 
@@ -68,10 +67,16 @@ data "cloudinit_config" "app_config" {
   }
 }
 
+data "aws_security_group" "selected" {
+  name = "${var.application}-sg"
+}
+
 resource "aws_instance" "app_server" {
-  ami                  = var.instance_ami
-  instance_type        = "t2.micro"
-  iam_instance_profile = "crowdq-fm-instance-role"
+  ami                    = var.instance_ami
+  instance_type          = "t2.micro"
+  iam_instance_profile   = "crowdq-fm-instance-role"
+  vpc_security_group_ids = [data.aws_security_group.selected.id]
+  key_name               = "${var.application}-ec2"
 
   root_block_device {
     volume_size           = 8
@@ -79,7 +84,7 @@ resource "aws_instance" "app_server" {
     delete_on_termination = true
   }
 
-  user_data = "value"
+  user_data = data.cloudinit_config.app_config.rendered
 
   tags = local.common_tags
 }

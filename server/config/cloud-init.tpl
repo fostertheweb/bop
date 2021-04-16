@@ -22,8 +22,4 @@ write_files:
 run_cmd:
   - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
   - source $HOME/.bashrc
-  - mkdir $HOME/app
-  - aws s3 cp $DIST_S3_URI /tmp/dist.zip
-  - unzip /tmp/dist.zip -d $HOME/app
-  - cd $HOME/app && npm install --production
-  - node $HOME/app/server
+  - nvm install --lts

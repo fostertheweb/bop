@@ -1,9 +1,9 @@
 variable "application" {
-  type = string
+  type    = string
   default = "crowdq-fm"
 }
 
 variable "domain_name" {
-  type = string
+  type    = string
   default = "crowdq.fm"
 }
