@@ -8,10 +8,7 @@ import { useParams } from "react-router";
 import { useQuery, useQueryCache } from "react-query";
 import axios from "axios";
 
-const {
-  REACT_APP_WEBSOCKET_URL: WEBSOCKET_URL,
-  REACT_APP_API_URL: API_URL,
-} = process.env;
+const { REACT_APP_API_URL: API_URL } = process.env;
 
 // selector fetch queue
 export const playQueueAtom = atom({
@@ -36,7 +33,7 @@ export function useQueue() {
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
 
   useEffect(() => {
-    const socket = io(WEBSOCKET_URL, {
+    const socket = io(API_URL, {
       query: {
         room_id: roomId,
       },
