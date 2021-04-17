@@ -18,7 +18,7 @@ YouTube.set("api", process.env.YOUTUBE_API_KEY);
 const newRoomId = new ShortUniqueId();
 const COMMAND = "📻"; // process.env.BOT_COMMAND
 const BOT_NAME = "CrowdQ"; // process.env.BOT_NAME
-const WEB_URL = "http://localhost:3000"; // process.env.WEB_URL
+const WEB_URL = "https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
 
 discord.on("message", async (message) => {
