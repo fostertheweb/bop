@@ -1,21 +1,21 @@
 variable "application" {
-  type = string
+  type    = string
   default = "crowdq-fm"
 }
 
 variable "domain_name" {
-  type = string
+  type    = string
   default = "crowdq.fm"
 }
 
 variable "spotify_api_url" {
-  type = string
+  type    = string
   default = "https://api.spotify.com/v1"
 }
 
 variable "api_url" {
-  type = string
-  default = "http://localhost:4000"
+  type    = string
+  default = "http://ec2-52-0-126-169.compute-1.amazonaws.com"
 }
 
 variable "client_mime_types" {
