@@ -15,7 +15,7 @@ variable "spotify_api_url" {
 
 variable "api_url" {
   type    = string
-  default = "http://ec2-52-0-126-169.compute-1.amazonaws.com"
+  default = "https://api.crowdq.fm"
 }
 
 variable "client_mime_types" {
