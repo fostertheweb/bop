@@ -4,7 +4,7 @@ import App from "./app";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import "@fontsource/varta";
+import "@fontsource/commissioner";
 import "./index.css";
 
 ReactDOM.render(

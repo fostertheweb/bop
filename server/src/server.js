@@ -51,16 +51,6 @@ discord.on("message", async (message) => {
       connection.setSpeaking("SOUNDSHARE");
       connection.voice.setDeaf(true);
 
-      connection.on("disconnect", () => {
-        // disconnected modal
-      });
-      connection.on("reconnecting", () => {
-        // update message to user
-      });
-      connection.on("ready", () => {
-        // close message on ui
-      });
-
       // save room details
       await redis.sendCommand(setJSON(`rooms:${room.id}`, room));
 
@@ -126,6 +116,21 @@ app.listen(process.env.PORT, function (err) {
         });
 
         const connection = await getVoiceConnection(room.guild_id);
+        connection.setSpeaking("SOUNDSHARE");
+        connection.voice.setDeaf(true);
+
+        connection.on("disconnect", () => {
+          app.io.to(roomId).emit("BOT_DISCONNECTED");
+        });
+
+        connection.on("reconnecting", () => {
+          app.io.to(roomId).emit("BOT_RECONNCETING");
+        });
+
+        connection.on("ready", () => {
+          app.io.to(roomId).emit("BOT_READY");
+        });
+
         const dispatcher = connection.play(stream, { volume: false });
 
         dispatcher.on("start", () => {

@@ -41,32 +41,30 @@ export default function Search() {
   return (
     <>
       <div className="sticky top-0 p-2 bg-white">
-        <div className="flex items-center">
-          <div className="flex items-center w-full text-base text-gray-600 bg-gray-100 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-800">
-            <FontAwesomeIcon
-              icon={isLoading ? faSpinnerThird : faSpotify}
-              size="lg"
-              className="ml-2 text-gray-600 fill-current"
-              spin={isLoading}
-            />
-            <input
-              className="w-full px-4 py-2 pl-2 text-base text-gray-600 bg-transparent rounded appearance-none focus:outline-none"
-              id="search"
-              placeholder="Search by track or artist"
-              onChange={({ target }) => setQuery(target.value)}
-              autoComplete="false"
-              ref={searchInputRef}
-            />
-            {query.length > 0 ? (
-              <button onClick={() => (searchInputRef.current.value = "")}>
-                <FontAwesomeIcon
-                  icon={faTimesCircle}
-                  size="lg"
-                  className="mr-2 text-gray-600 fill-current"
-                />
-              </button>
-            ) : null}
-          </div>
+        <div className="flex items-center w-full text-base text-gray-600 bg-gray-100 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-800">
+          <FontAwesomeIcon
+            icon={isLoading ? faSpinnerThird : faSpotify}
+            size="lg"
+            className="ml-2 text-gray-600 fill-current"
+            spin={isLoading}
+          />
+          <input
+            className="w-full p-2 text-base text-gray-600 bg-transparent rounded appearance-none focus:outline-none"
+            id="search"
+            placeholder="Search by track or artist"
+            onChange={({ target }) => setQuery(target.value)}
+            autoComplete="false"
+            ref={searchInputRef}
+          />
+          {query.length > 0 ? (
+            <button onClick={() => (searchInputRef.current.value = "")}>
+              <FontAwesomeIcon
+                icon={faTimesCircle}
+                size="lg"
+                className="mr-2 text-gray-600 fill-current"
+              />
+            </button>
+          ) : null}
         </div>
       </div>
 

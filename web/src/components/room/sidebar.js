@@ -12,7 +12,7 @@ import { useRoom } from "hooks/use-rooms";
 export default function Sidebar() {
   const { id } = useParams();
   return (
-    <div className="p-2 bg-gray-200" style={{ width: "calc(48px + 2rem)" }}>
+    <div className="p-2 bg-gray-200">
       <DiscordLink path={`/rooms/${id}`} />
       <SidebarLink path="search" icon={faSearch}>
         Search

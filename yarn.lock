@@ -1289,10 +1289,55 @@
     "@fastify/forwarded" "^1.0.0"
     ipaddr.js "^2.0.0"
 
+"@fontsource/asap@^4.2.3":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@fontsource/asap/-/asap-4.2.3.tgz#e39e9ec14eff23573d79aa4498af31f3c37c7f95"
+  integrity sha512-YOXkM8216m8m0tZZ2MSwZhkLE2ckfCjTbktL2/lSaF4K5IfqhCQTFlJDeFqF/hLNBWW6hUGvEfcnX6/I520Qhg==
+
+"@fontsource/catamaran@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/catamaran/-/catamaran-4.2.2.tgz#12be900f6e992274c34be2ccf8cc4137ecdb74b7"
+  integrity sha512-tfTTKb1KFU7bLtmEtlLGETWFydqlknwEQWAWZn68i920Krdj1MPQlNbYktAhf02GR//s5zYTfTXuwi2VeaM+aA==
+
+"@fontsource/commissioner@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/commissioner/-/commissioner-4.2.2.tgz#113e054ecdc268739eb2cad992b166d8d76a1b15"
+  integrity sha512-yP1dSR8bJCzETbM/OG75I6PxozSZ1L1vbfyrwZwzzaJkhP3xotQfBzyCHiimTUobFIwd3GnxiwcR4Y1ZtpXVVg==
+
+"@fontsource/epilogue@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/epilogue/-/epilogue-4.2.2.tgz#05617797e83141dcee1dfe26cc6803c7b3ef6d65"
+  integrity sha512-qaXW6Npyyp50zFQC/YDF2Turxf3xxC3Du7Rr8fw+Ud1jPWG3n2H70Nc1MdQUUoSx4Ws49itYVn9HfDNnIzyNhw==
+
+"@fontsource/signika@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/signika/-/signika-4.2.2.tgz#0ab0f92e0023854854919f884492e9217721aa6d"
+  integrity sha512-yNJzA8OH8OgXZNOIg2pCURZiLK1Iy79BKaddX2oMRgFiZ8CGGUWjbgbpasexhcg3UnWCfGQgcotDBVLMLAGwXA==
+
+"@fontsource/sora@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/sora/-/sora-4.2.2.tgz#a7f41431016fb8c35d09d084b7fce88ebb062373"
+  integrity sha512-dA5CwKX671YRf+qple+G6pXULxF1Hv7lmsXnJOWUipP0xN20JMxsOhHwlK5fwVFTC7/+x6NhD1G0qyHOoROC/Q==
+
+"@fontsource/space-grotesk@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/space-grotesk/-/space-grotesk-4.2.2.tgz#fbbf64227b215e8a18dc77d0cf25937d7661a1db"
+  integrity sha512-ODOOn/wlA3QMmDg71zr4hNqDlD89+SnpUCuR8iiIH0Fz3nEiZ0wjNww8NW914oszUxibRLkn+6O/q4wBFOq0cg==
+
+"@fontsource/syne@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/syne/-/syne-4.2.2.tgz#19abf8e3d3b4327ddbb0c8b1c439d13428b91380"
+  integrity sha512-OArva3G9RHPqGu0RT0+/sZEztrzMxNqF7xFgxd3stCJDxNGlhk5YxUvTGhVG06ZsJuUWAy438ZCRE9NrLMbDCA==
+
 "@fontsource/varta@^4.2.2":
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@fontsource/varta/-/varta-4.2.2.tgz#6aeaa5b5fb198a6ca47cddec1dd47d1473241a1e"
   integrity sha512-Db1KWbTnqckB+wd3eX1wyJCagHt3FRWCax02hq4HlGYOW/MaDg+bIvExIZCkH1iGhA6O3BDBJQsp0KrCSbHDww==
+
+"@fontsource/work-sans@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/work-sans/-/work-sans-4.2.2.tgz#f125f018a6b1baa5092901de3a0ef95f58fcefe4"
+  integrity sha512-fFm8a1TbE+qDnRNsf4R6Z/yZP2f3mbj54zSoWUMIWVkgTHM0RfpcOTqoIp7Aj5jon6na0Oynlq5yXvMA5p3pKA==
 
 "@fortawesome/fontawesome-common-types@^0.2.35":
   version "0.2.35"

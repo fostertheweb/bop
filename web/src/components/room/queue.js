@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic, faPlayCircle } from "@fortawesome/pro-duotone-svg-icons";
+import {
+  faClock,
+  faListMusic,
+  faPlayCircle,
+} from "@fortawesome/pro-duotone-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
 import { useGetTrackById } from "hooks/use-tracks";
 import {
@@ -37,17 +41,13 @@ export default function Queue() {
         <div className="flex items-center gap-2">
           <div>
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
-            <span className="border-b-2 border-transparent">Play Queue</span>
+            <span>Play Queue</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <FontAwesomeIcon
-            icon={faStopwatch}
-            className="fill-current"
-            size="lg"
-          />
-          <div>{formatDuration(totalDuration)}</div>
+        <div>
+          <FontAwesomeIcon icon={faStopwatch} className="mr-2 fill-current" />
+          <span>{formatDuration(totalDuration)}</span>
         </div>
       </div>
 

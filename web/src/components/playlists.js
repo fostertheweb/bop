@@ -107,12 +107,9 @@ export default function Playlists() {
           <div>
             <FontAwesomeIcon
               icon={faSpotify}
-              size="lg"
-              className="mr-2 fill-current"
+              className="mr-2 text-gray-500 fill-current"
             />
-            <span className="border-b-2 border-transparent">
-              {user ? `${user.id}'s` : null} Spotify Playlists
-            </span>
+            <span>{user ? `${user.id}'s` : null} Spotify Playlists</span>
           </div>
         </div>
       </div>
