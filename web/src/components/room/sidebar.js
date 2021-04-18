@@ -3,6 +3,7 @@ import {
   faSearch,
   faListMusic,
   faSpinnerThird,
+  faSlidersHSquare,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
@@ -19,6 +20,9 @@ export default function Sidebar() {
       </SidebarLink>
       <SidebarLink path="playlists" icon={faListMusic}>
         Playlists
+      </SidebarLink>
+      <SidebarLink path="settings" icon={faSlidersHSquare}>
+        Settings
       </SidebarLink>
     </div>
   );
@@ -67,7 +71,7 @@ export function SidebarLink({ path, icon, children }) {
     <NavLink
       to={path}
       className="block p-2 mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700"
-      activeClassName="bg-gray-400 text-gray-900"
+      activeClassName="bg-white text-gray-900 dark:bg-black dark:text-gray-500"
       activeStyle={{ color: darkAccent }}>
       <FontAwesomeIcon icon={icon} className="fill-current" size="lg" />
       <div className="mt-1">{children}</div>

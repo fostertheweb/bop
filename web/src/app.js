@@ -7,10 +7,13 @@ import { Room } from "containers/room";
 import Join from "containers/join";
 import { RecoilRoot } from "recoil";
 import { PersistenceObserver, initializeState } from "./store";
+import useDarkMode from "hooks/use-dark-mode";
 
 function App() {
+  const { ThemeProvider } = useDarkMode();
   return (
     <RecoilRoot initializeState={initializeState}>
+      <ThemeProvider />
       <PersistenceObserver />
       <Routes>
         <Route path="/" element={<Start />} />

@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faClock,
-  faListMusic,
-  faPlayCircle,
-} from "@fortawesome/pro-duotone-svg-icons";
+import { faListMusic, faPlayCircle } from "@fortawesome/pro-duotone-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
 import { useGetTrackById } from "hooks/use-tracks";
 import {
@@ -14,8 +10,6 @@ import {
   faMusic,
   faAlbumCollection,
   faSearch,
-  faMusicSlash,
-  faCloudMusic,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 

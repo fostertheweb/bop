@@ -1,11 +1,8 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCompactDisc,
-  faMusicSlash,
-} from "@fortawesome/pro-duotone-svg-icons";
+import { faCompactDisc } from "@fortawesome/pro-duotone-svg-icons";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
-import { faPlay, faPlayCircle } from "@fortawesome/pro-solid-svg-icons";
+import { faPlay } from "@fortawesome/pro-solid-svg-icons";
 
 export default function CurrentPlayback({ item, loading, playing }) {
   const playQueue = usePlayQueue();
@@ -59,20 +56,6 @@ function PlayButton({ disabled, onClick }) {
         className="fill-current drop-shadow"
       />
     </button>
-  );
-}
-
-function Idle() {
-  return (
-    <div
-      style={{ width: "48px", height: "48px" }}
-      className="flex items-center justify-center bg-gray-500 rounded shadow opacity-50">
-      <FontAwesomeIcon
-        icon={faMusicSlash}
-        size="lg"
-        className="text-gray-300 fill-current"
-      />
-    </div>
   );
 }
 
