@@ -53,7 +53,11 @@ function PlayButton({ disabled, onClick }) {
       className={`flex items-center justify-center ${
         disabled ? "text-gray-500" : "text-gray-300 hover:text-gray-100"
       }`}>
-      <FontAwesomeIcon icon={faPlay} size="2x" className="fill-current" />
+      <FontAwesomeIcon
+        icon={faPlay}
+        size="2x"
+        className="fill-current drop-shadow"
+      />
     </button>
   );
 }

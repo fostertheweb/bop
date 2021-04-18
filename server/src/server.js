@@ -109,10 +109,15 @@ app.listen(process.env.PORT, function (err) {
           id,
           video.durationFormatted,
         );
+
         const stream = ytdl(video.url, {
           type: "opus",
           filter: "audioonly",
           dlChunkSize: 0,
+        });
+
+        stream.on("end", () => {
+          stream.destroy();
         });
 
         const connection = await getVoiceConnection(room.guild_id);
@@ -138,6 +143,7 @@ app.listen(process.env.PORT, function (err) {
         });
 
         dispatcher.on("finish", async () => {
+          dispatcher.destroy();
           app.io.to(roomId).emit("PLAYBACK_END");
         });
 
@@ -185,8 +191,10 @@ async function getVoiceConnection(guildId) {
 async function getYouTubeVideo(name, artists) {
   // get youtube video url
   let video = await YouTube.searchOne(`${name} ${artists[0].name} audio`);
+  console.log("YouTube Request");
   if (!video) {
     video = await YouTube.searchOne(`${name} ${artists[0].name}`);
+    console.log("YouTube Request 2");
   }
 
   return video;

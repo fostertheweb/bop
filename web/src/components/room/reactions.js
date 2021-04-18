@@ -16,7 +16,11 @@ export default function Reactions({ disabled }) {
         disabled={disabled}
         className={disabled ? "text-gray-500" : "hover:text-white"}
         onClick={() => setLiked(!liked)}>
-        <FontAwesomeIcon icon={liked ? faHeartSolid : faHeart} size="lg" />
+        <FontAwesomeIcon
+          className="drop-shadow"
+          icon={liked ? faHeartSolid : faHeart}
+          size="lg"
+        />
       </button>
       <div className="w-8"></div>
       <button
@@ -24,6 +28,7 @@ export default function Reactions({ disabled }) {
         className={disabled ? "text-gray-500" : "hover:text-white"}
         onClick={() => setSkipped(!skipped)}>
         <FontAwesomeIcon
+          className="drop-shadow"
           icon={skipped ? faThumbsDownSolid : faThumbsDown}
           size="lg"
         />
