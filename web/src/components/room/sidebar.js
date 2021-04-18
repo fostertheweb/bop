@@ -3,7 +3,6 @@ import {
   faSearch,
   faListMusic,
   faSpinnerThird,
-  faSlidersHSquare,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
@@ -21,9 +20,9 @@ export default function Sidebar() {
       <SidebarLink path="playlists" icon={faListMusic}>
         Playlists
       </SidebarLink>
-      <SidebarLink path="settings" icon={faSlidersHSquare}>
+      {/* <SidebarLink path="settings" icon={faSlidersHSquare}>
         Settings
-      </SidebarLink>
+      </SidebarLink> */}
     </div>
   );
 }
