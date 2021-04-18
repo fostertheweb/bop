@@ -1,7 +1,27 @@
+@tailwind base;
+@tailwind components;
+
+.h-content {
+  height: calc(100vh - (60px + 2rem));
+}
+
+.text-shadow {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.album-backdrop {
+  width: calc(60px + 2rem);
+  height: calc(60px + 2rem);
+  background: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  font-family: "Varta", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -25,3 +45,5 @@ code {
 .small-caps {
   font-variant: small-caps;
 }
+
+@tailwind utilities;

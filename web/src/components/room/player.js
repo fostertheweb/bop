@@ -10,9 +10,6 @@ import { useVibrant } from "hooks/use-vibrant";
 import CurrentPlayback from "components/room/current-playback";
 import { useGetTrackById } from "hooks/use-tracks";
 import { useIsPlaying, useIsPlaybackLoading } from "hooks/use-player";
-import { usePlayQueue, useQueue } from "hooks/use-queue";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlayCircle } from "@fortawesome/pro-duotone-svg-icons";
 
 export default function Player() {
   const { status: getPlaybackStatus } = useGetCurrentPlayback();
@@ -27,8 +24,6 @@ export default function Player() {
     getTrackStatus === "loading" ||
     isPlaybackLoading;
   const isPlaying = useIsPlaying();
-  const playQueue = usePlayQueue();
-  const { playNext } = useQueue();
 
   return (
     <PlayerBackground gradient={background} className="p-4 bg-gray-600">
@@ -40,16 +35,7 @@ export default function Player() {
               loading={loading}
               playing={isPlaying}
             />
-            <PlayButton
-              onClick={playNext}
-              show={!isPlaying && !loading}
-              disabled={playQueue.length === 0}
-            />
-            <Reactions
-              disabled={
-                (playQueue.length === 0 && !isPlaying) || !track || loading
-              }
-            />
+            <Reactions disabled={!isPlaying || !track || loading} />
           </div>
 
           <div className="h-2"></div>
@@ -61,22 +47,6 @@ export default function Player() {
         </div>
       </div>
     </PlayerBackground>
-  );
-}
-
-function PlayButton({ disabled, show, onClick }) {
-  if (!show) return null;
-
-  return (
-    <button
-      disabled={disabled}
-      onClick={onClick}
-      style={{ width: "48px", height: "48px" }}
-      className={`flex items-center justify-center ${
-        disabled ? "text-gray-500" : "text-gray-300 hover:text-gray-100"
-      }`}>
-      <FontAwesomeIcon icon={faPlayCircle} size="3x" className="fill-current" />
-    </button>
   );
 }
 

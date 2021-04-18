@@ -4,16 +4,12 @@ import App from "./app";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import "typeface-cabin";
-import "typeface-catamaran";
-import "typeface-londrina-solid";
-
-import "./styles.css";
+import "@fontsource/varta";
 import "./index.css";
 
 ReactDOM.render(
   <Router>
-    <App className="cq-bg-dark h-full" />
+    <App className="h-full cq-bg-dark" />
   </Router>,
   document.getElementById("root"),
 );

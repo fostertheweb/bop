@@ -4,8 +4,13 @@ import {
   faCompactDisc,
   faMusicSlash,
 } from "@fortawesome/pro-duotone-svg-icons";
+import { usePlayQueue, useQueue } from "hooks/use-queue";
+import { faPlay, faPlayCircle } from "@fortawesome/pro-solid-svg-icons";
 
 export default function CurrentPlayback({ item, loading, playing }) {
+  const playQueue = usePlayQueue();
+  const { playNext } = useQueue();
+
   return (
     <div className="flex items-center text-gray-400">
       {item && playing ? (
@@ -13,7 +18,7 @@ export default function CurrentPlayback({ item, loading, playing }) {
       ) : loading ? (
         <Loading />
       ) : (
-        <Idle />
+        <PlayButton onClick={playNext} disabled={playQueue.length === 0} />
       )}
     </div>
   );
@@ -36,6 +41,20 @@ function Playback({ item: { id, album, name, artists } }) {
         <div style={{ color: "rgba(255,255,255,0.6)" }}>{artists[0].name}</div>
       </div>
     </div>
+  );
+}
+
+function PlayButton({ disabled, onClick }) {
+  return (
+    <button
+      disabled={disabled}
+      onClick={onClick}
+      style={{ width: "48px", height: "48px" }}
+      className={`flex items-center justify-center ${
+        disabled ? "text-gray-500" : "text-gray-300 hover:text-gray-100"
+      }`}>
+      <FontAwesomeIcon icon={faPlay} size="2x" className="fill-current" />
+    </button>
   );
 }
 

@@ -42,7 +42,11 @@ export default function Queue() {
         </div>
 
         <div className="flex items-center gap-2">
-          <FontAwesomeIcon icon={faStopwatch} className="fill-current" />
+          <FontAwesomeIcon
+            icon={faStopwatch}
+            className="fill-current"
+            size="lg"
+          />
           <div>{formatDuration(totalDuration)}</div>
         </div>
       </div>

@@ -47,7 +47,19 @@ discord.on("message", async (message) => {
       };
 
       // bot joins voice chat
-      await channel.join();
+      const connection = await channel.join();
+      connection.setSpeaking("SOUNDSHARE");
+      connection.voice.setDeaf(true);
+
+      connection.on("disconnect", () => {
+        // disconnected modal
+      });
+      connection.on("reconnecting", () => {
+        // update message to user
+      });
+      connection.on("ready", () => {
+        // close message on ui
+      });
 
       // save room details
       await redis.sendCommand(setJSON(`rooms:${room.id}`, room));
@@ -103,26 +115,18 @@ app.listen(process.env.PORT, function (err) {
         const [trackId] = await app.redis.lrange(`rooms:${roomId}:queue`, 0, 0);
         const { id, name, artists } = await getSpotifyTrack(trackId);
         const video = await getYouTubeVideo(name, artists);
-
-        const connection = await getVoiceConnection(room.guild_id);
+        const currentPlayback = buildCurrentPlayback(
+          id,
+          video.durationFormatted,
+        );
         const stream = ytdl(video.url, {
           type: "opus",
           filter: "audioonly",
           dlChunkSize: 0,
         });
-        const dispatcher = connection.play(stream);
 
-        const currentPlayback = buildCurrentPlayback(
-          id,
-          video.durationFormatted,
-        );
-        // save current playback
-        await app.redis.sendCommand(
-          setJSON(`rooms:${roomId}:playing`, currentPlayback),
-        );
-
-        // remove currently playing song from queue
-        await redis.lrem(`rooms:${roomId}:queue`, 0, id);
+        const connection = await getVoiceConnection(room.guild_id);
+        const dispatcher = connection.play(stream, { volume: false });
 
         dispatcher.on("start", () => {
           app.io.to(roomId).emit("PLAYBACK_START", currentPlayback);
@@ -131,6 +135,14 @@ app.listen(process.env.PORT, function (err) {
         dispatcher.on("finish", async () => {
           app.io.to(roomId).emit("PLAYBACK_END");
         });
+
+        // save current playback
+        await app.redis.sendCommand(
+          setJSON(`rooms:${roomId}:playing`, currentPlayback),
+        );
+
+        // remove currently playing song from queue
+        await redis.lrem(`rooms:${roomId}:queue`, 0, id);
       } catch (err) {
         app.log.error(err);
       }
@@ -157,6 +169,7 @@ async function getVoiceConnection(guildId) {
   let connection = bot.voice.connection;
 
   if (!connection) {
+    // get channel from host.id
     const channel = await discord.channels.fetch(bot.voice.channelID);
     connection = await channel.join();
   }
