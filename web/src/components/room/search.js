@@ -41,7 +41,7 @@ export default function Search() {
   return (
     <>
       <div className="sticky top-0 p-2 bg-white">
-        <div className="flex items-center w-full text-base text-gray-600 bg-gray-100 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-800">
+        <div className="w-full text-base text-gray-600 bg-gray-200 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-100">
           <FontAwesomeIcon
             icon={isLoading ? faSpinnerThird : faSpotify}
             size="lg"
@@ -49,8 +49,8 @@ export default function Search() {
             spin={isLoading}
           />
           <input
-            className="w-full p-2 text-base text-gray-600 bg-transparent rounded appearance-none focus:outline-none"
-            id="search"
+            className="w-auto p-2 text-base text-gray-600 bg-transparent rounded appearance-none focus:outline-none"
+            id="cqSearch"
             placeholder="Search by track or artist"
             onChange={({ target }) => setQuery(target.value)}
             autoComplete="false"

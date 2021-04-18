@@ -102,12 +102,13 @@ export default function Playlists() {
 
   return (
     <>
-      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-white">
-        <div className="flex items-center gap-2">
+      <div className="sticky top-0 flex items-center justify-between w-full p-4 text-base text-gray-600 bg-white">
+        <div className="flex items-center border-2 border-transparent">
           <div>
             <FontAwesomeIcon
               icon={faSpotify}
               className="mr-2 text-gray-500 fill-current"
+              size="lg"
             />
             <span>{user ? `${user.id}'s` : null} Spotify Playlists</span>
           </div>

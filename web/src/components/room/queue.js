@@ -28,7 +28,7 @@ export default function Queue() {
       {/* gradient background for sticky headers */}
       <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-gray-200">
         <div className="flex items-center gap-2">
-          <div>
+          <div className="border-2 border-transparent">
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
             <span>Play Queue</span>
           </div>
