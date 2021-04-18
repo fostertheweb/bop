@@ -13,7 +13,7 @@ import { useRoom } from "hooks/use-rooms";
 export default function Sidebar() {
   const { id } = useParams();
   return (
-    <div className="p-2 bg-gray-200">
+    <div className="flex flex-col gap-2 p-2 text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-gray-600">
       <DiscordLink path={`/rooms/${id}`} />
       <SidebarLink path="search" icon={faSearch}>
         Search
@@ -42,7 +42,7 @@ function DiscordLink({ path }) {
   return (
     <NavLink
       to={path}
-      className="flex items-center justify-center mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700">
+      className="flex items-center justify-center text-sm text-center transition duration-150 ease-in-out rounded cursor-pointer">
       <div className="flex items-center">
         <div className="flex-shrink-0">
           <img
@@ -50,7 +50,7 @@ function DiscordLink({ path }) {
             width="56"
             height="56"
             alt="Discord Server Icon"
-            className="rounded shadow"
+            className="rounded shadow filter hover:brightness-110"
             style={
               active
                 ? {
@@ -67,12 +67,14 @@ function DiscordLink({ path }) {
 
 export function SidebarLink({ path, icon, children }) {
   const { darkAccent } = useAccentColors();
+  const color = darkAccent === "initial" ? "initial" : darkAccent;
+
   return (
     <NavLink
       to={path}
-      className="block p-2 mt-2 text-sm text-center text-gray-600 transition duration-150 ease-in-out rounded cursor-pointer first:mt-0 hover:text-gray-700"
-      activeClassName="bg-white text-gray-900 dark:bg-black dark:text-gray-500"
-      activeStyle={{ color: darkAccent }}>
+      className="block p-2 text-sm text-center transition duration-150 ease-in-out rounded cursor-pointer hover:text-gray-700 dark:hover:text-gray-100"
+      activeClassName="bg-white dark:bg-gray-700 dark:text-gray-300"
+      activeStyle={{ color }}>
       <FontAwesomeIcon icon={icon} className="fill-current" size="lg" />
       <div className="mt-1">{children}</div>
     </NavLink>

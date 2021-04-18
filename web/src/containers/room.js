@@ -4,7 +4,7 @@ import Search from "components/room/search";
 import Playlists from "components/playlists";
 import Layout from "components/room/layout";
 import { useRoom } from "hooks/use-rooms";
-import Settings from "components/room/settings";
+// import Settings from "components/room/settings";
 
 function Info() {
   const { data: room, status } = useRoom();
@@ -47,7 +47,7 @@ export function Room() {
           <Route path="/" element={<Info />} />
           <Route path="search" element={<Search />} />
           <Route path="playlists" element={<Playlists />} />
-          <Route path="settings" element={<Settings />} />
+          {/* <Route path="settings" element={<Settings />} /> */}
         </Route>
       </Routes>
     </>

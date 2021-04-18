@@ -33,7 +33,7 @@ function Playback({ item: { id, album, name, artists } }) {
           className="rounded shadow"
         />
       </div>
-      <div className="ml-2">
+      <div className="ml-3">
         <div style={{ color: "rgba(255,255,255,0.8)" }}>{name}</div>
         <div style={{ color: "rgba(255,255,255,0.6)" }}>{artists[0].name}</div>
       </div>
@@ -53,7 +53,7 @@ function PlayButton({ disabled, onClick }) {
       <FontAwesomeIcon
         icon={faPlay}
         size="2x"
-        className="fill-current drop-shadow"
+        className="fill-current filter drop-shadow"
       />
     </button>
   );
@@ -72,7 +72,7 @@ function Loading() {
           spin
         />
       </div>
-      <div className="ml-2 animate-pulse">
+      <div className="ml-3 animate-pulse">
         <div
           className="w-40 h-2 rounded-sm"
           style={{ backgroundColor: "rgba(255,255,255,0.8)" }}></div>

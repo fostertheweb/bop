@@ -28,7 +28,7 @@ export default function Reactions({ disabled }) {
         className={disabled ? "text-gray-500" : "hover:text-white"}
         onClick={() => setSkipped(!skipped)}>
         <FontAwesomeIcon
-          className="drop-shadow"
+          className="filter drop-shadow"
           icon={skipped ? faThumbsDownSolid : faThumbsDown}
           size="lg"
         />

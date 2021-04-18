@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faListMusic, faPlayCircle } from "@fortawesome/pro-duotone-svg-icons";
-import { useGetPlayQueue } from "hooks/use-queue";
-import { useGetTrackById } from "hooks/use-tracks";
 import {
-  faStopwatch,
+  faListMusic,
+  faPlayCircle,
   faMusic,
   faAlbumCollection,
   faSearch,
 } from "@fortawesome/pro-duotone-svg-icons";
+import { useGetPlayQueue } from "hooks/use-queue";
+import { useGetTrackById } from "hooks/use-tracks";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 
 export default function Queue() {
-  const [totalDuration, setTotalDuration] = useState(0);
   const { data: queue, status: playQueueStatus } = useGetPlayQueue();
   const { remove } = useQueue();
   const playQueue = usePlayQueue();
 
-  function sumDuration(duration) {
-    setTotalDuration((total) => total + parseInt(duration));
-  }
-
   if (playQueueStatus === "loading") {
-    console.log("FETCHING THE PLAY QUEUE");
     return "Loading...";
   }
 
@@ -39,23 +34,15 @@ export default function Queue() {
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <FontAwesomeIcon icon={faStopwatch} className="mr-2 fill-current" />
-          <span>{formatDuration(totalDuration)}</span>
-        </div>
+          <span>{formatDuration(queueDuration)}</span>
+        </div> */}
       </div>
 
       {playQueue.length > 0 ? (
         queue.map((id, index) => {
-          return (
-            <Track
-              key={id}
-              id={id}
-              index={index}
-              remove={remove}
-              updateTotalDuration={sumDuration}
-            />
-          );
+          return <Track key={id} id={id} index={index} remove={remove} />;
         })
       ) : (
         <div className="flex flex-col items-center justify-center flex-grow gap-4 text-gray-600">
@@ -89,15 +76,21 @@ export default function Queue() {
   );
 }
 
-function Track({ id, index, remove, updateTotalDuration }) {
+function Track({ id, index, remove }) {
   const { data: item, status } = useGetTrackById(id);
+  // const setQueueDuration = useSetQueueDuration();
 
-  useEffect(() => {
-    if (item) {
-      updateTotalDuration(item.duration_ms);
-    }
-    // eslint-disable-next-line
-  }, [item]);
+  // useEffect(() => {
+  //   if (item) {
+  //     setQueueDuration((total) => total + parseInt(item.duration_ms));
+  //   }
+  //   // eslint-disable-next-line
+  // }, [item]);
+
+  function handleRemoveTrack(id, index, duration) {
+    remove(id, index);
+    // setQueueDuration((total) => total - parseInt(duration));
+  }
 
   if (!item || status === "loading") {
     return (
@@ -130,8 +123,7 @@ function Track({ id, index, remove, updateTotalDuration }) {
 
   return (
     <motion.div
-      onClick={() => remove(id, index)}
-      className="flex items-center w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer hover:bg-gray-300"
+      className="flex items-center justify-between w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer hover:bg-gray-300"
       variants={variants}
       initial="enter"
       animate="center"
@@ -140,19 +132,26 @@ function Track({ id, index, remove, updateTotalDuration }) {
         x: { type: "spring", stiffness: 300, damping: 200 },
         opacity: { duration: 0.2 },
       }}>
-      <div className="">
+      <div className="flex items-center">
         <img
           src={item.album.images[2].url}
           alt="album art"
           className="w-12 h-12 rounded shadow"
         />
-      </div>
-      <div className="w-3"></div>
-      <div>
-        <div className="text-gray-700">{item.name}</div>
-        <div className="text-gray-600">
-          {item.artists.map((artist) => artist.name).join(", ")}
+        <div className="w-3"></div>
+        <div>
+          <div className="text-gray-700">{item.name}</div>
+          <div className="text-gray-600">
+            {item.artists.map((artist) => artist.name).join(", ")}
+          </div>
         </div>
+      </div>
+      <div className="">
+        <button
+          onClick={() => handleRemoveTrack(id, index, item.duration_ms)}
+          className="flex items-center px-2 py-1 text-gray-400 bg-gray-200 rounded hover:bg-gray-400 hover:text-gray-600">
+          <FontAwesomeIcon icon={faTimes} size="lg" />
+        </button>
       </div>
     </motion.div>
   );
@@ -179,10 +178,10 @@ const variants = {
   },
 };
 
-function formatDuration(ms) {
-  const s = Math.ceil(ms / 1000);
-  const minutes = Math.ceil(s / 60);
-  const seconds = s % 60;
+// function formatDuration(ms) {
+//   const s = Math.ceil(ms / 1000);
+//   const minutes = Math.ceil(s / 60);
+//   const seconds = s % 60;
 
-  return `${minutes}:${String(seconds).length === 1 ? "0" + seconds : seconds}`;
-}
+//   return `${minutes}:${String(seconds).length === 1 ? "0" + seconds : seconds}`;
+// }

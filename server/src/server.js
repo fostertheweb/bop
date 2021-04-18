@@ -91,10 +91,12 @@ app.listen(process.env.PORT, function (err) {
 
     socket.on("ADD_TO_QUEUE", async (trackId) => {
       await redis.rpush(`rooms:${roomId}:queue`, trackId);
+      app.io.to(roomId).emit("QUEUE_UPDATED");
     });
 
     socket.on("REMOVE_FROM_QUEUE", async (trackId) => {
       await redis.lrem(`rooms:${roomId}:queue`, 0, trackId);
+      app.io.to(roomId).emit("QUEUE_UPDATED");
     });
 
     socket.on("PLAY_NEXT", async () => {

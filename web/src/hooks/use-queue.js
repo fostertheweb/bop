@@ -51,6 +51,10 @@ export function useQueue() {
       playNext();
     });
 
+    socket.on("QUEUE_UPDATED", () => {
+      queryCache.refetchQueries(["playQueue", roomId]);
+    });
+
     socketRef.current = socket;
     // eslint-disable-next-line
   }, []);
@@ -93,4 +97,17 @@ export function useGetPlayQueue() {
       },
     },
   );
+}
+
+export const queueDurationState = atom({
+  key: "crowdQ.queueDuration",
+  default: 0,
+});
+
+export function useQueueDuration() {
+  return useRecoilValue(queueDurationState);
+}
+
+export function useSetQueueDuration() {
+  return useSetRecoilState(queueDurationState);
 }

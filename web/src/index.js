@@ -4,12 +4,12 @@ import App from "./app";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import "@fontsource/commissioner";
+import "@fontsource/hind-siliguri";
 import "./index.css";
 
 ReactDOM.render(
   <Router>
-    <App className="h-full cq-bg-dark" />
+    <App className="h-full" />
   </Router>,
   document.getElementById("root"),
 );
