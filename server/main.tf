@@ -12,40 +12,11 @@ data "aws_secretsmanager_secret_version" "config" {
   secret_id = data.aws_secretsmanager_secret.config.id
 }
 
-resource "null_resource" "build" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = "yarn workspace server run build"
-  }
-}
-
-data "archive_file" "dist_zip" {
-  type        = "zip"
-  source_dir  = "./server/dist"
-  output_path = "./server/dist.zip"
-
-  depends_on = [
-    null_resource.build
-  ]
-}
-
 resource "aws_s3_bucket" "dist" {
   bucket = "${var.application}-server-dist"
   acl    = "private"
 
   tags = local.common_tags
-}
-
-resource "aws_s3_bucket_object" "dist" {
-  key    = "dist.zip"
-  bucket = aws_s3_bucket.dist.id
-  source = "./server/dist.zip"
-  etag   = data.archive_file.dist_zip.output_md5
-
-  depends_on = [aws_s3_bucket.dist, data.archive_file.dist_zip]
 }
 
 data "cloudinit_config" "app_config" {

@@ -10,5 +10,10 @@ phases:
       - yarn
   build:
     commands:
+      - yarn run build
+  post_build:
+    commands:
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
       - terraform apply -auto-approve -input=false
+      - aws s3 sync ./web/build s3://crowdq.fm
+      - aws s3 sync ./server/dist s3://crowdq-fm-server-dist
