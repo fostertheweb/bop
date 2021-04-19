@@ -19,7 +19,7 @@ export default function Sidebar() {
         Search
       </SidebarLink>
       <SidebarLink path="likes" icon={faHeart}>
-        Saved
+        Liked
       </SidebarLink>
       <SidebarLink path="playlists" icon={faListMusic}>
         Playlists
