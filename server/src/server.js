@@ -13,8 +13,6 @@ const spotify = new Spotify({
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
 });
 
-YouTube.set("api", process.env.YOUTUBE_API_KEY);
-
 const newRoomId = new ShortUniqueId();
 const COMMAND = "📻"; // process.env.BOT_COMMAND
 const BOT_NAME = "CrowdQ"; // process.env.BOT_NAME

@@ -14,6 +14,7 @@ const {
 } = process.env;
 
 const scope = [
+  "user-library-read",
   "user-read-private",
   "playlist-read-private",
   "playlist-modify-public",
