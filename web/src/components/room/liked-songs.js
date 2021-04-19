@@ -3,14 +3,10 @@ import { useLikedSongs } from "../../hooks/use-liked-songs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMusic } from "@fortawesome/pro-solid-svg-icons";
 import { useQueue } from "hooks/use-queue";
-import { useUserDetails } from "hooks/use-user-details";
 
 export default function LikedSongs() {
-  const { data: user, status: userStatus } = useUserDetails();
-  const { data: tracks, isFetching: isLoading } = useLikedSongs(user);
+  const { data: tracks, status } = useLikedSongs();
   const { add } = useQueue();
-
-  console.log(tracks);
 
   return (
     <>
@@ -24,7 +20,7 @@ export default function LikedSongs() {
         </div>
       </div>
 
-      {isLoading ? (
+      {status === "loading" ? (
         <SkeletonSearchResults />
       ) : (
         <div>

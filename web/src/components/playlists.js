@@ -62,7 +62,6 @@ export default function Playlists() {
               </div>
             ),
             SubCell: (cellProps) => {
-              console.log({ cellProps });
               return <>{cellProps.value}</>;
             },
           },
