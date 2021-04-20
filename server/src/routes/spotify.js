@@ -33,7 +33,6 @@ module.exports = function (app, _options, next) {
     const refresh_token = req.body.refresh_token || null;
     const params = new URLSearchParams();
     const code = req.cookies["code"];
-    console.log({ code });
     params.append("refresh_token", refresh_token);
     params.append("grant_type", "refresh_token");
     params.append("code", code);

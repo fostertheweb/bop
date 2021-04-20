@@ -26,7 +26,7 @@ function Playback({ item: { id, album, name, artists } }) {
     <div key={id} className="flex items-center w-full text-left">
       <div className="flex-shrink-0" style={{ background: "rgba(0,0,0,0.2)" }}>
         <img
-          src={album.images[2].url}
+          src={album?.images[2].url}
           width="48"
           height="48"
           alt="album art"

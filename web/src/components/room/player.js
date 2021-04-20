@@ -17,7 +17,7 @@ export default function Player() {
   const { data: track, status: getTrackStatus } = useGetTrackById(
     currentPlayback?.track_id,
   );
-  const { background, lightAccent } = useVibrant(track?.album.images[2].url);
+  const { background, lightAccent } = useVibrant(track?.album?.images[2].url);
   const isPlaybackLoading = useIsPlaybackLoading();
   const loading =
     getPlaybackStatus === "loading" ||
@@ -35,7 +35,10 @@ export default function Player() {
               loading={loading}
               playing={isPlaying}
             />
-            <Reactions disabled={!isPlaying || !track || loading} />
+            <Reactions
+              disabled={!isPlaying || !track || loading}
+              trackId={track?.id}
+            />
           </div>
 
           <div className="h-2"></div>
