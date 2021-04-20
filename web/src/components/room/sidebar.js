@@ -37,6 +37,7 @@ function DiscordLink({ path }) {
   if (status === "loading") {
     return <FontAwesomeIcon icon={faSpinnerThird} spin color={darkAccent} />;
   }
+  if (!room) return null;
 
   return (
     <NavLink

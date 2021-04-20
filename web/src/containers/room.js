@@ -12,6 +12,7 @@ function Info() {
   if (status === "loading") {
     return "Loading...";
   }
+  if (!room) return null;
 
   return (
     <div className="p-2 text-gray-800">
@@ -40,6 +41,18 @@ function Info() {
 }
 
 export function Room() {
+  const { data: room } = useRoom();
+  if (!room)
+    return (
+      <div class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 h-screen flex justify-center items-center">
+        <div className="w-1/3 h-1/3 bg-white rounded-md shadow-lg flex flex-col justify-center items-center">
+          <span className="text-4xl">This room is no longer active 😵</span>
+          <p className="text-xl p-1">
+            📻 Create a new one in your Discord server
+          </p>
+        </div>
+      </div>
+    );
   return (
     <>
       <Routes>
