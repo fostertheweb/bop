@@ -10,8 +10,12 @@ const Spotify = require("spotify-web-api-node");
 const {
   createAudioPlayer,
   joinVoiceChannel,
+  getVoiceConnection,
   createAudioResource,
   StreamType,
+  entersState,
+  AudioPlayerStatus,
+  VoiceConnectionStatus,
 } = require("@discordjs/voice");
 
 const spotify = new Spotify({
@@ -21,14 +25,20 @@ const spotify = new Spotify({
 
 const newRoomId = new ShortUniqueId();
 const COMMAND = "📻"; // process.env.BOT_COMMAND
-const BOT_NAME = "CrowdQ"; // process.env.BOT_NAME
 const WEB_URL = "https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
+
+let players = {};
+let adapters = {};
+
+discord.on("debug", console.log);
 
 discord.on("message", async (message) => {
   try {
     if (message.content === COMMAND) {
       const channel = message.member.voice.channel;
+
+      console.log({ channel });
 
       if (!channel) {
         return message.channel.send(`Oops, you are not in a voice channel.`);
@@ -55,8 +65,23 @@ discord.on("message", async (message) => {
         channelId: channel.id,
         guildId: channel.guild.id,
         selfDeaf: true,
+        debug: true,
+        adapterCreator: (methods) => {
+          console.log({ methods });
+          return {
+            sendPayload(data) {
+              return channel.guild.shard.send(data);
+            },
+            destroy() {
+              return console.log("Destroy Adapter for ", channel.guild.id);
+            },
+          };
+        },
       });
-      connection.setSpeaking("SOUNDSHARE");
+
+      console.log({ connection });
+
+      await entersState(connection, VoiceConnectionStatus.Ready, 5000);
 
       // save room details
       await redis.sendCommand(setJSON(`rooms:${room.id}`, room));
@@ -128,34 +153,50 @@ app.listen(process.env.PORT, function (err) {
         const resource = createAudioResource(stream, {
           inputType: StreamType.Opus,
         });
-        const player = createAudioPlayer();
+
+        let player;
+        if (players[room.guild_id]) {
+          player = players[room.guild_id];
+        } else {
+          player = createAudioPlayer();
+          players[room.guild_id] = player;
+        }
+
+        const connection = getVoiceConnection(room.guild_id);
+
+        console.log({ connection });
+
+        if (!connection) {
+          return app.io.to(roomId).emit("BOT_DISCONNECTED");
+        }
+
         player.play(resource);
 
-        const connection = await getVoiceConnection(room.guild_id);
-        connection.setSpeaking("SOUNDSHARE");
-        connection.voice.setDeaf(true);
+        connection.subscribe(player);
 
         connection.on("disconnect", () => {
           app.io.to(roomId).emit("BOT_DISCONNECTED");
         });
 
         connection.on("reconnecting", () => {
-          app.io.to(roomId).emit("BOT_RECONNCETING");
+          app.io.to(roomId).emit("BOT_RECONNECTING");
         });
 
         connection.on("ready", () => {
           app.io.to(roomId).emit("BOT_READY");
         });
 
-        const dispatcher = connection.play(stream, { volume: false });
+        await entersState(player, AudioPlayerStatus.Playing, 2500);
 
-        dispatcher.on("start", () => {
-          app.io.to(roomId).emit("PLAYBACK_START", currentPlayback);
-        });
+        // const dispatcher = connection.play(stream, { volume: false });
 
-        dispatcher.on("finish", async () => {
-          app.io.to(roomId).emit("PLAYBACK_END");
-        });
+        // dispatcher.on("start", () => {
+        //   app.io.to(roomId).emit("PLAYBACK_START", currentPlayback);
+        // });
+
+        // dispatcher.on("finish", async () => {
+        //   app.io.to(roomId).emit("PLAYBACK_END");
+        // });
 
         // save current playback
         await app.redis.sendCommand(
@@ -178,24 +219,6 @@ async function getSpotifyTrack(trackId) {
   spotify.setAccessToken(access_token);
   const { body: track } = await spotify.getTrack(trackId);
   return track;
-}
-
-async function getVoiceConnection(guildId) {
-  const guild = await discord.guilds.fetch(guildId);
-  const members = await guild.members.fetch({
-    query: BOT_NAME,
-    limit: 1,
-  });
-  const [bot] = members.values();
-  let connection = bot.voice.connection;
-
-  if (!connection) {
-    // get channel from host.id
-    const channel = await discord.channels.fetch(bot.voice.channelID);
-    connection = await channel.join();
-  }
-
-  return connection;
 }
 
 async function getYouTubeVideo(name, artists) {
