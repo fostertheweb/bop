@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router";
-import Queue from "components/room/queue";
-import Player from "components/room/player";
 import Sidebar from "components/room/sidebar";
+import Queue from "components/room/queue";
+import Player from "components/player";
 
 export default function Layout() {
   return (

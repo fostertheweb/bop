@@ -15,7 +15,7 @@ export function Track({ item }) {
         <img
           src={item.album.images[2].url}
           alt="album art"
-          className="shadow w-10 h-10"
+          className="w-10 h-10 shadow"
         />
       </div>
       <div className="ml-1">

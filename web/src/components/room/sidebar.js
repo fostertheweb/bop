@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useAccentColors } from "hooks/use-vibrant";
-import { useRoom } from "hooks/use-rooms";
+import { useGetRoom } from "hooks/use-rooms";
 
 export default function Sidebar() {
   const { id } = useParams();
@@ -29,7 +29,7 @@ export default function Sidebar() {
 }
 
 function DiscordLink({ path }) {
-  const { data: room, status } = useRoom();
+  const { data: room, status } = useGetRoom();
   const { darkAccent } = useAccentColors();
   const location = useLocation();
   const active = location.pathname === path;

@@ -35,3 +35,4 @@ web/src/styles.css
 *.tfvars
 web/src/styles.css
 web/build
+.terraform.lock.hcl

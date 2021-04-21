@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery } from "react-query";
-import { useGetSpotifyCredentials } from "hooks/use-spotify";
+import { useGetSpotifyCredentials } from "hooks/spotify/use-spotify";
 
 const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
