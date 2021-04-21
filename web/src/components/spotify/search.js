@@ -1,30 +1,57 @@
-import React from "react";
-import { useLikedSongs } from "../../hooks/use-liked-songs";
+import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMusic } from "@fortawesome/pro-solid-svg-icons";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useQueue } from "hooks/use-queue";
+import { useSearch } from "hooks/spotify/use-search";
+import { useDebounce } from "hooks/use-debounce";
+import {
+  faTimesCircle,
+  faMusic,
+  faSpinnerThird,
+} from "@fortawesome/pro-duotone-svg-icons";
 
-export default function LikedSongs() {
-  const { data: tracks, status } = useLikedSongs();
+export default function Search() {
   const { add } = useQueue();
+  const [query, setQuery] = useState("");
+  const debounced = useDebounce(query, 500);
+  const { isFetching: isLoading, data: tracks } = useSearch(debounced);
+  const searchInputRef = useRef(null);
 
   return (
     <>
-      {/* gradient background for sticky headers */}
-      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-white">
-        <div className="flex items-center gap-2">
-          <div className="border-2 border-transparent">
-            <FontAwesomeIcon icon={faHeart} className="mr-2 fill-current" />
-            <span>Liked Songs</span>
-          </div>
+      <div className="sticky top-0 p-2 bg-white">
+        <div className="flex items-center gap-2 p-2 text-base text-gray-600 bg-gray-200 border-2 border-gray-400 rounded focus-within:border-green-500 focus-within:bg-gray-100">
+          <FontAwesomeIcon
+            icon={isLoading ? faSpinnerThird : faSpotify}
+            size="lg"
+            className="text-gray-600 fill-current"
+            spin={isLoading}
+          />
+          <input
+            className="flex-grow text-base text-gray-600 bg-transparent rounded appearance-none focus:outline-none"
+            id="cqSearch"
+            placeholder="Search by track or artist"
+            onChange={({ target }) => setQuery(target.value)}
+            autoComplete="false"
+            ref={searchInputRef}
+          />
+          {query.length > 0 ? (
+            <button onClick={() => (searchInputRef.current.value = "")}>
+              <FontAwesomeIcon
+                icon={faTimesCircle}
+                size="lg"
+                className="text-gray-600 fill-current"
+              />
+            </button>
+          ) : null}
         </div>
       </div>
 
-      {status === "loading" ? (
+      {isLoading ? (
         <SkeletonSearchResults />
       ) : (
         <div>
-          {tracks?.map(({ track: item }) => (
+          {tracks?.map((item) => (
             <button
               onClick={() => add(item.id)}
               key={item.id}

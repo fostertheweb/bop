@@ -8,7 +8,7 @@ import {
   useCheckIfSavedTrack,
   useRemoveTrack,
   useSaveTrack,
-} from "hooks/use-liked-songs";
+} from "hooks/spotify/use-liked-songs";
 import React, { useState } from "react";
 
 export default function Reactions({ disabled, trackId }) {

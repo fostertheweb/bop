@@ -10,7 +10,7 @@ import {
   faSearch,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { useGetPlayQueue } from "hooks/use-queue";
-import { useGetTrackById } from "hooks/use-tracks";
+import { useGetTrackById } from "hooks/spotify/use-tracks";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 

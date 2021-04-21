@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { useLoginUrl, useSetRedirectTo } from "hooks/use-login";
+import { useLoginUrl, useSetRedirectTo } from "hooks/spotify/use-login";
 
 export function LoginButton() {
   const url = useLoginUrl();

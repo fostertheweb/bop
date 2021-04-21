@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { parse } from "query-string";
-import { useLogin, useRedirectTo } from "hooks/use-login";
+import { useLogin, useRedirectTo } from "hooks/spotify/use-login";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons";
 

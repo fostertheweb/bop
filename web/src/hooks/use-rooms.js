@@ -23,14 +23,14 @@ export function useSetRoomId() {
   return useSetRecoilState(roomIdState);
 }
 
-export function useRooms() {
+export function useGetRooms() {
   return useQuery("rooms", async function () {
     const { data } = await axios.get(`${API_URL}/rooms`);
     return data;
   });
 }
 
-export function useRoom() {
+export function useGetRoom() {
   const { id } = useParams();
   const setRoomId = useSetRoomId();
 
