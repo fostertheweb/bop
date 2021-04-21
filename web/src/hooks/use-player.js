@@ -1,5 +1,5 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
-import { userAccessTokenState } from "hooks/use-login";
+import { userAccessTokenState } from "hooks/spotify/use-login";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { useMutation, useQueryCache } from "react-query";
 import { useSetCurrentPlayback } from "hooks/use-current-playback";

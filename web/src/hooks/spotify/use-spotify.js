@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import axios from "axios";
-import { userAccessTokenState } from "./use-login";
+import { userAccessTokenState } from "hooks/spotify/use-login";
 import { useRecoilValue } from "recoil";
 
 const {
@@ -15,7 +15,7 @@ export function useGetSpotifyCredentials() {
   });
 }
 
-export function useSpotifyQuery(path) {
+export function useSpotifyClientQuery(path) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
   // const userRefreshToken = useRecoilValue(userRefreshTokenAtom);
   // const queryCache = useQueryCache();
@@ -38,7 +38,30 @@ export function useSpotifyQuery(path) {
   );
 }
 
-export function useSpotifyMutation(path) {
+export function useSpotifyUserQuery(path) {
+  const userAccessToken = useRecoilValue(userAccessTokenState);
+  // const userRefreshToken = useRecoilValue(userRefreshTokenAtom);
+  // const queryCache = useQueryCache();
+
+  return useQuery(
+    path,
+    async () => {
+      const { data } = await axios.get(SPOTIFY_API_URL + path, {
+        headers: {
+          Authorization: `Bearer ${userAccessToken}`,
+        },
+      });
+      return data;
+    },
+    {
+      onError(err) {
+        console.error(err);
+      },
+    },
+  );
+}
+
+export function useSpotifyUserMutation(path) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
   // const userRefreshToken = useRecoilValue(userRefreshTokenAtom);
   // const queryCache = useQueryCache();

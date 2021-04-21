@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { userAccessTokenState } from "hooks/use-login";
+import { userAccessTokenState } from "hooks/spotify/use-login";
 import { atom, selector, useRecoilValue } from "recoil";
 
 const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;

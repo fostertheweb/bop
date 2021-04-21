@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
-import { userAccessTokenState } from "hooks/use-login";
+import { userAccessTokenState } from "hooks/spotify/use-login";
 import { useSetIsPlaybackLoading, useSetIsPlaying } from "hooks/use-player";
 import axios from "axios";
 import { useParams } from "react-router";

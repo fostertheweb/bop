@@ -1,8 +1,8 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { faDiscord, faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
-import { useLoginUrl } from "hooks/use-login";
+import { useLoginUrl } from "hooks/spotify/use-login";
 
 export function LoginButton({ loading, redirect_uri }) {
   const url = useLoginUrl(redirect_uri);

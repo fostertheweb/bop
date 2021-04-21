@@ -3,11 +3,12 @@ import {
   faSearch,
   faListMusic,
   faSpinnerThird,
+  faHeart,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useAccentColors } from "hooks/use-vibrant";
-import { useRoom } from "hooks/use-rooms";
+import { useGetRoom } from "hooks/use-rooms";
 
 export default function Sidebar() {
   const { id } = useParams();
@@ -17,18 +18,18 @@ export default function Sidebar() {
       <SidebarLink path="search" icon={faSearch}>
         Search
       </SidebarLink>
+      <SidebarLink path="likes" icon={faHeart}>
+        Liked
+      </SidebarLink>
       <SidebarLink path="playlists" icon={faListMusic}>
         Playlists
       </SidebarLink>
-      {/* <SidebarLink path="settings" icon={faSlidersHSquare}>
-        Settings
-      </SidebarLink> */}
     </div>
   );
 }
 
 function DiscordLink({ path }) {
-  const { data: room, status } = useRoom();
+  const { data: room, status } = useGetRoom();
   const { darkAccent } = useAccentColors();
   const location = useLocation();
   const active = location.pathname === path;
@@ -37,6 +38,7 @@ function DiscordLink({ path }) {
   if (status === "loading") {
     return <FontAwesomeIcon icon={faSpinnerThird} spin color={darkAccent} />;
   }
+  if (!room) return null;
 
   return (
     <NavLink
