@@ -7,6 +7,12 @@ const { redis, setJSON, getJSON } = require("./queue");
 const discord = require("./shared/discord.js");
 const util = require("util");
 const Spotify = require("spotify-web-api-node");
+const {
+  createAudioPlayer,
+  joinVoiceChannel,
+  createAudioResource,
+  StreamType,
+} = require("@discordjs/voice");
 
 const spotify = new Spotify({
   clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -45,9 +51,12 @@ discord.on("message", async (message) => {
       };
 
       // bot joins voice chat
-      const connection = await channel.join();
+      const connection = joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        selfDeaf: true,
+      });
       connection.setSpeaking("SOUNDSHARE");
-      connection.voice.setDeaf(true);
 
       // save room details
       await redis.sendCommand(setJSON(`rooms:${room.id}`, room));
@@ -116,9 +125,11 @@ app.listen(process.env.PORT, function (err) {
           dlChunkSize: 0,
         });
 
-        stream.on("end", () => {
-          stream.destroy();
+        const resource = createAudioResource(stream, {
+          inputType: StreamType.Opus,
         });
+        const player = createAudioPlayer();
+        player.play(resource);
 
         const connection = await getVoiceConnection(room.guild_id);
         connection.setSpeaking("SOUNDSHARE");
@@ -143,7 +154,6 @@ app.listen(process.env.PORT, function (err) {
         });
 
         dispatcher.on("finish", async () => {
-          dispatcher.destroy();
           app.io.to(roomId).emit("PLAYBACK_END");
         });
 
