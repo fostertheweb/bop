@@ -17,7 +17,7 @@ export function useGetLikedSongs() {
       });
       return data.items;
     },
-    { retry: false, refetchOnWindowFocus: false },
+    { refetchOnWindowFocus: false },
   );
 }
 

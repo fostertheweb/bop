@@ -7,15 +7,12 @@ const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
 
 export function useGetPlaylists(userDetails) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
-  return useQuery(userDetails && ["playlists", userDetails.id], async () => {
-    const { data } = await axios.get(
-      `${SPOTIFY_API_URL}/users/${userDetails.id}/playlists`,
-      {
-        headers: {
-          Authorization: `Bearer ${userAccessToken}`,
-        },
+  return useQuery(userDetails && "playlists", async () => {
+    const { data } = await axios.get(`${SPOTIFY_API_URL}/me/playlists`, {
+      headers: {
+        Authorization: `Bearer ${userAccessToken}`,
       },
-    );
+    });
     return data;
   });
 }

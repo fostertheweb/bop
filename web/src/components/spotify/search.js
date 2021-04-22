@@ -53,7 +53,7 @@ export default function Search() {
         <div>
           {tracks?.map((item) => (
             <button
-              onClick={() => add(item.id)}
+              onClick={() => add(item)}
               key={item.id}
               className="flex items-center w-full px-3 py-2 text-left border-b border-gray-200 hover:bg-gray-100">
               <div className="">

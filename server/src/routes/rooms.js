@@ -81,10 +81,9 @@ module.exports = function (app, _options, next) {
       const playback = JSON.parse(
         await app.redis.sendCommand(getJSON(`rooms:${id}:playing`)),
       );
-      const guild = await app.discord().guilds.fetch(room.guild_id);
-      const members = await guild.members.fetch({ query: BOT_NAME, limit: 1 });
-      const [bot] = members.values();
-      const connection = bot.voice.connection;
+      const connection = await app
+        .discord()
+        .voice.connections.get(room.guild_id);
       const progress_ms = connection.dispatcher.streamTime || 0;
 
       return { ...playback, progress_ms };
