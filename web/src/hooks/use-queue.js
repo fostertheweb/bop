@@ -57,6 +57,14 @@ export function useQueue() {
       queryCache.refetchQueries(["playQueue", roomId]);
     });
 
+    socket.on("BOT_DISCONNECTED", () => {
+      console.log("Bot Disconnected");
+    });
+
+    socket.on("BOT_RECONNECTING", () => {
+      console.log("Bot Reconnecting");
+    });
+
     socketRef.current = socket;
     // eslint-disable-next-line
   }, []);
@@ -65,9 +73,9 @@ export function useQueue() {
     if (playQueue.includes(track.id)) {
       console.log("Already in queue.");
     } else {
-      socketRef.current.emit("ADD_TO_QUEUE", track.id);
       queryCache.setQueryData(["getTrack", track.id], track);
       setPlayQueue((queue) => [...queue, track.id]);
+      socketRef.current.emit("ADD_TO_QUEUE", track.id);
     }
   }
 
