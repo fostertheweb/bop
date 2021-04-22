@@ -73,9 +73,9 @@ export function useQueue() {
     if (playQueue.includes(track.id)) {
       console.log("Already in queue.");
     } else {
+      queryCache.setQueryData(["getTrack", track.id], track);
       setPlayQueue((queue) => [...queue, track.id]);
       socketRef.current.emit("ADD_TO_QUEUE", track.id);
-      queryCache.setQueryData(["getTrack", track.id], track);
     }
   }
 
