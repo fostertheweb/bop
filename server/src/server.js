@@ -172,10 +172,8 @@ async function getSpotifyTrack(trackId) {
 async function getYouTubeVideo(name, artists) {
   // get youtube video url
   let video = await YouTube.searchOne(`${name} "${artists[0].name}" audio`);
-  console.log("YouTube Request");
   if (!video) {
     video = await YouTube.searchOne(`${name} "${artists[0].name}"`);
-    console.log("YouTube Request 2");
   }
 
   return video;
