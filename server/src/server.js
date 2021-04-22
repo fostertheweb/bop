@@ -53,7 +53,7 @@ discord.on("message", async (message) => {
       });
 
       connection.on("reconnecting", () => {
-        app.io.to(room.id).emit("BOT_RECONNCETING");
+        app.io.to(room.id).emit("BOT_RECONNECTING");
       });
 
       connection.on("ready", () => {
