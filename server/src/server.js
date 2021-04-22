@@ -15,7 +15,6 @@ const spotify = new Spotify({
 
 const newRoomId = new ShortUniqueId();
 const COMMAND = "📻"; // process.env.BOT_COMMAND
-const BOT_NAME = "CrowdQ"; // process.env.BOT_NAME
 const WEB_URL = "https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
 
@@ -48,6 +47,18 @@ discord.on("message", async (message) => {
       const connection = await channel.join();
       connection.setSpeaking("SOUNDSHARE");
       connection.voice.setDeaf(true);
+
+      connection.on("disconnect", () => {
+        app.io.to(room.id).emit("BOT_DISCONNECTED");
+      });
+
+      connection.on("reconnecting", () => {
+        app.io.to(room.id).emit("BOT_RECONNCETING");
+      });
+
+      connection.on("ready", () => {
+        app.io.to(room.id).emit("BOT_READY");
+      });
 
       // save room details
       await redis.sendCommand(setJSON(`rooms:${room.id}`, room));
@@ -116,25 +127,14 @@ app.listen(process.env.PORT, function (err) {
           dlChunkSize: 0,
         });
 
-        stream.on("end", () => {
-          stream.destroy();
-        });
+        const connection = discord.voice.connections.get(room.guild_id);
 
-        const connection = await getVoiceConnection(room.guild_id);
+        if (!connection) {
+          throw new Error("No voice connection found.");
+        }
+
         connection.setSpeaking("SOUNDSHARE");
         connection.voice.setDeaf(true);
-
-        connection.on("disconnect", () => {
-          app.io.to(roomId).emit("BOT_DISCONNECTED");
-        });
-
-        connection.on("reconnecting", () => {
-          app.io.to(roomId).emit("BOT_RECONNCETING");
-        });
-
-        connection.on("ready", () => {
-          app.io.to(roomId).emit("BOT_READY");
-        });
 
         const dispatcher = connection.play(stream, { volume: false });
 
@@ -143,7 +143,6 @@ app.listen(process.env.PORT, function (err) {
         });
 
         dispatcher.on("finish", async () => {
-          dispatcher.destroy();
           app.io.to(roomId).emit("PLAYBACK_END");
         });
 
@@ -168,24 +167,6 @@ async function getSpotifyTrack(trackId) {
   spotify.setAccessToken(access_token);
   const { body: track } = await spotify.getTrack(trackId);
   return track;
-}
-
-async function getVoiceConnection(guildId) {
-  const guild = await discord.guilds.fetch(guildId);
-  const members = await guild.members.fetch({
-    query: BOT_NAME,
-    limit: 1,
-  });
-  const [bot] = members.values();
-  let connection = bot.voice.connection;
-
-  if (!connection) {
-    // get channel from host.id
-    const channel = await discord.channels.fetch(bot.voice.channelID);
-    connection = await channel.join();
-  }
-
-  return connection;
 }
 
 async function getYouTubeVideo(name, artists) {

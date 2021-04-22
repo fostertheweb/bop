@@ -44,7 +44,7 @@ export default function Playlists() {
 
 function PlaylistsTable({ data }) {
   return data.map((playlist) => (
-    <Disclosure as="div" className="">
+    <Disclosure as="div" key={playlist.id}>
       {({ open }) => (
         <>
           <Disclosure.Button className="flex items-center justify-between w-full px-4 py-2 text-gray-700 hover:bg-blue-100">
@@ -107,7 +107,7 @@ function Tracks({ data }) {
           <div
             key={`${track.id}-expanded-${i}`}
             className="flex items-center w-full px-2 text-sm text-gray-800 cursor-pointer hover:bg-purple-200"
-            onClick={() => add(track.id)}>
+            onClick={() => add(track)}>
             <div style={{ width: "30%" }} className="p-1 truncate">
               {track.name}
             </div>

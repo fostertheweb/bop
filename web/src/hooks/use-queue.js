@@ -59,8 +59,9 @@ export function useQueue() {
     // eslint-disable-next-line
   }, []);
 
-  function add(trackId) {
-    socketRef.current.emit("ADD_TO_QUEUE", trackId);
+  function add(track) {
+    socketRef.current.emit("ADD_TO_QUEUE", track.id);
+    queryCache.setQueryData(["getTrack", track.id], track);
     queryCache.refetchQueries(["playQueue", roomId]);
   }
 
