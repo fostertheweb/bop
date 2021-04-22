@@ -31,6 +31,8 @@ export function useQueue() {
   const queryCache = useQueryCache();
   const roomId = useRoomId();
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
+  const playQueue = usePlayQueue();
+  const setPlayQueue = useSetPlayQueue();
 
   useEffect(() => {
     const socket = io(API_URL, {
@@ -60,20 +62,23 @@ export function useQueue() {
   }, []);
 
   function add(track) {
-    socketRef.current.emit("ADD_TO_QUEUE", track.id);
-    queryCache.setQueryData(["getTrack", track.id], track);
-    queryCache.refetchQueries(["playQueue", roomId]);
+    if (playQueue.includes(track.id)) {
+      console.log("Already in queue.");
+    } else {
+      socketRef.current.emit("ADD_TO_QUEUE", track.id);
+      queryCache.setQueryData(["getTrack", track.id], track);
+      setPlayQueue((queue) => [...queue, track.id]);
+    }
   }
 
   function remove(trackId) {
     socketRef.current.emit("REMOVE_FROM_QUEUE", trackId);
-    queryCache.refetchQueries(["playQueue", roomId]);
+    setPlayQueue((queue) => queue.slice());
   }
 
   function playNext() {
     setIsPlaybackLoading(true);
     socketRef.current.emit("PLAY_NEXT");
-    queryCache.refetchQueries(["playQueue", roomId]);
   }
 
   return { add, remove, playNext };

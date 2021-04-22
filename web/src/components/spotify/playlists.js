@@ -33,7 +33,9 @@ export default function Playlists() {
               className="mr-2 text-gray-500 fill-current"
               size="lg"
             />
-            <span>{user ? `${user.id}'s` : null} Spotify Playlists</span>
+            <span>
+              {user ? `${user.display_name}'s` : null} Spotify Playlists
+            </span>
           </div>
         </div>
       </div>

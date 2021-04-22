@@ -17,7 +17,13 @@ export function useGetLikedSongs() {
       });
       return data.items;
     },
-    { refetchOnWindowFocus: false },
+    {
+      retry: false,
+      refetchOnWindowFocus: false,
+      onError(err) {
+        console.log(err);
+      },
+    },
   );
 }
 
