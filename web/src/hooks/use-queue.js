@@ -39,6 +39,7 @@ export function useQueue() {
       query: {
         room_id: roomId,
       },
+      transports: ['websocket']
     });
 
     socket.on("PLAYBACK_START", (currentPlayback) => {

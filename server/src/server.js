@@ -18,6 +18,8 @@ const COMMAND = "📻"; // process.env.BOT_COMMAND
 const WEB_URL = "https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
 
+process.on('warning', console.warn);
+
 discord.on("message", async (message) => {
   try {
     if (message.content === COMMAND) {
@@ -143,6 +145,7 @@ app.listen(process.env.PORT, function (err) {
         });
 
         dispatcher.on("finish", async () => {
+          stream.destroy();
           app.io.to(roomId).emit("PLAYBACK_END");
         });
 

@@ -89,9 +89,26 @@ module.exports = function (app, _options, next) {
       return { ...playback, progress_ms };
     } catch (err) {
       app.log.error(err);
+      app.io.emit("BOT_DISCONNECTED");
       return reply.notFound();
     }
   });
+
+  app.put("/:id/play-next", async ({ params: { id }}, reply) => {
+    try {
+      const room = JSON.parse(
+        await app.redis.sendCommand(getJSON(`rooms:${id}`)),
+      );
+
+      const connection = await app
+        .discord()
+        .voice.connections.get(room.guild_id);
+
+
+    } catch (err) {
+
+    }
+  })
 
   next();
 };
