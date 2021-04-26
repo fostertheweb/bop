@@ -4,7 +4,7 @@ import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { useMutation, useQueryCache } from "react-query";
 import { useSetCurrentPlayback } from "hooks/use-current-playback";
 import Axios from "axios";
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 
 const {
   REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL,

@@ -17,14 +17,15 @@ module.exports = {
     connection.voice.setDeaf(true);
 
     if (options.onDisconnect) {
-      connection.on("disconnect", options.onDisconnect);
+      connection.once("disconnect", options.onDisconnect);
     }
 
     if (options.onReconnecting) {
-      connection.on("reconnecting", options.onReconnecting);
+      connection.once("reconnecting", options.onReconnecting);
     }
+
     if (options.onReady) {
-      connection.on("ready", options.onReady);
+      connection.once("ready", options.onReady);
     }
 
     connections.set(channel.guild.id, connection);
@@ -43,11 +44,11 @@ module.exports = {
     const dispatcher = connection.play(stream, { volume: false });
 
     if (options.onStart) {
-      dispatcher.on("start", options.onStart);
+      dispatcher.once("start", options.onStart);
     }
 
     if (options.onFinish) {
-      dispatcher.on("finish", options.onFinish);
+      dispatcher.once("finish", options.onFinish);
     }
 
     audioPlayers.set(room.guild_id, dispatcher);

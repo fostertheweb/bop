@@ -37,7 +37,7 @@ export function useQueue() {
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
   const playQueue = usePlayQueue();
   const setPlayQueue = useSetPlayQueue();
-  const [playNextHTTP, {}] = usePlayNext();
+  const [playNextInQueue] = usePlayNext();
 
   useEffect(() => {
     const socket = io(API_URL, {
@@ -92,8 +92,7 @@ export function useQueue() {
 
   function playNext() {
     setIsPlaybackLoading(true);
-    playNextHTTP();
-    // socketRef.current.emit("PLAY_NEXT");
+    playNextInQueue();
   }
 
   return { add, remove, playNext };
