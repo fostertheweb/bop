@@ -4,8 +4,12 @@ import { usePlayQueue, useQueue } from "hooks/use-queue";
 import { useMutation, useQueryCache } from "react-query";
 import { useSetCurrentPlayback } from "hooks/use-current-playback";
 import Axios from "axios";
+import { useParams } from "react-router";
 
-const { REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL } = process.env;
+const {
+  REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL,
+  REACT_APP_API_URL: API_URL,
+} = process.env;
 
 const isPlaybackLoading = atom({
   key: "crowdQ.isPlaybackLoading",
@@ -121,6 +125,20 @@ export function usePlayNextTrack() {
       onSuccess() {
         playNext();
         setCurrentPlayback({ item, progress_ms: 0 });
+      },
+    },
+  );
+}
+
+export function usePlayNext() {
+  const { id } = useParams();
+  return useMutation(
+    async () => {
+      return await Axios.put(`${API_URL}/rooms/${id}/play-next`);
+    },
+    {
+      onSuccess() {
+        console.log("playing");
       },
     },
   );

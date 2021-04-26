@@ -3,3 +3,11 @@ const SONG_REQUEST = "SONG_REQUEST";
 const PLAY_SONG = "PLAY_SONG";
 const SKIP_SONG = "SKIP_SONG";
 const QUEUE_UPDATED = "QUEUE_UPDATED";
+
+module.exports = {
+  ADD_TO_QUEUE,
+  SONG_REQUEST,
+  PLAY_SONG,
+  SKIP_SONG,
+  QUEUE_UPDATED,
+};

@@ -3,7 +3,11 @@ import { io } from "socket.io-client";
 import { useRoomId } from "./use-rooms";
 import { useEffect, useRef } from "react";
 import { useSetCurrentPlayback } from "./use-current-playback";
-import { useSetIsPlaybackLoading, useSetIsPlaying } from "./use-player";
+import {
+  usePlayNext,
+  useSetIsPlaybackLoading,
+  useSetIsPlaying,
+} from "./use-player";
 import { useParams } from "react-router";
 import { useQuery, useQueryCache } from "react-query";
 import axios from "axios";
@@ -33,12 +37,14 @@ export function useQueue() {
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
   const playQueue = usePlayQueue();
   const setPlayQueue = useSetPlayQueue();
+  const [playNextInQueue] = usePlayNext();
 
   useEffect(() => {
     const socket = io(API_URL, {
       query: {
         room_id: roomId,
       },
+      transports: ["websocket"],
     });
 
     socket.on("PLAYBACK_START", (currentPlayback) => {
@@ -86,7 +92,7 @@ export function useQueue() {
 
   function playNext() {
     setIsPlaybackLoading(true);
-    socketRef.current.emit("PLAY_NEXT");
+    playNextInQueue();
   }
 
   return { add, remove, playNext };
