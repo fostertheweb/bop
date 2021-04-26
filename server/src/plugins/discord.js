@@ -40,7 +40,7 @@ module.exports = fp(function (fastify, _options, next) {
 
           connections.create(channel, {
             onReady() {
-              console.log("READY");
+              fastify.io.to(room.id).emit("BOT_READY");
             },
             onDisconnect() {
               fastify.io.to(room.id).emit("BOT_DISCONNECTED");

@@ -1,15 +1,15 @@
 const ytdl = require("ytdl-core");
 
 let connections = new Map();
-let audioPlayers = new Map();
+let streamDispatchers = new Map();
 
 // const guild = await discord.guilds.fetch(room.guild_id);
 // const member = await guild.members.fetch(room.host.id);
 // const channel = member.voice.channel;
 
 module.exports = {
-  getAudioPlayer(room) {
-    return audioPlayers.get(room.guild_id);
+  getStreamDispatcher(room) {
+    return streamDispatchers.get(room.id);
   },
   async create(channel, options) {
     const connection = await channel.join();
@@ -51,6 +51,10 @@ module.exports = {
       dispatcher.once("finish", options.onFinish);
     }
 
-    audioPlayers.set(room.guild_id, dispatcher);
+    streamDispatchers.set(room.id, dispatcher);
+  },
+
+  removeStreamDispatcher(room) {
+    streamDispatchers.delete(room.id);
   },
 };

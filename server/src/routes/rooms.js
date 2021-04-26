@@ -1,49 +1,15 @@
 const { default: ShortUniqueId } = require("short-unique-id");
-const { setJSON, getJSON } = require("../shared/helpers");
+const { setJSON, getJSON, removeJSON } = require("../shared/helpers");
 const YouTube = require("youtube-sr").default;
 const connections = require("../shared/connections");
 
 module.exports = function (app, _options, next) {
-  app.get("/", async (_, reply) => {
-    try {
-      const ids = await app.redis.lrange("rooms", 0, -1);
-
-      if (ids.length === 0) {
-        return reply.send([]);
-      }
-
-      const commands = ids.map((id) =>
-        app.redis.sendCommand(getJSON(`rooms:${id}`)),
-      );
-      const buffers = await Promise.all(commands);
-      const rooms = buffers.map((b) => JSON.parse(b.toString()));
-
-      return reply.send(rooms);
-    } catch (err) {
-      console.error(err);
-    }
-  });
-
-  app.post("/", async ({ body }, reply) => {
-    try {
-      const generateId = new ShortUniqueId();
-      const id = generateId();
-      const room = { id, ...body };
-      await app.redis.lpush("rooms", id);
-      await app.redis.sendCommand(setJSON(`rooms:${id}`, room));
-      return reply.send(room);
-    } catch (err) {
-      console.error(err);
-    }
-  });
-
   app.get("/:id", async ({ params: { id } }) => {
     return JSON.parse(await app.redis.sendCommand(getJSON(`rooms:${id}`)));
   });
 
   app.get("/:id/listeners", async ({ params: { id } }) => {
-    const ids = await app.redis.lrange(`rooms:${id}:listeners`, 0, -1);
-    return ids;
+    return await app.redis.lrange(`rooms:${id}:listeners`, 0, -1);
   });
 
   app.get("/:id/queue", async ({ params: { id } }) => {
@@ -51,8 +17,7 @@ module.exports = function (app, _options, next) {
   });
 
   app.get("/:id/requests", async ({ params: { id } }) => {
-    const requests = await app.redis.lrange(`rooms:${id}:requests`, 0, -1);
-    return requests.map((i) => JSON.parse(i));
+    return await app.redis.lrange(`rooms:${id}:requests`, 0, -1);
   });
 
   app.get(
@@ -63,16 +28,6 @@ module.exports = function (app, _options, next) {
     },
   );
 
-  app.delete("/", async () => {
-    await app.redis.del("rooms");
-    return [];
-  });
-
-  app.delete("/:id/requests", async ({ params: { id } }) => {
-    await app.redis.del(`rooms:${id}:requests`);
-    return [];
-  });
-
   app.get("/:id/current-playback", async ({ params: { id } }, reply) => {
     try {
       const room = JSON.parse(
@@ -81,7 +36,12 @@ module.exports = function (app, _options, next) {
       const playback = JSON.parse(
         await app.redis.sendCommand(getJSON(`rooms:${id}:playing`)),
       );
-      const dispatcher = connections.getAudioPlayer(room);
+      const dispatcher = connections.getStreamDispatcher(room);
+
+      if (!dispatcher) {
+        throw new Error("No audio playing in voice channel.");
+      }
+
       const progress_ms = dispatcher.streamTime || 0;
 
       return { ...playback, progress_ms };
@@ -111,6 +71,9 @@ module.exports = function (app, _options, next) {
         },
         onFinish() {
           app.io.to(room.id).emit("PLAYBACK_END");
+          app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
+          connections.getStreamDispatcher(room).destroy();
+          connections.removeStreamDispatcher(room);
         },
       });
 
