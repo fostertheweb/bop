@@ -1,5 +1,5 @@
 const app = require("fastify")({ logger: true });
-const { redis } = require("./queue");
+const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 
 // health check
 app.get("/ping", () => "PONG");
@@ -7,7 +7,7 @@ app.get("/ping", () => "PONG");
 // installed plugins
 app.register(require("fastify-cors"), {
   origin: true,
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT"],
   allowedHeaders: [
     "Content-Type",
     "X-Api-Key",
@@ -17,7 +17,7 @@ app.register(require("fastify-cors"), {
   ],
 });
 app.register(require("fastify-socket.io"), {
-  cors: { origin: true, methods: ["GET", "POST"] },
+  cors: { origin: true, methods: ["GET", "POST", "PUT"] },
 });
 app.register(require("fastify-sensible"));
 app.register(require("fastify-cookie"), {
@@ -25,9 +25,12 @@ app.register(require("fastify-cookie"), {
   parseOptions: {}, // options for parsing cookies
 });
 app.register(require("fastify-redis"), {
-  client: redis,
+  port: REDIS_PORT,
+  host: REDIS_HOST,
+  password: REDIS_PASSWORD,
 });
 app.register(require("./plugins/discord"));
+app.register(require("./plugins/spotify"));
 
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });
