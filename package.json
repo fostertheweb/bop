@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "social queue",
   "scripts": {
-    "web": "yarn workspace web start",
-    "server": "yarn workspace server run develop",
-    "build": "yarn workspace server run build && yarn workspace web run build"
+    "web": "npm start --workspace=web",
+    "server": "npm run develop --workspace=server",
+    "build": "npm run build --workspace=server --workspace=web"
   },
   "workspaces": [
     "web",

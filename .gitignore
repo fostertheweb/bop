@@ -36,3 +36,5 @@ web/src/styles.css
 web/src/styles.css
 web/build
 .terraform.lock.hcl
+
+.idea
