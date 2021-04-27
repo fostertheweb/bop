@@ -26,7 +26,7 @@ export default function Queue() {
   return (
     <>
       {/* gradient background for sticky headers */}
-      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-gray-200">
+      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-gray-200 dark:text-gray-200 dark:bg-gray-900">
         <div className="flex items-center gap-2">
           <div className="border-2 border-transparent">
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
@@ -45,13 +45,13 @@ export default function Queue() {
           return <Track key={id} id={id} index={index} remove={remove} />;
         })
       ) : (
-        <div className="flex flex-col items-center justify-center flex-grow gap-4 text-gray-600">
+        <div className="flex flex-col items-center justify-center flex-grow gap-4 text-gray-600 dark:text-gray-300">
           <FontAwesomeIcon
             icon={faAlbumCollection}
             size="4x"
-            className="text-gray-500 fill-current"
+            className="text-gray-500 fill-current dark:text-gray-400"
           />
-          <h3 className="text-lg font-medium text-gray-700">
+          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-200">
             Add to Play Queue
           </h3>
           <ul className="flex flex-col gap-3 mt-4">
@@ -95,7 +95,7 @@ function Track({ id, index, remove }) {
   if (!item || status === "loading") {
     return (
       <motion.div
-        className="flex items-center px-3 py-2 border-b border-gray-200"
+        className="flex items-center px-3 py-2 border-b border-gray-200 dark:border-green-500"
         key={index}
         variants={variants}
         initial="enter"
@@ -105,7 +105,7 @@ function Track({ id, index, remove }) {
           x: { type: "spring", stiffness: 300, damping: 200 },
           opacity: { duration: 0.2 },
         }}>
-        <div className="flex items-center justify-center w-12 h-12 bg-gray-300 rounded shadow">
+        <div className="flex items-center justify-center w-12 h-12 bg-gray-300 rounded shadow dark:bg-gray-800">
           <FontAwesomeIcon
             icon={faMusic}
             size="lg"
@@ -113,9 +113,9 @@ function Track({ id, index, remove }) {
           />
         </div>
         <div className="ml-2 animate-pulse">
-          <div className="w-40 h-2 bg-gray-400 rounded-sm"></div>
+          <div className="w-40 h-2 bg-gray-400 rounded-sm dark:bg-gray-600"></div>
           <div className="h-2"></div>
-          <div className="w-20 h-2 bg-gray-300 rounded-sm"></div>
+          <div className="w-20 h-2 bg-gray-300 rounded-sm dark:bg-gray-700"></div>
         </div>
       </motion.div>
     );
@@ -123,7 +123,7 @@ function Track({ id, index, remove }) {
 
   return (
     <motion.div
-      className="flex items-center justify-between w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer hover:bg-gray-300"
+      className="flex items-center justify-between w-full px-3 py-2 text-left border-b border-gray-300 opacity-0 cursor-pointer dark:border-gray-800 hover:bg-gray-300 dark:hover:bg-gray-800"
       variants={variants}
       initial="enter"
       animate="center"
@@ -140,8 +140,8 @@ function Track({ id, index, remove }) {
         />
         <div className="w-3"></div>
         <div>
-          <div className="text-gray-700">{item.name}</div>
-          <div className="text-gray-600">
+          <div className="text-gray-700 dark:text-gray-300">{item.name}</div>
+          <div className="text-gray-600 dark:text-gray-400">
             {item.artists.map((artist) => artist.name).join(", ")}
           </div>
         </div>
@@ -149,7 +149,7 @@ function Track({ id, index, remove }) {
       <div className="">
         <button
           onClick={() => handleRemoveTrack(id, index, item.duration_ms)}
-          className="flex items-center px-2 py-1 text-gray-400 bg-gray-200 rounded hover:bg-gray-400 hover:text-gray-600">
+          className="flex items-center px-2 py-1 text-gray-400 bg-gray-200 rounded dark:bg-gray-900 hover:bg-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 hover:text-gray-600">
           <FontAwesomeIcon icon={faTimes} size="lg" />
         </button>
       </div>

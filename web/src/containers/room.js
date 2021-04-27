@@ -9,8 +9,10 @@ import Info from "components/room/info";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/pro-duotone-svg-icons";
+import { useDarkMode } from "hooks/use-dark-mode";
 
 export function Room() {
+  useDarkMode();
   const { data: room, status } = useGetRoom();
 
   if (room || status === "loading") {

@@ -9,11 +9,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useAccentColors } from "hooks/use-vibrant";
 import { useGetRoom } from "hooks/use-rooms";
+import { useIsDarkMode } from "hooks/use-dark-mode";
 
 export default function Sidebar() {
   const { id } = useParams();
   return (
-    <div className="flex flex-col gap-2 p-2 text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-gray-600">
+    <div className="flex flex-col gap-2 p-2 text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-gray-900">
       <DiscordLink path={`/rooms/${id}`} />
       <SidebarLink path="search" icon={faSearch}>
         Search
@@ -29,11 +30,12 @@ export default function Sidebar() {
 }
 
 function DiscordLink({ path }) {
+  const isDarkMode = useIsDarkMode();
   const { data: room, status } = useGetRoom();
-  const { darkAccent } = useAccentColors();
+  const { darkAccent, lightAccent } = useAccentColors();
   const location = useLocation();
   const active = location.pathname === path;
-  const boxShadowColor = darkAccent === "initial" ? "#718096" : darkAccent;
+  const boxShadowColor = isDarkMode ? lightAccent : darkAccent;
 
   if (status === "loading") {
     return <FontAwesomeIcon icon={faSpinnerThird} spin color={darkAccent} />;
@@ -67,14 +69,15 @@ function DiscordLink({ path }) {
 }
 
 export function SidebarLink({ path, icon, children }) {
-  const { darkAccent } = useAccentColors();
-  const color = darkAccent === "initial" ? "initial" : darkAccent;
+  const isDarkMode = useIsDarkMode();
+  const { darkAccent, lightAccent } = useAccentColors();
+  const color = isDarkMode ? lightAccent : darkAccent;
 
   return (
     <NavLink
       to={path}
       className="block p-2 text-sm text-center transition duration-150 ease-in-out rounded cursor-pointer hover:text-gray-700 dark:hover:text-gray-100"
-      activeClassName="bg-white dark:bg-gray-700 dark:text-gray-300"
+      activeClassName="bg-white dark:bg-gray-800 dark:text-gray-300"
       activeStyle={{ color }}>
       <FontAwesomeIcon icon={icon} className="fill-current" size="lg" />
       <div className="mt-1">{children}</div>

@@ -10,7 +10,7 @@ const initialColorState = {
 
 const accentColorsState = atom({
   key: "crowdQ.accentColors",
-  default: { lightAccent: "initial", darkAccent: "initial" },
+  default: { lightAccent: "#e5e7eb", darkAccent: "#718096" },
 });
 
 export function useAccentColors() {
