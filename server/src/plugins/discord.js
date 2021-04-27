@@ -11,8 +11,9 @@ const WEB_URL = "https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
 
 module.exports = fp(function (fastify, _options, next) {
+  const client = new Client();
+
   try {
-    const client = new Client();
     client.login(process.env.DISCORD_BOT_TOKEN);
     client.on(
       "message",
@@ -39,11 +40,13 @@ module.exports = fp(function (fastify, _options, next) {
           };
 
           connections.create(channel, {
-            onReady() {
-              fastify.io.to(room.id).emit("BOT_READY");
-            },
-            onDisconnect() {
+            async onDisconnect() {
               fastify.io.to(room.id).emit("BOT_DISCONNECTED");
+              await fastify.redis.sendCommand(
+                removeJSON(`rooms:${room.id}:playing`),
+              );
+              connections.removeStreamDispatcher(room.id);
+              connections.removeConnection(room.guild_id);
             },
           });
 

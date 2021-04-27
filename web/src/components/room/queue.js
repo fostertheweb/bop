@@ -26,7 +26,7 @@ export default function Queue() {
   return (
     <>
       {/* gradient background for sticky headers */}
-      <div className="sticky top-0 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-gray-200 dark:text-gray-200 dark:bg-gray-900">
+      <div className="sticky top-0 z-10 flex items-center justify-between w-full p-4 mb-1 text-base text-gray-600 bg-gray-200 dark:text-gray-200 dark:bg-gray-900">
         <div className="flex items-center gap-2">
           <div className="border-2 border-transparent">
             <FontAwesomeIcon icon={faListMusic} className="mr-2 fill-current" />
