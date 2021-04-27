@@ -15,7 +15,8 @@ phases:
       - npm ci
   build:
     commands:
-      - npm run build
+      - yarn workspace web run build
+      - yarn workspace server run build
   post_build:
     commands:
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
