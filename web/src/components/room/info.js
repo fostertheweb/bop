@@ -12,13 +12,15 @@ export default function Info() {
 
   return (
     <div className="p-2 text-gray-800">
-      <div className="tracking-wide text-gray-600 small-caps">
+      <div className="tracking-wide text-gray-600 dark:text-gray-400 small-caps">
         Listening with
       </div>
 
-      <div className="text-xl font-medium">{room.name}</div>
+      <div className="text-xl font-medium dark:text-gray-300">{room.name}</div>
       <div className="h-4"></div>
-      <div className="tracking-wide text-gray-600 small-caps">Hosted by</div>
+      <div className="tracking-wide text-gray-600 dark:text-gray-400 small-caps">
+        Hosted by
+      </div>
       <div className="h-2"></div>
       <div className="flex items-center">
         <img
@@ -28,7 +30,9 @@ export default function Info() {
           alt="Host User Avatar"
           className="rounded shadow"
         />
-        <div className="ml-2 text-lg font-medium">{room.host.username}</div>
+        <div className="ml-2 text-lg font-medium dark:text-gray-300">
+          {room.host.username}
+        </div>
       </div>
 
       {/* Share Link for Room */}
