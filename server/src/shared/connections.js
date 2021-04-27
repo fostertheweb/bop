@@ -3,10 +3,6 @@ const ytdl = require("ytdl-core");
 let connections = new Map();
 let streamDispatchers = new Map();
 
-// const guild = await discord.guilds.fetch(room.guild_id);
-// const member = await guild.members.fetch(room.host.id);
-// const channel = member.voice.channel;
-
 module.exports = {
   getStreamDispatcher(room) {
     return streamDispatchers.get(room.id);
@@ -18,6 +14,7 @@ module.exports = {
 
     if (options.onDisconnect) {
       connection.once("disconnect", options.onDisconnect);
+      connection.once("failed", options.onDisconnect);
     }
 
     if (options.onReconnecting) {
@@ -54,7 +51,19 @@ module.exports = {
     streamDispatchers.set(room.id, dispatcher);
   },
 
-  removeStreamDispatcher(room) {
-    streamDispatchers.delete(room.id);
+  removeConnection(guildId) {
+    const connection = connections.get(guildId);
+
+    if (connection) {
+      connections.delete(guildId);
+    }
+  },
+  removeStreamDispatcher(roomId) {
+    const dispatcher = streamDispatchers.get(roomId);
+
+    if (dispatcher) {
+      dispatcher.destroy();
+      streamDispatchers.delete(roomId);
+    }
   },
 };

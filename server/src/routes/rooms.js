@@ -69,11 +69,10 @@ module.exports = function (app, _options, next) {
         onStart() {
           app.io.to(room.id).emit("PLAYBACK_START", currentPlayback);
         },
-        onFinish() {
+        async onFinish() {
           app.io.to(room.id).emit("PLAYBACK_END");
-          app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
-          connections.getStreamDispatcher(room).destroy();
-          connections.removeStreamDispatcher(room);
+          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
+          connections.removeStreamDispatcher(room.id);
         },
       });
 
@@ -88,6 +87,39 @@ module.exports = function (app, _options, next) {
       reply.send("OK");
     } catch (err) {
       app.log.error(err);
+      return reply.gone();
+    }
+  });
+
+  app.put("/:id/bot-reconnect", async ({ params: { id } }, reply) => {
+    try {
+      const room = JSON.parse(
+        await app.redis.sendCommand(getJSON(`rooms:${id}`)),
+      );
+      const guild = await app.discord().guilds.fetch(room.guild_id);
+      const member = await guild.members.fetch(room.host.id);
+      const channel = member.voice.channel;
+
+      if (!channel) {
+        throw new Error("Host is not in a voice channel.");
+      }
+
+      connections.removeStreamDispatcher(room.id);
+      connections.removeConnection(room.guild_id);
+
+      connections.create(channel, {
+        async onDisconnect() {
+          app.io.to(room.id).emit("BOT_DISCONNECTED");
+          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
+          connections.removeStreamDispatcher(room.id);
+          connections.removeConnection(room.guild_id);
+        },
+      });
+
+      return reply.send("OK");
+    } catch (err) {
+      app.log.error(err);
+      return reply.badRequest();
     }
   });
 
