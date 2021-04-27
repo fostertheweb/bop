@@ -7,6 +7,7 @@ phases:
     commands:
       - curl -fsSLO "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip"
       - unzip terraform_0.15.0_linux_amd64.zip -d /usr/local/bin
+      - npm install -g npm
   pre_build:
     commands:
       - touch .npmrc
@@ -15,8 +16,7 @@ phases:
       - npm i
   build:
     commands:
-      - cd web && npm run build && cd ..
-      - cd server && npm run build && cd ..
+      - npm run build
   post_build:
     commands:
       - terraform init -backend-config="token=$TF_CLOUD_TOKEN"
