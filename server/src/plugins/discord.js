@@ -2,7 +2,7 @@ const fp = require("fastify-plugin");
 const connections = require("../shared/connections");
 const { MessageEmbed } = require("discord.js");
 const { default: ShortUniqueId } = require("short-unique-id");
-const { setJSON } = require("../shared/helpers");
+const { removeJSON, setJSON } = require("../shared/helpers");
 const { Client } = require("discord.js");
 
 const newRoomId = new ShortUniqueId();
