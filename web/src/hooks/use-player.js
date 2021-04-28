@@ -135,6 +135,8 @@ export function usePlayNext() {
   const { id } = useParams();
   const setIsBotDisconnected = useSetIsBotDisconnected();
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
+  const setCurrentPlayback = useSetCurrentPlayback();
+  const setIsPlaying = useSetIsPlaying();
 
   return useMutation(
     async () => {
@@ -143,7 +145,9 @@ export function usePlayNext() {
     {
       retry: false,
       onError() {
+        setIsPlaying(false);
         setIsPlaybackLoading(false);
+        setCurrentPlayback(null);
         setIsBotDisconnected(true);
       },
     },

@@ -44,6 +44,10 @@ module.exports = {
       dlChunkSize: 0,
     });
 
+    if (connection.playing) {
+      connection.stopPlaying();
+    }
+
     connection.play(stream);
   },
 

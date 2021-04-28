@@ -42,7 +42,6 @@ export function useGetCurrentPlayback() {
         setIsPlaybackLoading(false);
       },
       onSuccess(currentPlayback) {
-        console.log({ currentPlayback });
         setCurrentPlayback(currentPlayback);
         setIsPlaying(true);
       },
