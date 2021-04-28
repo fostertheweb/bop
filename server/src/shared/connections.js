@@ -46,8 +46,8 @@ module.exports = {
 
     if (options.onFinish) {
       dispatcher.once("finish", () => {
-        options.onFinish();
         stream.end();
+        options.onFinish();
       });
     }
 

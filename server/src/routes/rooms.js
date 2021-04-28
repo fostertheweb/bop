@@ -1,4 +1,3 @@
-const { default: ShortUniqueId } = require("short-unique-id");
 const { setJSON, getJSON, removeJSON } = require("../shared/helpers");
 const YouTube = require("youtube-sr").default;
 const connections = require("../shared/connections");
@@ -57,6 +56,11 @@ module.exports = function (app, _options, next) {
         await app.redis.sendCommand(getJSON(`rooms:${id}`)),
       );
       const [trackId] = await app.redis.lrange(`rooms:${room.id}:queue`, 0, 0);
+
+      if (!trackId) {
+        return reply.code(204).send(null);
+      }
+
       const { body: track } = await app.spotify().getTrack(trackId);
       const { name, artists } = track;
       const video = await getYouTubeVideo(name, artists);
@@ -71,8 +75,8 @@ module.exports = function (app, _options, next) {
         },
         async onFinish() {
           app.io.to(room.id).emit("PLAYBACK_END");
-          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
           connections.removeStreamDispatcher(room.id);
+          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
         },
       });
 
@@ -110,9 +114,9 @@ module.exports = function (app, _options, next) {
       connections.create(channel, {
         async onDisconnect() {
           app.io.to(room.id).emit("BOT_DISCONNECTED");
-          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
           connections.removeStreamDispatcher(room.id);
           connections.removeConnection(room.guild_id);
+          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
         },
       });
 
