@@ -45,7 +45,10 @@ module.exports = {
     }
 
     if (options.onFinish) {
-      dispatcher.once("finish", options.onFinish);
+      dispatcher.once("finish", () => {
+        options.onFinish();
+        stream.end();
+      });
     }
 
     streamDispatchers.set(room.id, dispatcher);
@@ -62,7 +65,7 @@ module.exports = {
     const dispatcher = streamDispatchers.get(roomId);
 
     if (dispatcher) {
-      dispatcher.destroy();
+      dispatcher.end();
       streamDispatchers.delete(roomId);
     }
   },
