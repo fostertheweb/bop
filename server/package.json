@@ -8,7 +8,7 @@
     "start": "node --trace-warnings -r dotenv/config src/server",
     "build": "run-s dist:clean dist:copy",
     "dist:clean": "rm -rf dist",
-    "dist:copy": "mkdir dist && cp -R src/** dist/ && cp package.json package-lock.json dist/"
+    "dist:copy": "mkdir dist && cp -R src/** dist/ && cp package.json package-lock.json ecosystem.config.js dist/"
   },
   "keywords": [],
   "author": "",
