@@ -9,14 +9,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useAccentColors } from "hooks/use-vibrant";
-import { useGetRoom } from "hooks/use-rooms";
 import { useIsDarkMode } from "hooks/use-dark-mode";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 export default function TabBar() {
   const { id } = useParams();
   return (
-    <div className="flex flex-row items-center w-full gap-2 p-1 text-gray-600 bg-gray-200 md:hidden dark:text-gray-300 dark:bg-gray-900">
+    <div className="z-10 flex flex-row items-center w-full gap-2 p-1 text-gray-600 bg-gray-200 md:hidden dark:text-gray-300 dark:bg-gray-900">
       <DiscordTabBarItem path={`/rooms/${id}`} icon={faDiscord}>
         Details
       </DiscordTabBarItem>

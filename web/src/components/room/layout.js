@@ -13,7 +13,7 @@ export default function Layout() {
         The CrowdQ bot lost its connection the voice channel. We can try to
         reconnect the bot to your current voice channel.
       </Modal>
-      <div className="flex h-screen overflow-hidden cq-layout-pb">
+      <div className="flex overflow-hidden cq-h-screen cq-layout-pb">
         <Sidebar />
         <div className="flex flex-col flex-grow w-full overflow-x-hidden overflow-y-scroll lg:w-1/2 dark:bg-gray-800">
           <Outlet />

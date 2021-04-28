@@ -46,6 +46,11 @@ code {
   font-variant: small-caps;
 }
 
+.cq-h-screen {
+  height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
 .cq-layout-pb {
   padding-bottom: calc(60px + 1rem + 60px);
 }
