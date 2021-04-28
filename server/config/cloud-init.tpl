@@ -23,3 +23,7 @@ run_cmd:
   - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
   - source $HOME/.bashrc
   - nvm install --lts
+  - wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+  - mkdir ffmpeg-release
+  - tar xvf ffmpeg-release-amd64-static.tar.xz -C ffmpeg-release --strip-components=1
+  - sudo mv ffmpeg-release/ffmpeg ffmpeg-release/ffprobe /usr/local/bin/
