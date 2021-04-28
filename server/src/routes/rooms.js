@@ -37,7 +37,7 @@ module.exports = function (app, _options, next) {
       );
       const connection = connections.getConnection(room.guild_id);
 
-      if (!connection) {
+      if (!connection || !connection.current) {
         throw new Error("No active voice connection found.");
       }
 

@@ -4,6 +4,7 @@ import {
   faListMusic,
   faSpinnerThird,
   faHeart,
+  faAlbumCollection,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink, useLocation, useParams } from "react-router-dom";
@@ -16,13 +17,19 @@ export default function Sidebar() {
   return (
     <div className="flex flex-col gap-2 p-2 text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-gray-900">
       <DiscordLink path={`/rooms/${id}`} />
+      <div className="lg:hidden">
+        <SidebarLink path="queue" icon={faListMusic}>
+          Queue
+        </SidebarLink>
+      </div>
+
       <SidebarLink path="search" icon={faSearch}>
         Search
       </SidebarLink>
       <SidebarLink path="likes" icon={faHeart}>
         Liked
       </SidebarLink>
-      <SidebarLink path="playlists" icon={faListMusic}>
+      <SidebarLink path="playlists" icon={faAlbumCollection}>
         Playlists
       </SidebarLink>
     </div>

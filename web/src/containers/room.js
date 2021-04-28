@@ -10,6 +10,7 @@ import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/pro-duotone-svg-icons";
 import { useDarkMode } from "hooks/use-dark-mode";
+import Queue from "components/room/queue";
 
 export function Room() {
   useDarkMode();
@@ -21,6 +22,7 @@ export function Room() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route path="/" element={<Info />} />
+            <Route path="queue" element={<Queue />} />
             <Route path="search" element={<Search />} />
             <Route path="playlists" element={<Playlists />} />
             <Route path="likes" element={<LikedSongs />} />
