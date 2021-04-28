@@ -15,13 +15,8 @@ import { useIsDarkMode } from "hooks/use-dark-mode";
 export default function Sidebar() {
   const { id } = useParams();
   return (
-    <div className="flex flex-col gap-2 p-2 text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-gray-900">
+    <div className="flex-col hidden gap-2 p-2 text-gray-600 bg-gray-200 md:flex dark:text-gray-300 dark:bg-gray-900">
       <DiscordLink path={`/rooms/${id}`} />
-      <div className="lg:hidden">
-        <SidebarLink path="queue" icon={faListMusic}>
-          Queue
-        </SidebarLink>
-      </div>
 
       <SidebarLink path="search" icon={faSearch}>
         Search

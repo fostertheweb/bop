@@ -46,4 +46,14 @@ code {
   font-variant: small-caps;
 }
 
+.cq-layout-pb {
+  padding-bottom: calc(60px + 1rem + 60px);
+}
+
+@media (min-width: 768px) {
+  .cq-layout-pb {
+    padding-bottom: calc(60px + 2rem);
+  }
+}
+
 @tailwind utilities;
