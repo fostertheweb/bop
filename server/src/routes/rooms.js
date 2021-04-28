@@ -1,6 +1,7 @@
 const { setJSON, getJSON, removeJSON } = require("../shared/helpers");
 const YouTube = require("youtube-sr").default;
 const connections = require("../shared/connections");
+const { inspect } = require("util");
 
 module.exports = function (app, _options, next) {
   app.get("/:id", async ({ params: { id } }) => {
@@ -82,7 +83,7 @@ module.exports = function (app, _options, next) {
       reply.send("OK");
     } catch (err) {
       app.log.error(err);
-      return reply.gone();
+      return reply.code(204).send(null);
     }
   });
 
