@@ -49,10 +49,10 @@ export function useQueue() {
       transports: ["websocket"],
     });
 
-    socket.on("PLAYBACK_START", (currentPlayback) => {
+    socket.on("PLAYBACK_START", () => {
       setIsPlaybackLoading(false);
-      setCurrentPlayback(currentPlayback);
       setIsPlaying(true);
+      queryCache.refetchQueries(["currentPlayback", roomId]);
       queryCache.refetchQueries(["playQueue", roomId]);
     });
 

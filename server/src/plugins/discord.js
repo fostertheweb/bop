@@ -1,76 +1,90 @@
 const fp = require("fastify-plugin");
 const connections = require("../shared/connections");
-const { MessageEmbed } = require("discord.js");
 const { default: ShortUniqueId } = require("short-unique-id");
 const { removeJSON, setJSON } = require("../shared/helpers");
-const { Client } = require("discord.js");
+const discord = require("../shared/discord");
 
 const newRoomId = new ShortUniqueId();
 const COMMAND = "📻"; // process.env.BOT_COMMAND
 const WEB_URL = "https://crowdq.fm";
 const CDN = "https://cdn.discordapp.com";
 
-module.exports = fp(function (fastify, _options, next) {
-  const client = new Client();
-
+module.exports = fp(async function (fastify, _options) {
   try {
-    client.login(process.env.DISCORD_BOT_TOKEN);
-    client.on(
-      "message",
-      async ({ content, member, channel: chat, author, guild }) => {
-        if (content === COMMAND) {
-          const channel = member.voice.channel;
+    discord.on("messageCreate", async (message) => {
+      if (message.content === COMMAND) {
+        const textChannelId = message.channel.id;
+        const voiceChannelId = message.member.voiceState.channelID;
+        const author = message.author;
+        const guild = message.channel.guild;
 
-          if (!channel) {
-            return channel.send(`Oops, you are not in a voice channel.`);
-          }
-
-          const host = {
-            id: author.id,
-            username: author.username,
-            avatar_url: `${CDN}/avatars/${author.id}/${author.avatar}.png`,
-          };
-
-          const room = {
-            id: newRoomId(),
-            guild_id: guild.id,
-            name: guild.name,
-            icon_url: `${CDN}/icons/${guild.id}/${guild.icon}.png`,
-            host,
-          };
-
-          connections.create(channel, {
-            async onDisconnect() {
-              fastify.io.to(room.id).emit("BOT_DISCONNECTED");
-              await fastify.redis.sendCommand(
-                removeJSON(`rooms:${room.id}:playing`),
-              );
-              connections.removeStreamDispatcher(room.id);
-              connections.removeConnection(room.guild_id);
-            },
-          });
-
-          // save room details
-          await fastify.redis.sendCommand(setJSON(`rooms:${room.id}`, room));
-
-          return chat.send(
-            new MessageEmbed()
-              .setTitle(`New Room Created`)
-              .setColor("#8B5CF6")
-              .setThumbnail(host.avatar_url)
-              .addField("Host", host.username)
-              .addField(
-                "Room",
-                `[crowdq.fm/${room.id}](${WEB_URL}/rooms/${room.id})`,
-              ),
+        if (!voiceChannelId) {
+          return client.createMessage(
+            textChannelId,
+            `Oops, you are not in a voice channel.`,
           );
         }
-      },
-    );
+
+        const host = {
+          id: author.id,
+          username: author.username,
+          avatar_url: `${CDN}/avatars/${author.id}/${author.avatar}.png`,
+        };
+
+        const room = {
+          id: newRoomId(),
+          guild_id: guild.id,
+          name: guild.name,
+          icon_url: `${CDN}/icons/${guild.id}/${guild.icon}.png`,
+          host,
+        };
+
+        connections.create(guild.id, voiceChannelId, {
+          onStart() {
+            fastify.io.to(room.id).emit("PLAYBACK_START");
+          },
+          async onFinish() {
+            fastify.io.to(room.id).emit("PLAYBACK_END");
+            await fastify.redis.sendCommand(
+              removeJSON(`rooms:${room.id}:playing`),
+            );
+          },
+          async onDisconnect() {
+            fastify.io.to(room.id).emit("BOT_DISCONNECTED");
+            await fastify.redis.sendCommand(
+              removeJSON(`rooms:${room.id}:playing`),
+            );
+            connections.removeConnection(room.guild_id);
+          },
+        });
+
+        // save room details
+        await fastify.redis.sendCommand(setJSON(`rooms:${room.id}`, room));
+
+        return discord.createMessage(textChannelId, {
+          embed: {
+            title: "Add Songs to the Play Queue",
+            thumbnail: { url: host.avatar_url },
+            color: 3066993,
+            fields: [
+              {
+                name: "Hosted by",
+                value: host.username,
+              },
+              {
+                name: "Room Link",
+                value: `[crowdq.fm/rooms/${room.id}](${WEB_URL}/rooms/${room.id})`,
+              },
+            ],
+          },
+        });
+      }
+    });
+
+    await discord.connect();
   } catch (err) {
     fastify.log.error(err);
   }
 
-  fastify.decorate("discord", () => client);
-  next();
+  fastify.decorate("discord", () => discord);
 });
