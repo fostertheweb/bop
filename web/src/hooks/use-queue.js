@@ -9,7 +9,7 @@ import {
   useSetIsPlaying,
 } from "./use-player";
 import { useParams } from "react-router";
-import { useQuery, useQueryCache } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { useSetIsBotDisconnected } from "./use-bot";
 
@@ -33,12 +33,12 @@ export function useQueue() {
   const setCurrentPlayback = useSetCurrentPlayback();
   const setIsPlaying = useSetIsPlaying();
   const socketRef = useRef(null);
-  const queryCache = useQueryCache();
+  const queryCache = useQueryClient();
   const roomId = useRoomId();
   const setIsPlaybackLoading = useSetIsPlaybackLoading();
   const playQueue = usePlayQueue();
   const setPlayQueue = useSetPlayQueue();
-  const [playNextInQueue] = usePlayNext();
+  const { mutate: playNextInQueue } = usePlayNext();
   const setIsBotDisconnected = useSetIsBotDisconnected();
 
   useEffect(() => {

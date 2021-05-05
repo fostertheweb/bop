@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { useQueue } from "hooks/use-queue";
@@ -14,8 +15,14 @@ export default function Search() {
   const { add } = useQueue();
   const [query, setQuery] = useState("");
   const debounced = useDebounce(query, 500);
-  const { isFetching: isLoading, data: tracks } = useSearch(debounced);
+  const {
+    isFetching: isLoading,
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useSearch(debounced);
   const searchInputRef = useRef(null);
+  const tracks = data?.pages?.flatMap((page) => page.items) || [];
 
   return (
     <>
@@ -47,11 +54,22 @@ export default function Search() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading && !isFetchingNextPage ? (
         <SkeletonSearchResults />
       ) : (
-        <div>
-          {tracks?.map((item) => (
+        <InfiniteScroll
+          dataLength={tracks.length}
+          next={() => fetchNextPage({ pageParam: tracks.length + 10 })}
+          hasMore={tracks.length !== 100}
+          scrollableTarget="outlet-container"
+          endMessage={
+            <div className="text-center w-full px-3 py-2 border-b border-gray-200 dark:border-gray-700  dark:bg-gray-800">
+              <span className="text-gray-700 dark:text-gray-300">
+                Just pick a song already
+              </span>
+            </div>
+          }>
+          {tracks.map((item) => (
             <button
               onClick={() => add(item)}
               key={item.id}
@@ -74,7 +92,7 @@ export default function Search() {
               </div>
             </button>
           ))}
-        </div>
+        </InfiniteScroll>
       )}
     </>
   );

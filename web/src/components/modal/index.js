@@ -9,7 +9,7 @@ import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons";
 export default function Modal({ children }) {
   const isBotDisconnected = useIsBotDisconnected();
   let [isOpen, setIsOpen] = useState(isBotDisconnected);
-  const [reconnect, { status }] = useBotReconnect();
+  const { mutate: reconnect, status } = useBotReconnect();
 
   useEffect(() => {
     setIsOpen(isBotDisconnected);

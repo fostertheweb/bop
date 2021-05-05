@@ -18,7 +18,7 @@ export function useGetSpotifyCredentials() {
 export function useSpotifyClientQuery(path) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
   // const userRefreshToken = useRecoilValue(userRefreshTokenAtom);
-  // const queryCache = useQueryCache();
+  // const queryCache = useQueryClient();
 
   return useQuery(
     path,
@@ -41,7 +41,7 @@ export function useSpotifyClientQuery(path) {
 export function useSpotifyUserQuery(path) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
   // const userRefreshToken = useRecoilValue(userRefreshTokenAtom);
-  // const queryCache = useQueryCache();
+  // const queryCache = useQueryClient();
 
   return useQuery(
     path,
@@ -64,7 +64,7 @@ export function useSpotifyUserQuery(path) {
 export function useSpotifyUserMutation(path) {
   const userAccessToken = useRecoilValue(userAccessTokenState);
   // const userRefreshToken = useRecoilValue(userRefreshTokenAtom);
-  // const queryCache = useQueryCache();
+  // const queryCache = useQueryClient();
 
   return useQuery(
     async () => {
