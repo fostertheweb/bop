@@ -11,6 +11,7 @@ import {
 import { useParams } from "react-router";
 import { useQuery, useQueryCache } from "react-query";
 import axios from "axios";
+import { useSetIsBotDisconnected } from "./use-bot";
 
 const { REACT_APP_API_URL: API_URL } = process.env;
 
@@ -38,6 +39,7 @@ export function useQueue() {
   const playQueue = usePlayQueue();
   const setPlayQueue = useSetPlayQueue();
   const [playNextInQueue] = usePlayNext();
+  const setIsBotDisconnected = useSetIsBotDisconnected();
 
   useEffect(() => {
     const socket = io(API_URL, {
@@ -47,10 +49,10 @@ export function useQueue() {
       transports: ["websocket"],
     });
 
-    socket.on("PLAYBACK_START", (currentPlayback) => {
+    socket.on("PLAYBACK_START", () => {
       setIsPlaybackLoading(false);
-      setCurrentPlayback(currentPlayback);
       setIsPlaying(true);
+      queryCache.refetchQueries(["currentPlayback", roomId]);
       queryCache.refetchQueries(["playQueue", roomId]);
     });
 
@@ -64,11 +66,10 @@ export function useQueue() {
     });
 
     socket.on("BOT_DISCONNECTED", () => {
-      console.log("Bot Disconnected");
-    });
-
-    socket.on("BOT_RECONNECTING", () => {
-      console.log("Bot Reconnecting");
+      setIsPlaying(false);
+      setCurrentPlayback(null);
+      setIsBotDisconnected(true);
+      queryCache.refetchQueries(["currentPlayback", roomId]);
     });
 
     socketRef.current = socket;

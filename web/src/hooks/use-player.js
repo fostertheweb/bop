@@ -5,6 +5,7 @@ import { useMutation, useQueryCache } from "react-query";
 import { useSetCurrentPlayback } from "hooks/use-current-playback";
 import Axios from "axios";
 import { useParams } from "react-router";
+import { useSetIsBotDisconnected } from "hooks/use-bot";
 
 const {
   REACT_APP_SPOTIFY_API_URL: SPOTIFY_API_URL,
@@ -132,13 +133,22 @@ export function usePlayNextTrack() {
 
 export function usePlayNext() {
   const { id } = useParams();
+  const setIsBotDisconnected = useSetIsBotDisconnected();
+  const setIsPlaybackLoading = useSetIsPlaybackLoading();
+  const setCurrentPlayback = useSetCurrentPlayback();
+  const setIsPlaying = useSetIsPlaying();
+
   return useMutation(
     async () => {
       return await Axios.put(`${API_URL}/rooms/${id}/play-next`);
     },
     {
-      onSuccess() {
-        console.log("playing");
+      retry: false,
+      onError() {
+        setIsPlaying(false);
+        setIsPlaybackLoading(false);
+        setCurrentPlayback(null);
+        setIsBotDisconnected(true);
       },
     },
   );

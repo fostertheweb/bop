@@ -1,7 +1,7 @@
-const { default: ShortUniqueId } = require("short-unique-id");
 const { setJSON, getJSON, removeJSON } = require("../shared/helpers");
 const YouTube = require("youtube-sr").default;
 const connections = require("../shared/connections");
+const { inspect } = require("util");
 
 module.exports = function (app, _options, next) {
   app.get("/:id", async ({ params: { id } }) => {
@@ -36,13 +36,13 @@ module.exports = function (app, _options, next) {
       const playback = JSON.parse(
         await app.redis.sendCommand(getJSON(`rooms:${id}:playing`)),
       );
-      const dispatcher = connections.getStreamDispatcher(room);
+      const connection = connections.getConnection(room.guild_id);
 
-      if (!dispatcher) {
-        throw new Error("No audio playing in voice channel.");
+      if (!connection || !connection.current) {
+        throw new Error("No active voice connection found.");
       }
 
-      const progress_ms = dispatcher.streamTime || 0;
+      const progress_ms = connection.current.playTime || 0;
 
       return { ...playback, progress_ms };
     } catch (err) {
@@ -57,6 +57,11 @@ module.exports = function (app, _options, next) {
         await app.redis.sendCommand(getJSON(`rooms:${id}`)),
       );
       const [trackId] = await app.redis.lrange(`rooms:${room.id}:queue`, 0, 0);
+
+      if (!trackId) {
+        return reply.code(204).send(null);
+      }
+
       const { body: track } = await app.spotify().getTrack(trackId);
       const { name, artists } = track;
       const video = await getYouTubeVideo(name, artists);
@@ -65,17 +70,7 @@ module.exports = function (app, _options, next) {
         video.durationFormatted,
       );
 
-      connections.play(room, video.url, {
-        onStart() {
-          app.io.to(room.id).emit("PLAYBACK_START", currentPlayback);
-        },
-        onFinish() {
-          app.io.to(room.id).emit("PLAYBACK_END");
-          app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
-          connections.getStreamDispatcher(room).destroy();
-          connections.removeStreamDispatcher(room);
-        },
-      });
+      connections.play(room.guild_id, video.url);
 
       // save current playback
       await app.redis.sendCommand(
@@ -88,6 +83,44 @@ module.exports = function (app, _options, next) {
       reply.send("OK");
     } catch (err) {
       app.log.error(err);
+      return reply.code(204).send(null);
+    }
+  });
+
+  app.put("/:id/bot-reconnect", async ({ params: { id } }, reply) => {
+    try {
+      const room = JSON.parse(
+        await app.redis.sendCommand(getJSON(`rooms:${id}`)),
+      );
+      const guild = app.discord().guilds.get(room.guild_id);
+      const member = guild.members.get(room.host.id);
+      const voiceChannelId = member.voiceState.channelID;
+
+      if (!voiceChannelId) {
+        throw new Error("Host is not in a voice channel.");
+      }
+
+      connections.removeConnection(room.guild_id);
+
+      connections.create(room.guild_id, voiceChannelId, {
+        onStart() {
+          app.io.to(room.id).emit("PLAYBACK_START");
+        },
+        async onFinish() {
+          app.io.to(room.id).emit("PLAYBACK_END");
+          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
+        },
+        async onDisconnect() {
+          app.io.to(room.id).emit("BOT_DISCONNECTED");
+          connections.removeConnection(room.guild_id);
+          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
+        },
+      });
+
+      return reply.send("OK");
+    } catch (err) {
+      app.log.error(err);
+      return reply.badRequest();
     }
   });
 

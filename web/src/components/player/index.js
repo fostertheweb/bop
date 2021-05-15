@@ -26,10 +26,12 @@ export default function Player() {
   const isPlaying = useIsPlaying();
 
   return (
-    <PlayerBackground gradient={background} className="p-4 bg-gray-600">
+    <PlayerBackground
+      gradient={background}
+      className="z-10 p-2 bg-gray-600 md:p-4">
       <div className="box-border sticky top-0 flex items-center justify-center w-full bg-transparent">
-        <div className="w-1/3">
-          <div className="flex items-center justify-between px-2">
+        <div className="w-full md:w-1/2 lg:w-1/3">
+          <div className="flex items-center justify-between px-1 md:px-2">
             <CurrentPlayback
               item={track}
               loading={loading}

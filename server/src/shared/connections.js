@@ -1,23 +1,27 @@
 const ytdl = require("ytdl-core");
+const discord = require("./discord");
 
 let connections = new Map();
-let streamDispatchers = new Map();
-
-// const guild = await discord.guilds.fetch(room.guild_id);
-// const member = await guild.members.fetch(room.host.id);
-// const channel = member.voice.channel;
 
 module.exports = {
-  getStreamDispatcher(room) {
-    return streamDispatchers.get(room.id);
+  getConnection(guildId) {
+    return connections.get(guildId);
   },
-  async create(channel, options) {
-    const connection = await channel.join();
-    connection.setSpeaking("SOUNDSHARE");
-    connection.voice.setDeaf(true);
+  async create(guildId, voiceChannelId, options) {
+    const connection = await discord.joinVoiceChannel(voiceChannelId);
+    connection.updateVoiceState(false, true);
+
+    if (options.onStart) {
+      connection.on("start", options.onStart);
+    }
+
+    if (options.onFinish) {
+      connection.on("end", options.onFinish);
+    }
 
     if (options.onDisconnect) {
       connection.once("disconnect", options.onDisconnect);
+      connection.once("failed", options.onDisconnect);
     }
 
     if (options.onReconnecting) {
@@ -28,11 +32,11 @@ module.exports = {
       connection.once("ready", options.onReady);
     }
 
-    connections.set(channel.guild.id, connection);
+    connections.set(guildId, connection);
   },
 
-  play(room, url, options) {
-    const connection = connections.get(room.guild_id);
+  play(guildId, url) {
+    const connection = connections.get(guildId);
 
     const stream = ytdl(url, {
       type: "opus",
@@ -40,21 +44,14 @@ module.exports = {
       dlChunkSize: 0,
     });
 
-    // play song
-    const dispatcher = connection.play(stream, { volume: false });
-
-    if (options.onStart) {
-      dispatcher.once("start", options.onStart);
-    }
-
-    if (options.onFinish) {
-      dispatcher.once("finish", options.onFinish);
-    }
-
-    streamDispatchers.set(room.id, dispatcher);
+    connection.play(stream);
   },
 
-  removeStreamDispatcher(room) {
-    streamDispatchers.delete(room.id);
+  removeConnection(guildId) {
+    const connection = connections.get(guildId);
+
+    if (connection) {
+      connections.delete(guildId);
+    }
   },
 };
