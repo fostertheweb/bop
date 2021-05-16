@@ -18,14 +18,17 @@ impl EventHandler for Handler {
                 .voice_states
                 .get(&msg.author.id)
                 .and_then(|voice_state| voice_state.channel_id);
+            let manager = songbird::get(&ctx).await.expect("Songbird init.").clone();
 
-            if channel_id.is_some() {
-                let manager = songbird::get(&ctx).await.expect("Songbird init.").clone();
-                let _handler = manager.join(guild.id, channel_id.unwrap()).await;
-            } else {
-                if let Err(why) = msg.reply(&ctx, "You are not in a voice channel.").await {
-                    println!("Unable to reply: {:?}", why);
-                };
+            match channel_id {
+                Some(channel) => {
+                    let _handler = manager.join(guild.id, channel).await;
+                }
+                None => {
+                    if let Err(why) = msg.reply(&ctx, "You are not in a voice channel.").await {
+                        println!("Unable to reply: {:?}", why);
+                    };
+                }
             }
         }
     }
