@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package player;
+
+message PlayRequest {
+  string guild_id = 1;
+  string url = 2;
+}
+
+message PlayResponse {
+  string guild_id = 1;
+}
+
+service PlayService {
+  rpc PlaySong(PlayRequest) returns (PlayResponse) {}
+}
