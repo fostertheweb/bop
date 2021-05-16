@@ -5,8 +5,8 @@ phases:
     runtime-versions:
       nodejs: latest
     commands:
-      - curl -fsSLO "https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip"
-      - unzip terraform_0.15.0_linux_amd64.zip -d /usr/local/bin
+      - curl -fsSLO "https://releases.hashicorp.com/terraform/0.15.3/terraform_0.15.3_linux_amd64.zip"
+      - unzip terraform_0.15.3_linux_amd64.zip -d /usr/local/bin
       - npm install -g npm
   pre_build:
     commands:

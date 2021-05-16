@@ -2,8 +2,9 @@ const fp = require("fastify-plugin");
 const connections = require("../shared/connections");
 const { default: ShortUniqueId } = require("short-unique-id");
 const { removeJSON, setJSON } = require("../shared/helpers");
-const discord = require("../shared/discord");
+const Eris = require("eris");
 
+const discord = new Eris(process.env.DISCORD_BOT_TOKEN);
 const newRoomId = new ShortUniqueId();
 const COMMAND = "📻"; // process.env.BOT_COMMAND
 const WEB_URL = "https://crowdq.fm";
@@ -54,7 +55,6 @@ module.exports = fp(async function (fastify, _options) {
             await fastify.redis.sendCommand(
               removeJSON(`rooms:${room.id}:playing`),
             );
-            connections.removeConnection(room.guild_id);
           },
         });
 

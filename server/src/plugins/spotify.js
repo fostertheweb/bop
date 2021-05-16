@@ -1,5 +1,10 @@
 const fp = require("fastify-plugin");
-const spotify = require("../shared/spotify");
+const Spotify = require("spotify-web-api-node");
+
+const spotify = new Spotify({
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+});
 
 module.exports = fp(function (fastify, _options, next) {
   function getCredentials() {
