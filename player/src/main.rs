@@ -1,14 +1,36 @@
-use std::env;
-
-use songbird::SerenityInit;
-
+use futures::{future, prelude::*};
 use serenity::client::Context;
-
 use serenity::{
     async_trait,
     model::{channel::Message, gateway::Ready},
     prelude::*,
 };
+use songbird::SerenityInit;
+use std::{
+    env,
+    net::{IpAddr, Ipv6Addr, SocketAddr},
+    time::Duration,
+};
+use tarpc::{
+    context,
+    server::{self, incoming::Incoming, Channel},
+    tokio_serde::formats::Json,
+};
+
+use service::Player;
+
+#[derive(Clone)]
+struct PlayerServer(SocketAddr);
+
+#[derive(Clone)]
+struct PlayerService;
+
+#[tarpc::server]
+impl Player for PlayerService {
+    async fn play_song(self, _: context::Context, guild_id: String, url: String) -> String {
+        println!("Play Song in Guild {}", guild_id);
+    }
+}
 
 struct Handler;
 
@@ -36,6 +58,40 @@ impl EventHandler for Handler {
     async fn ready(&self, _ctx: Context, ready: Ready) {
         println!("{} says hello!", ready.user.name);
     }
+}
+
+async fn play(ctx: &Context, msg: &Message) {
+    let url = "";
+    let guild = msg.guild(&ctx.cache).await.unwrap();
+    let guild_id = guild.id;
+
+    let manager = songbird::get(ctx)
+        .await
+        .expect("Songbird Voice client placed in at initialisation.")
+        .clone();
+
+    if let Some(handler_lock) = manager.get(guild_id) {
+        let mut handler = handler_lock.lock().await;
+
+        let source = match songbird::ytdl(&url).await {
+            Ok(source) => source,
+            Err(why) => {
+                println!("Err starting source: {:?}", why);
+
+                // error playing
+
+                return Ok(());
+            }
+        };
+
+        handler.play_source(source);
+
+        // song is playing
+    } else {
+        // not in voice channel
+    }
+
+    Ok(())
 }
 
 #[tokio::main]

@@ -1,5 +1,5 @@
 [package]
-name = "crowdq-player"
+name = "player"
 version = "0.1.0"
 authors = ["Jonathan Foster <fostertheweb@gmail.com>"]
 edition = "2018"
@@ -8,4 +8,9 @@ edition = "2018"
 serenity = { version = "0.10", default-features = false, features = ["client", "cache", "gateway", "rustls_backend", "voice", "model"] }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 songbird = { version = "0.1.6" }
+futures = { version = "0.3.15" }
 tarpc = { version = "0.26" }
+
+[lib]
+name = "service"
+path = "src/lib.rs"
