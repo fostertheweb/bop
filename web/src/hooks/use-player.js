@@ -1,7 +1,7 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAccessTokenState } from "hooks/spotify/use-login";
 import { usePlayQueue, useQueue } from "hooks/use-queue";
-import { useMutation, useQueryCache } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useSetCurrentPlayback } from "hooks/use-current-playback";
 import Axios from "axios";
 import { useParams } from "react-router";
@@ -40,7 +40,7 @@ export function useSetIsPlaying() {
 
 export function useRestartCurrentTrack() {
   const userAccessToken = useRecoilValue(userAccessTokenState);
-  const queryCache = useQueryCache();
+  const queryCache = useQueryClient();
 
   return useMutation(
     async () => {

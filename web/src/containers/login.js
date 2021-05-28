@@ -8,7 +8,7 @@ import { faSpinnerThird } from "@fortawesome/pro-duotone-svg-icons";
 export default function Login() {
   const location = useLocation();
   const { code } = parse(location.search);
-  const [login, { status }] = useLogin();
+  const { mutate: login, status } = useLogin();
   const redirect_uri = `${window.location.origin}${window.location.pathname}`;
   const navigate = useNavigate();
   const [isRedirecting, setRedirecting] = useState(false);

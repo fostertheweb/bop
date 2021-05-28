@@ -14,8 +14,8 @@ import React, { useState } from "react";
 export default function Reactions({ disabled, trackId }) {
   const [skipped, setSkipped] = useState(false);
   const { data: liked, status: checkStatus } = useCheckIfSavedTrack(trackId);
-  const [saveTrack, { status: saveStatus }] = useSaveTrack(trackId);
-  const [removeTrack, { status: removeStatus }] = useRemoveTrack(trackId);
+  const { mutate: saveTrack, status: saveStatus } = useSaveTrack(trackId);
+  const { mutate: removeTrack, status: removeStatus } = useRemoveTrack(trackId);
   const loading =
     saveStatus === "loading" ||
     checkStatus === "loading" ||

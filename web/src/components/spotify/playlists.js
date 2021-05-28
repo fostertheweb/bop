@@ -1,4 +1,5 @@
 import React from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/pro-solid-svg-icons";
 import { useUserDetails } from "hooks/spotify/use-user-details";
@@ -13,14 +14,21 @@ import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 export default function Playlists() {
   const { data: user, status: userStatus } = useUserDetails();
-  const { status: playlistsStatus, data: playlists } = useGetPlaylists(user);
+  const {
+    status: playlistsStatus,
+    data,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetPlaylists(user);
+
+  const playlists = data?.pages.flatMap((page) => page.data.items) || [];
 
   if (userStatus === "loading") {
     return "Fetching Spotify User Details";
   }
 
-  if (playlistsStatus === "loading") {
-    return `Fetching Spotify Playlists for ${user.id}`;
+  if (playlistsStatus === "loading" && !isFetchingNextPage && user) {
+    return `Fetching Spotify Playlists for ${user?.id}`;
   }
 
   return (
@@ -39,7 +47,17 @@ export default function Playlists() {
           </div>
         </div>
       </div>
-      {user ? <PlaylistsTable data={playlists.items} /> : <NotLoggedIn />}
+      {user && playlistsStatus === "success" ? (
+        <InfiniteScroll
+          dataLength={playlists.length}
+          next={() => fetchNextPage({ pageParam: playlists.length + 10 })}
+          hasMore={true}
+          scrollableTarget="outlet-container">
+          <PlaylistsTable data={playlists} />
+        </InfiniteScroll>
+      ) : (
+        <NotLoggedIn />
+      )}
     </>
   );
 }
@@ -54,7 +72,7 @@ function PlaylistsTable({ data }) {
               <div
                 className="flex-shrink-0 w-16 h-16 bg-cover rounded"
                 style={{
-                  backgroundImage: `url(${playlist.images[0].url})`,
+                  backgroundImage: `url(${playlist.images[0]?.url})`,
                 }}></div>
               <div className="flex-grow">
                 <div className="text-base text-gray-800 dark:text-gray-300">
