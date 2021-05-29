@@ -1,15 +1,15 @@
-use std::path::Path;
+fn main() {
+  let iface_files = &["proto/player.proto"];
+  let dirs = &["."];
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    if let Err(why) = tonic_build::configure()
-        .out_dir(Path::new("service"))
-        .compile(
-            &[Path::new("proto/player.proto")],
-            &[Path::new("proto/player.proto")],
-        )
-    {
-        println!("Error: {}", why);
-    }
+  tonic_build::configure()
+      .build_server(true)
+      .build_client(true)
+      .compile(iface_files, dirs)
+      .unwrap_or_else(|e| panic!("protobuf compilation failed: {}", e));
 
-    Ok(())
+  // recompile protobufs only if any of the proto files changes
+  for file in iface_files {
+      println!("cargo:rerun-if-changed={}", file);
+  }
 }
