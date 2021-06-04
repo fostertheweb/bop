@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
     let player = Player::default();
 
-    println!("Starting gRPC Server...");
+    println!("Play Service listening on {}", addr);
     Server::builder()
         .add_service(PlayServiceServer::new(player))
         .serve(addr)

@@ -31,6 +31,7 @@ app.register(require("fastify-redis"), {
 });
 app.register(require("./plugins/discord"));
 app.register(require("./plugins/spotify"));
+app.register(require("./plugins/grpc"));
 
 // routes
 app.register(require("./routes/spotify"), { prefix: "/spotify" });

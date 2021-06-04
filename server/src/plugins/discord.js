@@ -1,5 +1,4 @@
 const fp = require("fastify-plugin");
-const connections = require("../shared/connections");
 const { default: ShortUniqueId } = require("short-unique-id");
 const { removeJSON, setJSON } = require("../shared/helpers");
 const Eris = require("eris");
@@ -39,24 +38,6 @@ module.exports = fp(async function (fastify, _options) {
           icon_url: `${CDN}/icons/${guild.id}/${guild.icon}.png`,
           host,
         };
-
-        connections.create(guild.id, voiceChannelId, {
-          onStart() {
-            fastify.io.to(room.id).emit("PLAYBACK_START");
-          },
-          async onFinish() {
-            fastify.io.to(room.id).emit("PLAYBACK_END");
-            await fastify.redis.sendCommand(
-              removeJSON(`rooms:${room.id}:playing`),
-            );
-          },
-          async onDisconnect() {
-            fastify.io.to(room.id).emit("BOT_DISCONNECTED");
-            await fastify.redis.sendCommand(
-              removeJSON(`rooms:${room.id}:playing`),
-            );
-          },
-        });
 
         // save room details
         await fastify.redis.sendCommand(setJSON(`rooms:${room.id}`, room));

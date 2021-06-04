@@ -1,7 +1,5 @@
 const { setJSON, getJSON, removeJSON } = require("../shared/helpers");
 const YouTube = require("youtube-sr").default;
-const connections = require("../shared/connections");
-const { inspect } = require("util");
 
 module.exports = function (app, _options, next) {
   app.get("/:id", async ({ params: { id } }) => {
@@ -36,13 +34,8 @@ module.exports = function (app, _options, next) {
       const playback = JSON.parse(
         await app.redis.sendCommand(getJSON(`rooms:${id}:playing`)),
       );
-      const connection = connections.getConnection(room.guild_id);
 
-      if (!connection || !connection.current) {
-        throw new Error("No active voice connection found.");
-      }
-
-      const progress_ms = connection.current.playTime || 0;
+      const progress_ms = 0;
 
       return { ...playback, progress_ms };
     } catch (err) {
@@ -53,32 +46,44 @@ module.exports = function (app, _options, next) {
 
   app.put("/:id/play-next", async ({ params: { id } }, reply) => {
     try {
-      const room = JSON.parse(
-        await app.redis.sendCommand(getJSON(`rooms:${id}`)),
-      );
-      const [trackId] = await app.redis.lrange(`rooms:${room.id}:queue`, 0, 0);
+      // const room = JSON.parse(
+      //   await app.redis.sendCommand(getJSON(`rooms:${id}`)),
+      // );
+      // const [trackId] = await app.redis.lrange(`rooms:${room.id}:queue`, 0, 0);
 
-      if (!trackId) {
-        return reply.code(204).send(null);
-      }
+      // if (!trackId) {
+      //   return reply.code(204).send(null);
+      // }
 
-      const { body: track } = await app.spotify().getTrack(trackId);
+      const { body: track } = await app
+        .spotify()
+        .getTrack("5STe0hPlbFwIk0OkjNRJLa?si=815e1ee9fd9640d9");
       const { name, artists } = track;
       const video = await getYouTubeVideo(name, artists);
       const currentPlayback = buildCurrentPlayback(
-        trackId,
+        track.id,
         video.durationFormatted,
       );
 
-      connections.play(room.guild_id, video.url);
+      app
+        .grpc()
+        .playSong({ guildId: id, url: video.url }, function (err, feature) {
+          if (err) {
+            // process error
+            app.log.error(err);
+          } else {
+            // process feature
+            app.log.info(feature);
+          }
+        });
 
       // save current playback
-      await app.redis.sendCommand(
-        setJSON(`rooms:${room.id}:playing`, currentPlayback),
-      );
+      // await app.redis.sendCommand(
+      //   setJSON(`rooms:${room.id}:playing`, currentPlayback),
+      // );
 
       // remove currently playing song from queue
-      await app.redis.lrem(`rooms:${room.id}:queue`, 0, trackId);
+      // await app.redis.lrem(`rooms:${room.id}:queue`, 0, trackId);
 
       reply.send("OK");
     } catch (err) {
@@ -99,23 +104,6 @@ module.exports = function (app, _options, next) {
       if (!voiceChannelId) {
         throw new Error("Host is not in a voice channel.");
       }
-
-      connections.removeConnection(room.guild_id);
-
-      connections.create(room.guild_id, voiceChannelId, {
-        onStart() {
-          app.io.to(room.id).emit("PLAYBACK_START");
-        },
-        async onFinish() {
-          app.io.to(room.id).emit("PLAYBACK_END");
-          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
-        },
-        async onDisconnect() {
-          app.io.to(room.id).emit("BOT_DISCONNECTED");
-          connections.removeConnection(room.guild_id);
-          await app.redis.sendCommand(removeJSON(`rooms:${room.id}:playing`));
-        },
-      });
 
       return reply.send("OK");
     } catch (err) {
