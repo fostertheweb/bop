@@ -7,6 +7,34 @@ use serenity::{
 use songbird::SerenityInit;
 use std::env;
 
+use tonic::{transport::Server, Request, Response, Status};
+
+use player::play_service_server::{PlayService, PlayServiceServer};
+use player::{PlayRequest, PlayResponse};
+
+pub mod player {
+    tonic::include_proto!("player");
+}
+
+#[derive(Debug, Default)]
+pub struct Player {}
+
+#[tonic::async_trait]
+impl PlayService for Player {
+    async fn play_song(
+        &self,
+        request: Request<PlayRequest>,
+    ) -> Result<Response<PlayResponse>, Status> {
+        println!("Received request from: {:?}", request);
+
+        let response = player::PlayResponse {
+            guild_id: request.into_inner().guild_id,
+        };
+
+        Ok(Response::new(response))
+    }
+}
+
 struct Handler;
 
 #[async_trait]
@@ -38,42 +66,8 @@ impl EventHandler for Handler {
     }
 }
 
-// async fn play(ctx: &Context, msg: &Message) {
-//     let url = "";
-//     let guild = msg.guild(&ctx.cache).await.unwrap();
-//     let guild_id = guild.id;
-
-//     let manager = songbird::get(ctx)
-//         .await
-//         .expect("Songbird Voice client placed in at initialisation.")
-//         .clone();
-
-//     if let Some(handler_lock) = manager.get(guild_id) {
-//         let mut handler = handler_lock.lock().await;
-
-//         let source = match songbird::ytdl(&url).await {
-//             Ok(source) => source,
-//             Err(why) => {
-//                 println!("Err starting source: {:?}", why);
-
-//                 // error playing
-
-//                 return Ok(());
-//             }
-//         };
-
-//         handler.play_source(source);
-
-//         // song is playing
-//     } else {
-//         // not in voice channel
-//     }
-
-//     Ok(())
-// }
-
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let token =
         env::var("DISCORD_BOT_TOKEN").expect("Add Discord Bot token to environment variables.");
 
@@ -86,4 +80,15 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("Client error: {:?}", why);
     }
+
+    let addr = "[::1]:50051".parse()?;
+    let player = Player::default();
+
+    println!("Play Service listening on {}", addr);
+    Server::builder()
+        .add_service(PlayServiceServer::new(player))
+        .serve(addr)
+        .await?;
+
+    Ok(())
 }

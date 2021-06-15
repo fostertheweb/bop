@@ -13,7 +13,3 @@ prost = { version = "0.7" }
 
 [build-dependencies]
 tonic-build = "0.4.2"
-
-[[bin]]
-name = "player-server"
-path = "src/server.rs"
